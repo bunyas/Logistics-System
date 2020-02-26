@@ -1,0 +1,583 @@
+﻿
+@{
+    ViewBag.Title = "PatientCareAndManagement";
+    Layout = "~/Views/Shared/_LayoutMAULT.cshtml";
+}
+<!-- Breadcrumbs-->
+<ol class="breadcrumb" style="margin-top:30px;">
+    <li class="breadcrumb-item">
+        <a href="#">Dashboard</a>
+    </li>
+    <li class="breadcrumb-item active">ART Patient And Care Management</li>
+</ol>
+<div class="panel panel-default">
+    <div class="panel-heading">Select the month Range</div>
+    <div class="panel-body">
+        <div class="col-md-12">
+            <div class="col-md-1"><h4>From:</h4></div>
+            <div class="col-md-2">
+                @Html.EJ().DropDownList("FromDropDownList").Datasource((IEnumerable<object>)ViewData["DropDownSource"]).DropDownListFields(Df => Df.Text("Description").Value("ID")).WatermarkText("Select the month").Width("100%")
+            </div>
+            <div class="col-md-1"><h4 style="float:right;">TO:</h4></div>
+            <div class="col-md-2">
+                @Html.EJ().DropDownList("ToDropDownList").Datasource((IEnumerable<object>)ViewData["DropDownSource"]).DropDownListFields(Df => Df.Text("Description").Value("ID")).WatermarkText("Select the month").Width("100%")
+            </div>
+            <div class="col-md-1"><h4 style="float:right;">YEAR:</h4></div>
+            <div class="col-md-2">
+                @Html.EJ().DropDownList("YearDropDownList").Datasource((IEnumerable<object>)ViewData["DropDownSource1"]).DropDownListFields(Df => Df.Text("Description").Value("ID")).WatermarkText("Select the month").Width("100%")
+            </div>
+            <div class="col-md-2">
+                <input id="LoadDatabtn" class="btn btn-sm btn-primary" type="button" value="Load Records" onclick="myfunc()" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@{Html.EJ().Tab("defaultTabs").Items(data =>
+    {
+    data.Add().ID("CareAvailability").Text("Availability of required tools and reference materials").ContentTemplate(@<div>
+
+        @(Html.EJ().Grid<object>("CareAvailabilityGrid")
+            .Datasource((IEnumerable<object>)ViewBag.Careavailability)
+            .ShowColumnChooser()
+             .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+             {
+                 items.AddTool(ToolBarItems.ExcelExport);
+             }))
+     .AllowSorting().AllowFiltering().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+            .Columns(col =>
+
+            {
+
+                col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+                col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Level_desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+                col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:MM/dd/yyyy}").Add();
+
+                col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+                col.Field("Q_one").HeaderText("HMIS 055-HIV testing and Counselling (RCT) register").Width("150").AllowFiltering(false).Add();
+
+                col.Field("Q_two").HeaderText("HMIS 036-Pre-Exposure Prophylaxis (PEP) register").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowFiltering(false).Add();
+
+                col.Field("Q_three").HeaderText("HMIS 053-Client Appointment Book").Width("150").AllowFiltering(false).Add();
+
+                col.Field("Q_four").HeaderText("HMIS 082-Early Infant Diagnosis (EID) register").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowFiltering(false).Add();
+
+                col.Field("Q_five").HeaderText("Anti-Retroviral Therapy (ART) dispensing log").Width("150").AllowFiltering(false).Add();
+
+                col.Field("Q_six").HeaderText("HMIS 122A-Anti-Retroviral Therapy (ART) clients cards").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowFiltering(false).Add();
+
+                col.Field("Q_seven").HeaderText("HMIS 080-Pre-Anti-Retroviral Therapy (ART)  register").Width("150").AllowFiltering(false).Add();
+
+                col.Field("Q_eight").HeaderText("HMIS 081-Anti-Retroviral Therapy (ART) register").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowFiltering(false).Add();
+
+                col.Field("Q_nine").HeaderText("Guidelines for Prevention and Treatment of HIV in Uganda (version 2016)").Width("150").AllowFiltering(false).Add();
+
+                col.Field("Q_ten").HeaderText("Uganda Clinical Guidelines-UCG (version 2016)").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowFiltering(false).Add();
+
+            }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick")))
+    </div>);
+    data.Add().ID("DispensingLog").Text("ART/EMTCT dispensing log").ContentTemplate(@<div>
+
+        @(Html.EJ().Grid<object>("DispensingLogGrid")
+            .Datasource((IEnumerable<object>)ViewBag.dispensingLog)
+            .ShowColumnChooser()
+             .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+             {
+                 items.AddTool(ToolBarItems.ExcelExport);
+             }))
+     .AllowSorting().AllowFiltering().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+            .Columns(col =>
+
+            {
+
+                col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+                col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Level_desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+                col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:MM/dd/yyyy}").Add();
+                col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+                col.Field("Dispensing_Date").HeaderText("Date").Width("100").AllowFiltering(false).Add();
+
+                col.Field("Patient_No").HeaderText("Patient's number").Width("100").AllowFiltering(false).Add();
+
+                col.Field("Medicine_Name").HeaderText("Name of Medicine").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+                col.Field("Amount_Dispensed").HeaderText("Dispensed amount").Width("100").AllowFiltering(false).Add();
+
+                col.Field("Score").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick1")))
+    </div>);
+    data.Add().ID("ARTRegister").Text("HMIS – 081- ART register").ContentTemplate(@<div>
+
+        @(Html.EJ().Grid<object>("ARTRegisterGrid")
+            .Datasource((IEnumerable<object>)ViewBag.register)
+            .ShowColumnChooser()
+             .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+             {
+                 items.AddTool(ToolBarItems.ExcelExport);
+             }))
+     .AllowSorting().AllowFiltering().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+
+        .Columns(col =>
+        {
+
+            col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+            col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("Level_Desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+            col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:MM/dd/yyyy}").Add();
+
+            col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+            col.Field("Start_Date").HeaderText("Start Date").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            col.Field("Patient_No").HeaderText("Patient's Number").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            col.Field("Patient_Name").HeaderText("Patient's Name").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            col.Field("Patient_Weight").HeaderText("Patient's Weight").Width("100").AllowFiltering(false).Add();
+
+            col.Field("Patient_Age").HeaderText("Patient's Age").Width("100").AllowFiltering(false).Add();
+
+            col.Field("Dapsone").HeaderText("Start Date CPT/Dapson").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            col.Field("Original_Regimen").HeaderText("Original regimen").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            col.Field("Current_Regimen").HeaderText("Current regimen").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            col.Field("Score").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+        }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick2")))
+    </div>);
+    data.Add().ID("Adolescent").Text(" Adolescents and adults").ContentTemplate(@<div>
+
+        @(Html.EJ().Grid<object>("AdolscentGrid")
+            .Datasource((IEnumerable<object>)ViewBag.Adolescent)
+            .ShowColumnChooser()
+             .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+             {
+                 items.AddTool(ToolBarItems.ExcelExport);
+             }))
+     .AllowSorting().AllowFiltering().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+            .ShowStackedHeader()
+        .StackedHeaderRows(row =>
+        {
+            row.StackedHeaderColumns(column =>
+            {
+                column.HeaderText("CASE 1").Column(col =>
+                {
+                    col.Add("Drug_1");
+                    col.Add("Score_1");
+                }).Add();
+                column.HeaderText("CASE 2").Column(col =>
+                {
+                    col.Add("Drug_2");
+                    col.Add("Score_2");
+                }).Add();
+                column.HeaderText(" CASE 3").Column(col =>
+                {
+                    col.Add("Drug_3");
+                    col.Add("Score_3");
+                }).Add();
+                column.HeaderText("CASE 4").Column(col =>
+                {
+                    col.Add("Drug_4");
+                    col.Add("Score_4");
+                }).Add();
+                column.HeaderText("CASE 5").Column(col =>
+                {
+                    col.Add("Drug_5");
+                    col.Add("Score_5");
+                }).Add();
+                column.HeaderText("CASE 6").Column(col =>
+                {
+                    col.Add("Drug_6");
+                    col.Add("Score_6");
+                }).Add();
+                column.HeaderText("CASE 7").Column(col =>
+                {
+                    col.Add("Drug_7");
+                    col.Add("Score_7");
+                }).Add();
+                column.HeaderText("CASE 8").Column(col =>
+                {
+                    col.Add("Drug_8");
+                    col.Add("Score_8");
+                }).Add();
+                column.HeaderText("CASE 9").Column(col =>
+                {
+                    col.Add("Drug_9");
+                    col.Add("Score_9");
+                }).Add();
+                column.HeaderText("CASE 10").Column(col =>
+                {
+                    col.Add("Drug_10");
+                    col.Add("Score_10");
+                }).Add();
+            }).Add();
+        })
+        .Columns(col =>
+            {
+
+                col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+                col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Level_desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+                col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:MM/dd/yyyy}").Add();
+                col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+                col.Field("regimen_classification_desc").HeaderText("Category").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+                col.Field("Drug_1").HeaderText("Regimen").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_1").HeaderText("Score").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Drug_2").HeaderText("Regimen").TextAlign(TextAlign.Left).Priority(4).Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_2").HeaderText("Score").AllowFiltering(false).Width(100).Add();
+
+                col.Field("Drug_3").HeaderText("Regimen").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_3").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).AllowFiltering(false).Width(100).Add();
+
+                col.Field("Drug_4").HeaderText("Regimen").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_4").HeaderText("Score").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Drug_5").HeaderText("Regimen").TextAlign(TextAlign.Left).Priority(4).Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_5").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).Width("70").AllowFiltering(false).Add();
+
+                col.Field("Drug_6").HeaderText("Regimen").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_6").HeaderText("Score").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Drug_7").HeaderText("Regimen").TextAlign(TextAlign.Left).Priority(4).Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_7").HeaderText("Score").AllowFiltering(false).Width(100).Add();
+
+                col.Field("Drug_8").HeaderText("Regimen").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_8").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).AllowFiltering(false).Width(100).Add();
+
+                col.Field("Drug_9").HeaderText("Regimen").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_9").HeaderText("Score").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Drug_10").HeaderText("Regiemen").TextAlign(TextAlign.Left).Priority(4).Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_10").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).Width("70").AllowFiltering(false).Add();
+
+                col.Field("Total_Score").HeaderText("Total Score").TextAlign(TextAlign.Left).Priority(4).Width("70").AllowFiltering(false).Add();
+            }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick3")))
+    </div>);
+    data.Add().ID("Paediatric").Text(" Paediatrics").ContentTemplate(@<div>
+
+        @(Html.EJ().Grid<object>("PaediatricGrid")
+            .Datasource((IEnumerable<object>)ViewBag.paediatric)
+            .ShowColumnChooser()
+             .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+             {
+                 items.AddTool(ToolBarItems.ExcelExport);
+             }))
+     .AllowSorting().AllowFiltering().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+           .ShowStackedHeader()
+        .StackedHeaderRows(row =>
+        {
+            row.StackedHeaderColumns(column =>
+            {
+                column.HeaderText("CASE 1").Column(col =>
+                {
+                    col.Add("Drug_1");
+                    col.Add("Score_1");
+                }).Add();
+                column.HeaderText("CASE 2").Column(col =>
+                {
+                    col.Add("Drug_2");
+                    col.Add("Score_2");
+                }).Add();
+                column.HeaderText(" CASE 3").Column(col =>
+                {
+                    col.Add("Drug_3");
+                    col.Add("Score_3");
+                }).Add();
+                column.HeaderText("CASE 4").Column(col =>
+                {
+                    col.Add("Drug_4");
+                    col.Add("Score_4");
+                }).Add();
+                column.HeaderText("CASE 5").Column(col =>
+                {
+                    col.Add("Drug_5");
+                    col.Add("Score_5");
+                }).Add();
+                column.HeaderText("CASE 6").Column(col =>
+                {
+                    col.Add("Drug_6");
+                    col.Add("Score_6");
+                }).Add();
+                column.HeaderText("CASE 7").Column(col =>
+                {
+                    col.Add("Drug_7");
+                    col.Add("Score_7");
+                }).Add();
+                column.HeaderText("CASE 8").Column(col =>
+                {
+                    col.Add("Drug_8");
+                    col.Add("Score_8");
+                }).Add();
+                column.HeaderText("CASE 9").Column(col =>
+                {
+                    col.Add("Drug_9");
+                    col.Add("Score_9");
+                }).Add();
+                column.HeaderText("CASE 10").Column(col =>
+                {
+                    col.Add("Drug_10");
+                    col.Add("Score_10");
+                }).Add();
+            }).Add();
+        })
+        .Columns(col =>
+
+            {
+
+                col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+                col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Level_desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+                col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:MM/dd/yyyy}").Add();
+                col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+                col.Field("regimen_classification_desc").HeaderText("Category").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+                col.Field("Drug_1").HeaderText("Regimen").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_1").HeaderText("Score").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Drug_2").HeaderText("Regimen").TextAlign(TextAlign.Left).Priority(4).Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_2").HeaderText("Score").AllowFiltering(false).Width(100).Add();
+
+                col.Field("Drug_3").HeaderText("Regimen").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_3").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).AllowFiltering(false).Width(100).Add();
+
+                col.Field("Drug_4").HeaderText("Regimen").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_4").HeaderText("Score").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Drug_5").HeaderText("Regimen").TextAlign(TextAlign.Left).Priority(4).Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_5").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).Width("70").AllowFiltering(false).Add();
+
+                col.Field("Drug_6").HeaderText("Regimen").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_6").HeaderText("Score").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Drug_7").HeaderText("Regimen").TextAlign(TextAlign.Left).Priority(4).Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_7").HeaderText("Score").AllowFiltering(false).Width(100).Add();
+
+                col.Field("Drug_8").HeaderText("Regimen").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_8").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).AllowFiltering(false).Width(100).Add();
+
+                col.Field("Drug_9").HeaderText("Regimen").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_9").HeaderText("Score").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Drug_10").HeaderText("Regiemen").TextAlign(TextAlign.Left).Priority(4).Width("120").AllowFiltering(false).Add();
+
+                col.Field("Score_10").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).Width("70").AllowFiltering(false).Add();
+
+                col.Field("Total_Score").HeaderText("Total Score").TextAlign(TextAlign.Left).Priority(4).Width("70").AllowFiltering(false).Add();
+            }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick4")))
+    </div>);
+    }).EnableTabScroll(true).Render();}
+
+<script>
+    function OnToolbarClick(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["CareAvailabilityData"] = JSON.stringify(this.model.dataSource);
+        }
+    }
+    function OnToolbarClick1(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["DispensingLogData"] = JSON.stringify(this.model.dataSource);
+        }
+    }
+    function OnToolbarClick2(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["ARTRegisterData"] = JSON.stringify(this.model.dataSource);
+        }
+    }
+    function OnToolbarClick3(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["AdolescentData"] = JSON.stringify(this.model.dataSource);
+        }
+    }
+    function OnToolbarClick4(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["PaediatricData"] = JSON.stringify(this.model.dataSource);
+        }
+    }
+    function myfunc() {
+        var dateobject = $("#FromDropDownList").data("ejDropDownList");
+        var StartDate = dateobject.option('value');
+        var dateobject1 = $("#ToDropDownList").data("ejDropDownList");
+        var EndDate = dateobject1.option('value');
+        var dateobject3 = $("#YearDropDownList").data("ejDropDownList");
+        var Year = dateobject3.option('value');
+        $.ajax({
+            url: "/CHSS/BindCareAvailability",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startMonth": StartDate,
+                "endMonth": EndDate,
+                "year": Year,
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#CareAvailabilityGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+        $.ajax({
+            url: "/CHSS/BindDispensingLog",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startMonth": StartDate,
+                "endMonth": EndDate,
+                "year": Year,
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#DispensingLogGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+        $.ajax({
+            url: "/CHSS/BindARTRegister",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startMonth": StartDate,
+                "endMonth": EndDate,
+                "year": Year,
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#ARTRegisterGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+        $.ajax({
+            url: "/CHSS/BindAdolsent",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startMonth": StartDate,
+                "endMonth": EndDate,
+                "year": Year,
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#AdolscentGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+        $.ajax({
+            url: "/CHSS/BindPaediatric",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startMonth": StartDate,
+                "endMonth": EndDate,
+                "year": Year,
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#PaediatricGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+    }
+</script>
+

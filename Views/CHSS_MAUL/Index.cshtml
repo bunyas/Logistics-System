@@ -1,0 +1,279 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+<div id="content-wrapper">
+    <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <ol class="breadcrumb" style="margin-top:30px;">
+            <li class="breadcrumb-item">
+                <a href="#">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">CHSS</li>
+        </ol>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+
+                    <div class="col-md-1"><h6>From:</h6></div>
+                    <div class="col-md-3">
+                        <input type="text" id="dp_start_date" name="dp_start_date" class=" e-field e-ejinputtext valid" style="width:100%" />
+                    </div>
+                    <div class="col-md-1"><h6 style="float:right;">TO:</h6></div>
+                    <div class="col-md-3">
+                        <input type="text" id="dp_end_date" name="dp_end_date" class=" e-field e-ejinputtext valid" style="width:100%" />
+                    </div>
+                    <div class="col-md-2">
+                        <input id="LoadDatabtn" class="btn btn-sm btn-primary" type="button" value="Load Records" onclick="myfunc()" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Area Chart Example-->
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="fas fa-chart-area"></i>
+                Area Chart Example
+            </div>
+            <div class="card-body">
+                <canvas id="myAreaChart" width="100%" height="30"></canvas>
+            </div>
+            <div class="card-footer small text-muted"></div>
+        </div>
+        <div class="row">
+
+            <div class="col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4>Facility Score Range analysis</h4>
+                        <hr/>
+                        @(Html.EJ().Chart("container1")
+                              .PrimaryXAxis(prx =>
+                              {
+                                  prx.Title(tl => { tl.Text("Facilities"); }).MajorGridLines(mj => { mj.Visible(true); });
+
+                              })
+                              .PrimaryYAxis(pr => pr.Range(ra => ra.Max(70).Min(0).Interval(10)).Title(tl => tl.Text("Medals")))
+        .CommonSeriesOptions(cr => cr.Type(SeriesType.Doughnut).ColumnFacet(ColumnFacet.Rectangle).EnableAnimation(true).Marker(mr => mr.DataLabel(dt => dt.Visible(true).EnableContrastColor(true).ShowEdgeLabels(true)))
+        .Tooltip(tt => tt.Visible(true).Format("#point.x# : #point.y# #series.name#")))
+        .Series(sr =>
+        {
+            sr.DataSource(ViewBag.datasource1).XName("Range_name").YName("Percentage").Name("Facilities").EnableAnimation(true).Add();
+        })
+                              .Load("loadTheme")
+                              .IsResponsive(true)
+                              .Size(sz => sz.Height("300"))
+                              // .Title(title => title.Text("Facility Score Range analysis"))
+                              .Legend(lg => { lg.Visible(true); })
+                        )
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h5>Facility with electronic Inventory management systems linked to SAP-MIRP analysis</h5>
+                        <hr />
+                        @(Html.EJ().Chart("container")
+                                  .PrimaryXAxis(prx =>
+                                  {
+                                      prx.Title(tl => { tl.Text("Facilities"); }).MajorGridLines(mj => { mj.Visible(false); });
+
+                                  })
+                                  .PrimaryYAxis(pry =>
+                                  {
+                                      pry.Title(tl => { tl.Text("Scores"); })
+                                          .LabelFormat("{value}%");
+                                  })
+                                  .Crosshair(cr =>
+                                  {
+                                      cr.Visible(true).Type(CrosshairType.Trackball).Line(ln => ln.Color("transparent"))
+                                          .Marker(mr => { mr.Shape(ChartShape.Circle).Visible(true).Border(st => { st.Width(1); }); });
+                                  })
+                                 .CommonSeriesOptions(cr => cr.Type(SeriesType.Pie).ColumnFacet(ColumnFacet.Rectangle).EnableAnimation(true).Marker(mr => mr.DataLabel(dt => dt.Visible(true).EnableContrastColor(true).ShowEdgeLabels(true)))
+                                    .Tooltip(tt => tt.Visible(true).Format("#point.x# : #point.y# #series.name#")))
+                                    .Series(sr =>
+                                    {
+                                        sr.DataSource(ViewBag.datasource2).XName("Range_name").YName("Percentage").Name("Facilities").EnableAnimation(true).Add();
+                                    })
+                                  .Load("loadTheme")
+                                  .IsResponsive(true)
+                                  .Size(sz => sz.Height("300"))
+                                  //.Title(title => title.Text("Facility with electronic Inventory management systems linked to SAP-MIRP analysis"))
+                                  .Legend(lg => { lg.Visible(true); })
+                        )
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="panel panel-info">
+                    <div class="panel-body">
+                        <h5>Facilities  with electronic Inventory management systems analysis</h5>
+                        <hr />
+                        @(Html.EJ().Chart("container2")
+                                  .PrimaryXAxis(prx =>
+                                  {
+                                      prx.Title(tl => { tl.Text("Facilities"); }).MajorGridLines(mj => { mj.Visible(false); });
+
+                                  })
+                                  .PrimaryYAxis(pry =>
+                                  {
+                                      pry.Title(tl => { tl.Text("Scores"); })
+                                          .LabelFormat("{value}%");
+                                  })
+                                  .Crosshair(cr =>
+                                  {
+                                      cr.Visible(true).Type(CrosshairType.Trackball).Line(ln => ln.Color("transparent"))
+                                          .Marker(mr => { mr.Shape(ChartShape.Circle).Visible(true).Border(st => { st.Width(1); }); });
+                                  })
+                                 .CommonSeriesOptions(cr => cr.Type(SeriesType.Pie).ColumnFacet(ColumnFacet.Rectangle).EnableAnimation(true).Marker(mr => mr.DataLabel(dt => dt.Visible(true).EnableContrastColor(true).ShowEdgeLabels(true)))
+                                        .Tooltip(tt => tt.Visible(true).Format("#point.x# : #point.y# #series.name#")))
+                                        .Series(sr =>
+                                        {
+                                            sr.DataSource(ViewBag.datasource3).XName("Range_name").YName("Percentage").Name("Facilities").EnableAnimation(true)
+                                            .EnableSmartLabels(true).StartAngle(-90).EndAngle(90).Add();
+                                        })
+                                  .Load("loadTheme")
+                                  .IsResponsive(true)
+                                  .Size(sz => sz.Height("300"))
+                                  //.Title(title => title.Text("Facility with electronic Inventory management systems linked to SAP-MIRP analysis"))
+                                  .Legend(lg => { lg.Visible(true); })
+                        )
+                    </div>
+                </div>
+            </div>
+                        @*<div class="col-lg-4">
+                              <div class="panel panel-info">
+                                <div class="panel-heading">Panel Heading</div>
+                                <div class="panel-body">Panel Content</div>
+                            </div>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie"></i>
+                    Facility Score Range analysis
+                </div>
+                <div class="card-body">
+                    @(Html.EJ().Chart("container1")
+                          .PrimaryXAxis(prx =>
+                          {
+                              prx.Title(tl => { tl.Text("Facilities"); }).MajorGridLines(mj => { mj.Visible(true); });
+
+                          })
+                          .PrimaryYAxis(pry =>
+                          {
+                              pry.Title(tl => { tl.Text("Scores"); })
+                                  .LabelFormat("{value}");
+                          })
+                          .Crosshair(cr =>
+                          {
+                              cr.Visible(true).Type(CrosshairType.Crosshair).Line(ln => ln.Color("transparent"))
+                                  .Marker(mr => { mr.Shape(ChartShape.DownArrow).Visible(true).Border(st => { st.Width(1); }); });
+                          })
+                          .Series(sr =>
+                          {
+                              sr.DataSource(ViewBag.datasource1).XName("Range_name").YName("Percentage").Type(SeriesType.Doughnut).Name("Range_name").EnableAnimation(true).Add();
+                          })
+                          .Load("loadTheme")
+                          .IsResponsive(true)
+                          .Size(sz => sz.Height("300"))
+                          // .Title(title => title.Text("Facility Score Range analysis"))
+                          .Legend(lg => { lg.Visible(true); })
+                    )
+                </div>
+                <div class="card-footer small text-muted"></div>
+            </div>
+        </div>*@
+        </div>
+        <div class="card mb-3">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card-header">
+                        <i class="fas fa-chart-area"></i>
+                        Products Months of stock Analysis
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <div class="row">
+                                <div class="col-md-4"><h4 style="float:right;">Select a product</h4></div>
+                                <div class="col-md-6" style="float:left;">
+                                    @Html.EJ().DropDownList("ProductsDropDownList").Datasource((IEnumerable<object>)ViewData["pros"]).DropDownListFields(Df => Df.Text("product_description").Value("product_code")).SelectedIndex(0).EnableFilterSearch(true).WatermarkText("select a product").Width("100%").ClientSideEvents(eve => eve.Change("drpvaluechange"))
+                                </div>
+                            </div>
+                        </div>
+                        @(Html.EJ().Chart("container3")
+        .PrimaryXAxis(pr => pr.Title(tl => tl.Text("Category")))
+        .PrimaryYAxis(pr => pr.Range(ra => ra.Max(160).Min(0).Interval(10)).Title(tl => tl.Text("No of facilities")))
+        .CommonSeriesOptions(cr => cr.Type(SeriesType.Column).ColumnFacet(ColumnFacet.Rectangle).EnableAnimation(true).Marker(mr => mr.DataLabel(dt => dt.Visible(true).EnableContrastColor(true).ShowEdgeLabels(true)))
+        .Tooltip(tt => tt.Visible(true).Format("#point.x# : #point.y# #series.name# Months of stock")))
+        .Series(sr =>
+        {
+            sr.DataSource(ViewBag.datasource4).XName("Range_name").YName("Percentage").Name("Facilities").EnableAnimation(true).Add();
+        })
+        .Load("loadTheme")
+        .IsResponsive(true)
+        .Title(t => t.Text(""))
+        .Size(sz => sz.Height("600"))
+        .Legend(lg => { lg.Visible(true).Position(LegendPosition.Top); })
+                        )
+                    </div>
+                    <div class="card-footer small text-muted"></div>
+                </div>
+            </div>
+
+        </div>
+        <p class="small text-center text-muted my-5">
+            <em></em>
+        </p>
+    </div>
+    <!-- /.container-fluid -->
+</div>
+
+<script>
+    $(function () {
+        $("#dp_start_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+        $("#dp_end_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+    });
+    function drpvaluechange(args) {
+
+        $.ajax({
+            url: "/ChssDashBoard/BindMos",
+            type: "GET",
+            dataType: "json",
+            data: { "_product": args.value },
+            success: function (data) {
+                $("#container3").ejChart("option", { series: [{ dataSource: data, xName: "Range_name", yName:"Percentage" }] });
+            }
+        });
+    }
+    function myfunc() {
+        var dateobject = $("#dp_start_date").data("ejDatePicker");
+        var StartDate = dateobject.getValue();
+        var dateobject1 = $("#dp_end_date").data("ejDatePicker");
+        var EndDate = dateobject1.getValue();
+        $.ajax({
+            url: "BindScores",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startMonth": StartDate,
+                "endMonth": EndDate
+            },
+            success: function (data) {
+                $("#container1").ejChart("option", { series: [{ dataSource: data, xName: "Range_name", yName: "Percentage" }] });
+            }
+        });
+    }
+</script>
+

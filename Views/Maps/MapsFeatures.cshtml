@@ -1,0 +1,39 @@
+﻿@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+@using Syncfusion.JavaScript.DataVisualization
+@using Syncfusion.JavaScript.DataVisualization.Models
+@{
+    ViewBag.Title = "Facility Maps";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+<div id="ControlRegion">
+    @{
+        var datasource = ViewData["datasource"];
+         var mapData = ViewData["mapdata"];
+
+    }
+    <div style="height:100%;width:100%;">
+        @(Html.EJ().Map("container")
+           .Background("white")
+           .EnableAnimation(true)
+           .Layers(lr =>
+           {
+               lr.LayerType(LayerType.OSM)
+               .EnableAnimation(true)
+               .ShapeSettings(sp =>
+               {
+                   sp//.Fill("#626171")
+                            .StrokeThickness(1)
+                            .Stroke("#6F6F79")
+                            .AutoFill(false)
+                            .HighlightStroke("#6F6F79")
+                            .ValuePath("name")
+                            .HighlightColor("gray");
+               })
+               .ShapeData(mapData).Add();
+           })
+        )
+    </div>
+</div>
+ 

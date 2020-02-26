@@ -1,0 +1,573 @@
+﻿
+@{
+    ViewBag.Title = "Certificate of Release from Quarantine";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+<h2>Certificate of Release from Quarantine</h2>
+
+<div id="ControlRegion">
+    @(Html.EJ().Dialog("ErrorList").Title("Exception Thrown").ShowOnInit(false))
+    @(Html.EJ().Dialog("SuccessDial").Title("Record Saved").ShowFooter(true).FooterTemplateId("sample").ShowOnInit(false))
+    @(Html.EJ().Dialog("CancelDial").Title("Record Not Saved").ShowFooter(true).FooterTemplateId("cancelfooter").ShowOnInit(false))
+
+
+    @(Html.EJ().Grid<object>("Grid").AllowRowDragAndDrop()
+        .Datasource(datasource => datasource.URL("GetComplaints").RemoveURL("DialogDelete").Adaptor(AdaptorType.UrlAdaptor))
+        .EnableAltRow()
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+        .AllowPaging()
+        .AllowFiltering()
+        // .AllowTextWrap()
+        // .AllowGrouping()
+        .SelectionType(SelectionType.Multiple)
+        .AllowScrolling()
+        .IsResponsive(true)
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })
+        .ToolbarSettings(toolbar =>
+        {
+            toolbar.ShowToolbar().ToolbarItems(items =>
+            {
+                items.AddTool(ToolBarItems.Add);
+                items.AddTool(ToolBarItems.Edit);
+                items.AddTool(ToolBarItems.Delete);
+                items.AddTool(ToolBarItems.Update);
+                items.AddTool(ToolBarItems.Cancel);
+                items.AddTool(ToolBarItems.Search);
+                items.AddTool(ToolBarItems.ExcelExport);
+                items.AddTool(ToolBarItems.WordExport);
+                items.AddTool(ToolBarItems.PdfExport);
+            });
+        })
+        .Columns(col =>
+        {
+            col.Field("Id").HeaderText("Id").IsPrimaryKey(true).Visible(false).TextAlign(TextAlign.Right).Width(70).Add();
+            col.Field("e_reg_complaint_code").HeaderText("e_reg_complaint_code").IsPrimaryKey(false).Visible(false).TextAlign(TextAlign.Right).Width(70).Add();
+            col.Field("e_reg_complaint_No").HeaderText("Complaint Number").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Justify).Width(70).Add();
+            col.Field("Date_request").Type("date").HeaderText("Date & time of request").Format("{0:dd/MMM/yyyy}").Width(70).Add();
+            col.Field("Release_Date").Type("date").HeaderText("Date Release (Warehouse)").Format("{0:dd/MMM/yyyy}").Width(70).Add();
+            col.Field("Summary_of_Investigations").HeaderText("Summary of Investigations").ClipMode(ClipMode.EllipsisWithTooltip).Width(400).Add();
+
+        })
+    //.ClientSideEvents(evt => evt.ActionBegin("onActionBegin").ActionComplete("edit").ActionFailure("failure"))
+    )
+</div>
+
+<script type="text/template" id="template" @*style="width: 100%"*@>
+    @*<b>Complaints</b>*@
+
+    <div id="defaultTab" style="width: 100%;">
+
+
+        <div id="tab1">
+
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default" id="complaintHeader">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                                A. Details of Staff Requesting for Release from Quarantine
+                            </a>
+                        </h2>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse in">
+                        <div>
+                            <table @*id="table2" border="1" cellpadding="3" cellspacing="0" border-collapse="none"*@>
+
+                                <tr>
+                                    <td style="text-align:left;" @*hidden="hidden"*@>Complaint Number</td>
+                                    <td style="text-align: left" hidden="hidden"> <input type="text" id="e_reg_complaint_code" name="e_reg_complaint_code" value="{{:e_reg_complaint_code}}" class="e-field e-ejinputtext valid" hidden="hidden" /> </td>
+                                    <td style="text-align: left" @*hidden="hidden"*@> <input type="text" id="e_reg_complaint_No" name="e_reg_complaint_No" value="{{:e_reg_complaint_No}}" class="e-field e-ejinputtext valid" @*hidden="hidden"*@ /> </td>
+                                    <td style="text-align: left;">Date Complaint received at MAUL</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_date_recieved" name="e_reg_date_recieved" value="{{:e_reg_date_recieved}}" class="e-field e-ejinputtext valid" /></td>
+
+                                </tr>
+                                <tr>
+
+                                    <td style="text-align: left;">Complaint category</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_complaint_category" name="e_reg_complaint_category" value="{{:e_reg_complaint_category}}" class="e-field e-ejinputtext valid" /> </td>
+
+                                    <td style="text-align: left;">Affected Sites</td>
+                                    <td style="text-align: left"> <input @*type="text"*@ id="AffectedSites" name="AffectedSites" value="{{:AffectedSites}}" /> </td>
+
+                                </tr>
+                                <tr>
+                                    <td class="redLabels">Issue/ Complaint Details</td>
+                                    <td colspan="3" style="text-align: left">
+                                        <textarea id="e_reg_complaint_details" name="e_reg_complaint_details" class="form-control" value="{{: e_reg_complaint_details}}" cols="95" rows="5" style="max-width:100%">{{: e_reg_complaint_details}}</textarea>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="text-align: left;">Product Category</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_product_category" name="e_reg_product_category" value="{{:e_reg_product_category}}" class="e-field e-ejinputtext valid" /> </td>
+                                    <td style="text-align: left;">Mode of Communcation</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_communication_mode" name="e_reg_communication_mode" value="{{:e_reg_communication_mode}}" class="e-field e-ejinputtext valid" /> </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="text-align: left;">MAUL Responsible Staff</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_MAUL_Staff" name="e_reg_MAUL_Staff" value="{{:e_reg_MAUL_Staff}}" class="e-field e-ejinputtext valid" /> </td>
+
+                                </tr>
+
+                                <tr>
+                                    <td style="text-align: left;">Expected Date of Resolution</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_expected_date_resolution" name="e_reg_expected_date_resolution" value="{{:e_reg_expected_date_resolution}}" class="e-field e-ejinputtext valid" /> </td>
+                                    <td class="redLabels">Date Resolved</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_date_resolved" name="e_reg_date_resolved" value="{{:e_reg_date_resolved}}" class="e-field e-ejinputtext valid " /> </td>
+                                </tr>
+
+                            </table>
+                             
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" id="complainantDetails">
+                    <div class="panel-heading">
+                        <h4 class="panel-title ">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                                A. Details of Staff Requesting for Release from Quarantine
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse2">
+                        <div>
+
+                            <table>
+                                <tr hidden="hidden">>
+                                    <td style="text-align: left;">cp_code</td>
+                                    <td style="text-align: left">
+                                        <input id="cp_code" name="cp_code" value="{{: cp_code}}" @*class="e-field e-ejinputtext valid"*@ style="text-align: right; width: 175px; height: 28px" />
+                                    </td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td style="text-align: left;">Name</td>
+                                    <td style="text-align: left">
+                                        <input id="Staff_name" name="Staff_name" value="{{: Staff_name}}" @*class="e-field e-ejinputtext valid"*@ style="text-align: right; width: 175px; height: 28px" />
+                                    </td>
+                                    <td style="text-align: left;">Telephone number:</td>
+                                    <td style="text-align: left"> <input type="text" id="Staff_phone" style="text-align:left" name="Staff_phone" value="{{:Staff_phone}}" class="e-field e-ejinputtext valid" /> </td>
+                                    <td style="text-align: left;">Date and time of request</td>
+                                    <td style="text-align: left"> <input type="text" id="Date_request" name="Date_request" value="{{:Date_request}}" class="e-field e-ejinputtext valid " /> </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="text-align: left;">Title (Designation):</td>
+                                    <td style="text-align: left"> <input type="text" id="Staff_Designation" name="Staff_Designation" value="{{:Staff_Designation}}" class="e-field e-ejinputtext valid " /> </td>
+
+                                    <td style="text-align: left;">Email addresss</td>
+                                    <td style="text-align: left"> <input type="text" id="Staff_email" name="Staff_email" value="{{:Staff_email}}" class="e-field e-ejinputtext valid" /> </td>
+                                     
+                                </tr>
+                                
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+               
+                <div class="panel panel-default" id="productDetails">
+                    <div class="panel-heading">
+                        <h4 class="panel-title ">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseproduct">
+                                Product details
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseproduct">
+                        <div>
+                            <table>
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="panel panel-default" id="complaintmedicines">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapsemedicines">For Medicines</a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapsemedicines" class="panel-collapse collapse collapse in">
+                                                <div>
+                                                    <table>
+                                                        <tr style="width:100%">
+                                                            <td width="100%">
+                                                                <div id="medicinesGrid" width:100%"> </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div> 
+                <div class="panel panel-default" id="supportingDocuments">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseSupportDocs">
+                                Supporting Documents
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseSupportDocs" class="panel-collapse collapse collapse in">
+                        <div @*class="panel-body"*@>
+                            <table>
+                                <tr>
+                                    <td colspan="4" style="text-align: justify;">
+
+                                        <div id="partialPlaceHolder" style="width:100%"> </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" id="level1Communication">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+                                C. Summary of Quality Issue and QA Investigations
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse4" class="panel-collapse collapse collapse in">
+                        <div @*class="panel-body"*@>
+                            <table>
+                                <tr>
+                                    <td style="text-align: left;">Product Complaint Ref. No.</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_complaint_No" name="e_reg_complaint_No" value="{{:e_reg_complaint_No}}" class="e-field e-ejinputtext valid " /> </td>
+                                    <td></td> 
+                                    <td></td> 
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right;">Summary of Investigations </td>
+
+                                    <td colspan="3" style="text-align: left">
+                                        <textarea id="Summary_of_Investigations" name="Summary_of_Investigations" class="form-control" value="{{: Summary_of_Investigations}}" cols="95" rows="5" style="max-width:100%">{{: Summary_of_Investigations}}</textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right;">Release Instruction: </td>
+                                    <td colspan="3" style="text-align: left"> <input type="text" id="Release_Instruction" name="Release_Instruction" value="{{:Release_Instruction}}" class="e-field e-ejinputtext valid " /> </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" id="complaintClassification">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">
+                                D. Documents Attached
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse5" class="panel-collapse collapse collapse in">
+                        <div @*class="panel-body"*@>
+                            <table>
+
+                                <tr>
+                                    <td>Copy of Investigation Report</td>
+                                    <td style="text-align: left"> <input type="text" id="Copy_Investigation_Report" name="Copy_Investigation_Report" value="{{:Copy_Investigation_Report}}" class="e-field e-ejinputtext valid " /> </td>
+                                </tr>
+                                <tr>
+                                    <td>Goods Returned Note:</td>
+                                    <td style="text-align: left"> <input type="text" id="Goods_Returned_Note" name="Goods_Returned_Note" value="{{:Goods_Returned_Note}}" class="e-field e-ejinputtext valid " /> </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Other (Specify)…………………………</td>
+
+                                    <td colspan="3" style="text-align: left">
+                                        <textarea id="attached_otherDoc" name="attached_otherDoc" class="form-control" value="{{: attached_otherDoc}}" cols="95" rows="2" style="max-width:100%">{{: attached_otherDoc}}</textarea>
+                                    </td>
+                               
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+ 
+
+                <div class="panel panel-default" id="level2Communication">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse7">
+                                E. Release Details
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse7" class="panel-collapse collapse collapse in">
+                        <div @*class="panel-body"*@>
+                            <table>
+
+                                <tr style="width:100%">
+                                    <td class="redLabels" style="text-align: right;">Authorized by (Pharmacist in Charge):</td>
+                                    <td style="text-align: left"> <input type="text" id="Release_Authorizedby" name="Release_Authorizedby" value="{{:Release_Authorizedby}}" class="e-field e-ejinputtext valid " /> </td>
+                                    <td style="text-align: right;">Title</td>
+                                    <td style="text-align: left"> <input type="text" id="Communicated_By_Lev2Title" name="Communicated_By_Lev2Title" value="{{:Communicated_By_Lev2Title}}" class="e-field e-ejinputtext valid " /> </td>
+                                    <td style="text-align: right;">Date</td>
+                                    <td style="text-align: left"> <input type="text" id="Communicated_By_Lev2Date" name="Communicated_By_Lev2Date" value="{{:Communicated_By_Lev2Date}}" class="e-field e-ejinputtext valid " /> </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right;">Email to facility and/or copy of letter attached </td>
+
+                                    <td style="text-align: left">
+                                        {{if Communicated_By_Lev2Email}}
+                                        <input type="checkbox" id="Communicated_By_Lev2Email" name="Communicated_By_Lev2Email" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                                        {{else}}
+                                        <input type="checkbox" id="Communicated_By_Lev2Email" name="Communicated_By_Lev2Email" class="e-field e-checkbox" style="width:30px" />
+                                        {{/if}}
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" id="detailedInvestigation">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse8">
+                                Detailed Investigation
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse8" class="panel-collapse collapse collapse in">
+                        <div @*class="panel-body"*@>
+                            <table>
+
+                                <tr style="width:100%">
+                                    <td width="100%">
+                                        <!-- Place where you will insert your partial -->
+                                        <div id="DetailInvestGrd" @*style="display:none;*@ width:100%"> </div>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+    </div>
+</script>
+<script>
+     function edit(args) {
+
+        if (args.requestType == "save") {
+            var proddesc = $('#e_reg_complaint_details').val();
+            var str = proddesc + " Saved Successfully!!!";
+            //alert(proddesc);
+            successSave();
+        }
+        var objDialog = $("#Grid").data("ejGrid");
+
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+            $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+            $("#EditDialog_Grid_Cancel").ejButton("destroy");
+            $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+            $("#cancel").css({ "width": "100px", "height": "50px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+            $("#" + objDialog._id + "_dialogEdit").ejDialog({ open: "open" })
+            //A Global var to track and hold file uploading info
+            window.uploadData = {};
+            // Date of Visit
+            $("#e_reg_date_recieved").ejDatePicker(
+                {
+                    maxDate: new Date(), value: new Date(new Date($("#e_reg_date_recieved").attr("value"))),
+                    validationRules: {
+                        required: true
+                    },
+                    validationMessage: {
+                        required: "Date recieved is Required"
+                    },
+                }
+            );
+            var YesNo =@Html.Raw(Json.Encode(ViewBag.YesNo)); 
+            var contacts =@Html.Raw(Json.Encode(ViewBag.Contacts));
+            var maul_staff =@Html.Raw(Json.Encode(ViewBag.MAUL_Staff)); 
+            var release_instructions =@Html.Raw(Json.Encode(ViewBag.fo_a_release_instruction)); 
+
+            var DDprodCat = $('#e_reg_product_category').ejDropDownList({
+                dataSource: productCategories,
+                width: "150px",
+                fields: { value: "category_code", text: "category_desc" },
+                //change: "selectContact",
+            }).data("ejDropDownList");
+
+ 
+            var DD_MS = $('#e_reg_MAUL_Staff').ejDropDownList({
+                dataSource: maul_staff,
+                width: "150px",
+                fields: { value: "cp_code", text: "cp_name" },
+                //change: "selectContact",
+            }).data("ejDropDownList");
+
+            var DropDownListCC = $('#ComplainantCategory').ejDropDownList({
+                dataSource: contacts,
+                width: "150px",
+                fields: { value: "category_id", text: "category_desc" },
+                change: "selectContact",
+            }).data("ejDropDownList");
+
+            $("#e_reg_date_complaint").ejDatePicker({ maxDate: new Date() }); 
+            $("#e_reg_date_resolved").ejDatePicker({ maxDate: new Date() });
+            $("#Communicated_By_Lev1Date").ejDatePicker({ maxDate: new Date() });
+            $("#e_reg_expected_date_resolution").ejDatePicker();
+            $("#Feedback_Date").ejDatePicker({ maxDate: new Date() });
+            $("#Communicated_By_Lev2Date").ejDatePicker({ maxDate: new Date() });
+            $("#e_reg_contact_person_id").ejAutocomplete();
+
+            $('#e_reg_complaint_category').ejDropDownList({
+                dataSource: @Html.Raw(Json.Encode(ViewBag.e_reg_complaint_category)),
+                width: "200px",
+                validationRules: {
+                    required: true
+                },
+                validationMessage: {
+                    required: "Complaint Category is Required"
+                },
+                fields: { value: "complaint_category_code", text: "complaint_category_desc" },
+
+            }).data("ejDropDownList");
+
+
+            var ASDropDownList = $('#AffectedSites').ejDropDownList({
+                dataSource: Facilities,
+                width: "240px",
+                fields: { value: "FacilityCode", text: "Facility" },
+                showCheckbox: true,
+            }).data("ejDropDownList");
+
+            $('#e_reg_complaint_accuteness').ejDropDownList({
+                dataSource: @Html.Raw(Json.Encode(ViewBag.Accuteness)),
+                width: "200px",
+                fields: { value: "accuteness_code", text: "accuteness_desc" },
+            }).data("ejDropDownList");
+
+            $('#IP').ejDropDownList({
+                dataSource: @Html.Raw(Json.Encode(ViewBag.YesNo)),
+                fields: { value: "yes_no_id", text: "yes_no_desc" },
+            }).data("ejDropDownList");
+
+
+            if (args.requestType == "add") {
+                $.ajax({
+                    type: 'GET',
+                    url: "complaintCode",
+                    success: function (result) {
+                        $('#e_reg_complaint_code').val(++result);
+                    },
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "ComplaintCodeString",
+                    data: {},
+                    datatype: "html",
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data) {
+                        $('#e_reg_complaint_No').val(data.msg);
+                    },
+                    error: function () {
+                        alert("Error occured!!");
+                    }
+                });
+            }
+            window.e_reg_complaint_code = $('#e_reg_complaint_code').val();;
+             
+
+
+ 
+
+
+            $("#PreInvestGrd").ejGrid({
+                dataSource: ej.DataManager({ url: "BatchData?regCompCode=" + window.e_reg_complaint_code, batchUrl: "BatchUpdate", adaptor: "UrlAdaptor" }),
+                allowGrouping: false,
+                isResponsive: true,
+                enableAltRow: true,
+                allowTextWrap: true,
+                textWrapSettings: { wrapMode: "both" },
+                cellEdit: "cellEdit",
+                allowResizeToFit: true,
+                showStackedHeader: true,
+                enableResponsiveRow: true,
+                queryCellInfo: "queryCellInfo",
+                toolbarSettings: { showToolbar: false, toolbarItems: ['search'] },
+                editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+                allowResizeToFit: true,
+                columns: [
+                    { field: "e_reg_complaint_code", visible: true, allowEditing: true, headerText: "HHcode", width: 50, isPrimaryKey: false },
+                    { field: "investigation_code", visible: true, allowEditing: false, headerText: "", isPrimaryKey: true },
+                    { field: "investigation_desc", visible: true, allowEditing: false, headerText: "COMPLAINT INVESTIGATION", width: 400 },
+                    { field: "yes_no", visible: true, headerText: "Yes/No", width: 100, foreignKeyField: "yes_no_id", foreignKeyValue: "yes_no_desc", dataSource: YesNo },
+                    //{ field: "Required_Evidence_Exist", visible: true, headerText: "Recieved Evidence", width: 400, template: "<a rel='nofollow' href='//www.syncfusion.com/?OrderID={{:OrderID}}'>Click Me</a>" },
+
+
+                    @*{
+                        headerText: "Existing Evidence",
+                        template: "@Html.ActionLink("${Required_Evidence}", "DownloadFile", new { fileNamePath = "${Required_Evidence}" })"
+                    },*@
+                    { headerText: "Submitted Evidence", template: "#tempx", textAlign: "center", width: 110 },
+
+                    {
+                        field: "Required_Evidence", headerText: "Required Evidence", headerTooltip: "Click the button to add Select file(s)", editTemplate: {
+                            create: function () {
+                                return $("<div class='e-field'>");
+                            },
+                            write: function (args) {
+                                var proxy = args;
+                                args.element.ejUploadbox({
+                                    saveUrl: "SaveSupportDoc",
+                                    extensionsAllow: ".zip",
+                                    complete: function (args) {
+                                        proxy.element.val(args.responseText);
+                                    },
+                                    uploadName: "PreInvestGrdRequired_Evidence",
+                                });
+                                proxy.element.val(proxy.rowdata.Required_Evidence);
+                            },
+                            read: function (args) {
+                                return args.val();
+                            },
+                        }
+                        , width: 300,
+                    },
+                ],
+                create: "onGridCreate"
+            });
+ 
+
+        }
+    }
+</script>

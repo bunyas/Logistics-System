@@ -1,0 +1,792 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Medical Access Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @*@Styles.Render("~/Content/ej/web/flat-saffron/ej.web.all.min.css")*@
+    @Styles.Render("~/Content/ej/web/bootstrap-theme/ej.web.all.min.css")
+    @Scripts.Render("~/Scripts/jquery-3.1.1.min.js")
+    @Scripts.Render("~/Scripts/jquery.validate.min.js")
+    @Scripts.Render("~/Scripts/jsrender.min.js")
+    @Scripts.Render("~/Scripts/ej/ej.web.all.min.js")
+    @Scripts.Render("~/Scripts/ej/ej.unobtrusive.min.js")
+    @Scripts.Render("~/Scripts/jquery.validate.unobtrusive.min.js")
+
+    <style>
+        .container {
+            margin-left: 2%;
+            min-width:1450px;
+            width:100%;
+            padding:0px;
+            margin-right:2%;
+            margin-right:-100px;
+        }
+        #Wrapper {
+            /*background-color: #3F51B5;*/
+            z-index: 1;
+            height: 500px;
+            width: 100%;
+            position: fixed;
+        }
+
+        #page-content-wrapper {
+            margin-left: 20px;
+            margin-right: 7px;
+        }
+
+    </style>
+    <style>
+        /*!
+        // 3. Loader
+        // --------------------------------------------------*/
+        .loader {
+            top: 45%;
+            left: 45%;
+            position: fixed;
+            opacity: 0.8;
+            z-index: 10000000;
+            background: none;
+            height: 10%;
+            width: 10%;
+            margin: auto;
+        }
+
+        .strip-holder {
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+            left: 50%;
+            margin-left: -50px;
+            position: relative;
+        }
+
+        .strip-1,
+        .strip-2,
+        .strip-3 {
+            width: 15px;
+            height: 20px;
+            background: #0072bc;
+            position: relative;
+            -webkit-animation: stripMove 2s ease infinite alternate;
+            animation: stripMove 2s ease infinite alternate;
+            -moz-animation: stripMove 2s ease infinite alternate;
+        }
+
+        .strip-2 {
+            -webkit-animation-duration: 2.1s;
+            animation-duration: 2.1s;
+            background-color: #c9252b;
+        }
+
+        .strip-3 {
+            -webkit-animation-duration: 2.2s;
+            animation-duration: 2.2s;
+            background-color: #01579B;
+        }
+
+        @@-webkit-keyframes stripMove {
+            0% {
+                transform: translate3d(0px, 0px, 0px);
+                -webkit-transform: translate3d(0px, 0px, 0px);
+                -moz-transform: translate3d(0px, 0px, 0px);
+            }
+
+            50% {
+                transform: translate3d(0px, 0px, 0px);
+                -webkit-transform: translate3d(0px, 0px, 0px);
+                -moz-transform: translate3d(0px, 0px, 0px);
+                transform: scale(4, 1);
+                -webkit-transform: scale(4, 1);
+                -moz-transform: scale(4, 1);
+            }
+
+            100% {
+                transform: translate3d(-50px, 0px, 0px);
+                -webkit-transform: translate3d(-50px, 0px, 0px);
+                -moz-transform: translate3d(-50px, 0px, 0px);
+            }
+        }
+
+        @@-moz-keyframes stripMove {
+            0% {
+                transform: translate3d(-50px, 0px, 0px);
+                -webkit-transform: translate3d(-50px, 0px, 0px);
+                -moz-transform: translate3d(-50px, 0px, 0px);
+            }
+
+            50% {
+                transform: translate3d(0px, 0px, 0px);
+                -webkit-transform: translate3d(0px, 0px, 0px);
+                -moz-transform: translate3d(0px, 0px, 0px);
+                transform: scale(4, 1);
+                -webkit-transform: scale(4, 1);
+                -moz-transform: scale(4, 1);
+            }
+
+            100% {
+                transform: translate3d(50px, 0px, 0px);
+                -webkit-transform: translate3d(50px, 0px, 0px);
+                -moz-transform: translate3d(50px, 0px, 0px);
+            }
+        }
+
+        @@keyframes stripMove {
+            0% {
+                transform: translate3d(-50px, 0px, 0px);
+                -webkit-transform: translate3d(-50px, 0px, 0px);
+                -moz-transform: translate3d(-50px, 0px, 0px);
+            }
+
+            50% {
+                transform: translate3d(0px, 0px, 0px);
+                -webkit-transform: translate3d(0px, 0px, 0px);
+                -moz-transform: translate3d(0px, 0px, 0px);
+                transform: scale(4, 1);
+                -webkit-transform: scale(4, 1);
+                -moz-transform: scale(4, 1);
+            }
+
+            100% {
+                transform: translate3d(50px, 0px, 0px);
+                -webkit-transform: translate3d(50px, 0px, 0px);
+                -moz-transform: translate3d(50px, 0px, 0px);
+            }
+        }
+    </style>
+
+
+</head>
+<body>
+    <div class="loader" id="AjaxLoader" style="display:none;">
+        <div class="strip-holder">
+            <div class="strip-1"></div>
+            <div class="strip-2"></div>
+            <div class="strip-3"></div>
+        </div>
+    </div> 
+    <div class="navbar navbar-fixed-top">
+       @if (@ViewBag.Dash != "YES")
+       {
+         @Html.Partial("_LoginPartial")
+       }
+       
+
+        @Html.EJ().Menu("mainMenu").Items(items =>
+   {
+       items.Add().Url(Url.Action("LMISDashboard", "Dashboard")).Text("Home");
+
+       if (User.IsInRole("MonitoringAndEvaluationOfficer"))
+       {
+           items.Add().Url("#").Text("LMIS").Children(child =>
+           {
+               child.Add().Id("LMIS_ExpectedReports").Url("#").Text("Expected Reports").Children(child1 =>
+               {
+                   child1.Add().Id("LMIS_ExpectedReports1").Url(Url.Action("ExpectedReports", "LMIS_ExpectedReports")).Text("Add Expected Reports");
+                   child1.Add().Id("LMIS_ExpectedReports11").Url(Url.Action("ExpectedReports_Edit", "LMIS_ExpectedReports")).Text("Edit Expected Reports");
+               });
+
+               child.Add().Id("BatchUpload").Url("").Text("Batch Upload").Children(child1 =>
+               {
+                   child1.Add().Id("RoutineBatch").Url(Url.Action("Index", "BatchUpload")).Text("Routine Orders");
+                   child1.Add().Id("EmergencyBatch").Url(Url.Action("EmergencyUpload", "BatchUpload")).Text("Emergency Orders");
+               });
+
+               child.Add().Id("BatchUpload2").Url("").Text("Ordering").Children(child2 =>
+               {
+                   child2.Add().Url("").Text("Custom Orders").Children(child3 =>
+                   {
+                       child3.Add().Id("CustomLMIS_ART").Url(Url.Action("HSIPCustomOrders", "LMIS_ART")).Text("ART");
+                       child3.Add().Id("CustomLMIS_HIVTestKits").Url(Url.Action("HSIPCustomOrders", "LMIS_HIVTestKits")).Text("HIV Test Kits");
+                       child3.Add().Id("CustomLMIS_Laboratory").Url(Url.Action("HSIPCustomOrders", "LMIS_Laboratory")).Text("Laboratory");
+                       child3.Add().Id("CustomLMIS_SMC").Url(Url.Action("HSIPCustomOrders", "LMIS_SMC")).Text("SMC");
+                       child3.Add().Id("CustomLMIS_OISTI").Url(Url.Action("HSIPCustomOrders", "LMIS_OISTI")).Text("OIs");
+                       child3.Add().Id("CustomLMIS_ViralLoad").Url(Url.Action("HSIPCustomOrders", "LMIS_ViralLoad")).Text("Viral Load");
+                       child3.Add().Id("CustomLMIS_TB").Url(Url.Action("HSIPCustomOrders", "LMIS_TB")).Text("TB Prophylaxis");
+                       child3.Add().Id("CustomLMIS_R").Url(Url.Action("HSIPCustomOrders", "LMIS_RUTF")).Text("RUTF");
+
+                   });
+                   child2.Add().Id("BatchUpload3").Url("").Text("Project Orders").Children(child0 =>
+                   {
+                       child0.Add().Url("").Text("Routine Orders").Children(child4 =>
+                       {
+                           child4.Add().Id("RoutineLMIS_ART").Url(Url.Action("HSIPRoutineOrders", "LMIS_ART")).Text("ART");
+                           child4.Add().Id("RoutineLMIS_HIVTestKits").Url(Url.Action("HSIPRoutineOrders", "LMIS_HIVTestKits")).Text("HIV Test Kits");
+                           child4.Add().Id("RoutineLMIS_Laboratory").Url(Url.Action("HSIPRoutineOrders", "LMIS_Laboratory")).Text("Laboratory");
+                           child4.Add().Id("RoutineLMIS_SMC").Url(Url.Action("HSIPRoutineOrders", "LMIS_SMC")).Text("SMC");
+                           child4.Add().Id("RoutineLMIS_OISTI").Url(Url.Action("HSIPRoutineOrders", "LMIS_OISTI")).Text("OIs");
+                           child4.Add().Id("RoutineLMIS_ViralLoad").Url(Url.Action("HSIPRoutineOrders", "LMIS_ViralLoad")).Text("Viral Load");
+                           child4.Add().Id("RoutineLMIS_TB").Url(Url.Action("HSIPRoutineOrders", "LMIS_TB")).Text("TB Prophylaxis");
+                           child4.Add().Id("RoutineLMIS_r").Url(Url.Action("HSIPRoutineOrders", "LMIS_RUTF")).Text("RUTF");
+
+                       });
+
+                       child0.Add().Url("").Text("Emergency Orders").Children(child5 =>
+                       {
+                           child5.Add().Id("EmergencyLMIS_ART").Url(Url.Action("HSIPRoutineOrders_Emergency", "LMIS_ART")).Text("ART");
+                           child5.Add().Id("EmergencyLMIS_HIVTestKits").Url(Url.Action("HSIPRoutineOrders_Emergency", "LMIS_HIVTestKits")).Text("HIV Test Kits");
+                           child5.Add().Id("EmergencyLMIS_Laboratory").Url(Url.Action("HSIPRoutineOrders_Emergency", "LMIS_Laboratory")).Text("Laboratory");
+                           child5.Add().Id("EmergencyLMIS_SMC").Url(Url.Action("HSIPRoutineOrders_Emergency", "LMIS_SMC")).Text("SMC");
+                           child5.Add().Id("EmergencyLMIS_OISTI").Url(Url.Action("HSIPRoutineOrders_Emergency", "LMIS_OISTI")).Text("OIs");
+                           child5.Add().Id("EmergencyLMIS_ViralLoad").Url(Url.Action("HSIPRoutineOrders_Emergency", "LMIS_ViralLoad")).Text("Viral Load");
+                           child5.Add().Id("EmergencyLMIS_TB").Url(Url.Action("HSIPRoutineOrders_Emergency", "LMIS_TB")).Text("TB Prophylaxis");
+                           child5.Add().Id("EmergencyLMIS_r").Url(Url.Action("HSIPRoutineOrders_Emergency", "LMIS_RUTF")).Text("RUTF");
+
+                       });
+                   });
+               });
+
+               child.Add().Id("Allocations2").Url("").Text("Allocations").Children(child2 =>
+               {
+                   child2.Add().Url("").Text("Custom Orders").Children(child1 =>
+                   {
+                       child1.Add().Id("AllocationsCustomLMIS_ART").Url(Url.Action("AllocationHSIPIndexCustom", "LMIS_ART")).Text("ART");
+                       child1.Add().Id("AllocationsCustomLMIS_HIVTestKits").Url(Url.Action("AllocationHSIPIndexCustom", "LMIS_HIVTestKits")).Text("HIV Test Kits");
+                       child1.Add().Id("AllocationsCustomLMIS_Laboratory").Url(Url.Action("AllocationHSIPIndexCustom", "LMIS_Laboratory")).Text("Laboratory");
+                       child1.Add().Id("AllocationsCustomLMIS_SMC").Url(Url.Action("AllocationHSIPIndexCustom", "LMIS_SMC")).Text("SMC");
+                       child1.Add().Id("AllocationsCustomLMIS_OISTI").Url(Url.Action("AllocationHSIPIndexCustom", "LMIS_OISTI")).Text("OIs");//Referral
+                       child1.Add().Id("AllocationsCustomLMIS_ViralLoad").Url(Url.Action("AllocationHSIPIndexCustom", "LMIS_ViralLoad")).Text("Viral Load");//
+                       child1.Add().Id("AllocationsCustomLMIS_TB").Url(Url.Action("AllocationHSIPIndexCustom", "LMIS_TB")).Text("TB Prophylaxis");//
+                       child1.Add().Id("AllocationsCustomLMIS_r").Url(Url.Action("AllocationHSIPIndexCustom", "LMIS_RUTF")).Text("RUTF");//
+
+                   });
+                   child2.Add().Url("").Text("Project Orders").Children(child3 =>
+                   {
+                       child3.Add().Url("").Text("Routine Orders").Children(child1 =>
+                       {
+                           child1.Add().Id("AllocationsRoutineLMIS_ART").Url(Url.Action("AllocationHSIPIndex", "LMIS_ART")).Text("ART");
+                           child1.Add().Id("AllocationsRoutineLMIS_HIVTestKits").Url(Url.Action("AllocationHSIPIndex", "LMIS_HIVTestKits")).Text("HIV Test Kits");
+                           child1.Add().Id("AllocationsRoutineLMIS_Laboratory").Url(Url.Action("AllocationHSIPIndex", "LMIS_Laboratory")).Text("Laboratory");
+                           child1.Add().Id("AllocationsRoutineLMIS_SMC").Url(Url.Action("AllocationHSIPIndex", "LMIS_SMC")).Text("SMC");
+                           child1.Add().Id("AllocationsRoutineLMIS_OISTI").Url(Url.Action("AllocationHSIPIndex", "LMIS_OISTI")).Text("OIs");//Referral
+                           child1.Add().Id("AllocationsRoutineLMIS_ViralLoad").Url(Url.Action("AllocationHSIPIndex", "LMIS_ViralLoad")).Text("Viral Load");//
+                           child1.Add().Id("AllocationsRoutineLMIS_TB").Url(Url.Action("AllocationHSIPIndex", "LMIS_TB")).Text("TB Prophylaxis");//
+                           child1.Add().Id("AllocationsRoutineLMIS_r").Url(Url.Action("AllocationHSIPIndex", "LMIS_RUTF")).Text("RUTF");//
+
+                       });
+
+                       child3.Add().Url("").Text("Emergency Orders").Children(child1 =>
+                       {
+                           child1.Add().Id("AllocationsEmergencyLMIS_ART").Url(Url.Action("AllocationHSIPIndex_Emergency", "LMIS_ART")).Text("ART");
+                           child1.Add().Id("AllocationsEmergencyLMIS_HIVTestKits").Url(Url.Action("AllocationHSIPIndex_Emergency", "LMIS_HIVTestKits")).Text("HIV Test Kits");
+                           child1.Add().Id("AllocationsEmergencyLMIS_Laboratory").Url(Url.Action("AllocationHSIPIndex_Emergency", "LMIS_Laboratory")).Text("Laboratory");
+                           child1.Add().Id("AllocationsEmergencyLMIS_SMC").Url(Url.Action("AllocationHSIPIndex_Emergency", "LMIS_SMC")).Text("SMC");
+                           child1.Add().Id("AllocationsEmergencyLMIS_OISTI").Url(Url.Action("AllocationHSIPIndex_Emergency", "LMIS_OISTI")).Text("OIs");//Referral
+                           child1.Add().Id("AllocationsEmergencyLMIS_ViralLoad").Url(Url.Action("AllocationHSIPIndex_Emergency", "LMIS_ViralLoad")).Text("Viral Load");//
+                           child1.Add().Id("AllocationsEmergencyLMIS_TB").Url(Url.Action("AllocationHSIPIndex_Emergency", "LMIS_TB")).Text("TB Prophylaxis");//
+                           child1.Add().Id("AllocationsEmergencyLMIS_r").Url(Url.Action("AllocationHSIPIndex_Emergency", "LMIS_RUTF")).Text("RUTF");//
+
+                       });
+                   });
+               });
+
+               child.Add().Id("Edit2").Url("").Text("Edit").Children(child2 =>
+               {
+                   child2.Add().Url("").Text("Custom Orders").Children(child7 =>
+                   {
+                       child7.Add().Id("EditCustomLMIS_ART").Url(Url.Action("Edit_HSIPCustomOrders", "LMIS_ART")).Text("ART");
+                       child7.Add().Id("EditCustomLMIS_HIVTestKits").Url(Url.Action("Edit_HSIPCustomOrders", "LMIS_HIVTestKits")).Text("HIV Test Kits");
+                       child7.Add().Id("EditCustomLMIS_Laboratory").Url(Url.Action("Edit_HSIPCustomOrders", "LMIS_Laboratory")).Text("Laboratory");
+                       child7.Add().Id("EditCustomLMIS_SMC").Url(Url.Action("Edit_HSIPCustomOrders", "LMIS_SMC")).Text("SMC");
+                       child7.Add().Id("EditCustomLMIS_OISTI").Url(Url.Action("Edit_HSIPCustomOrders", "LMIS_OISTI")).Text("OIs");//Referral
+                       child7.Add().Id("EditCustomLMIS_ViralLoad").Url(Url.Action("Edit_HSIPCustomOrders", "LMIS_ViralLoad")).Text("Viral Load");//
+                       child7.Add().Id("EditCustomLMIS_TB").Url(Url.Action("Edit_HSIPCustomOrders", "LMIS_TB")).Text("TB Prophylaxis");//
+                       child7.Add().Id("EditCustomLMIS_r").Url(Url.Action("Edit_HSIPCustomOrders", "LMIS_RUTF")).Text("RUTF");//
+
+                   });
+                   child2.Add().Url("").Text("Project Orders").Children(child3 =>
+                   {
+                       child3.Add().Url("").Text("Routine Orders").Children(child7 =>
+                       {
+                           child7.Add().Id("EditRoutineLMIS_ART").Url(Url.Action("Edit_HSIPRoutineOrders", "LMIS_ART")).Text("ART");
+                           child7.Add().Id("EditRoutineLMIS_HIVTestKits").Url(Url.Action("Edit_HSIPRoutineOrders", "LMIS_HIVTestKits")).Text("HIV Test Kits");
+                           child7.Add().Id("EditRoutineLMIS_Laboratory").Url(Url.Action("Edit_HSIPRoutineOrders", "LMIS_Laboratory")).Text("Laboratory");
+                           child7.Add().Id("EditRoutineLMIS_SMC").Url(Url.Action("Edit_HSIPRoutineOrders", "LMIS_SMC")).Text("SMC");
+                           child7.Add().Id("EditRoutineLMIS_OISTI").Url(Url.Action("Edit_HSIPRoutineOrders", "LMIS_OISTI")).Text("OIs");//Referral
+                           child7.Add().Id("EditRoutineLMIS_ViralLoad").Url(Url.Action("Edit_HSIPRoutineOrders", "LMIS_ViralLoad")).Text("Viral Load");//
+                           child7.Add().Id("EditRoutineLMIS_TB").Url(Url.Action("Edit_HSIPRoutineOrders", "LMIS_TB")).Text("TB Prophylaxis");//
+                           child7.Add().Id("EditRoutineLMIS_r").Url(Url.Action("Edit_HSIPRoutineOrders", "LMIS_RUTF")).Text("RUTF");//
+
+                       });
+
+                       child3.Add().Url("").Text("Emergency Orders").Children(child7 =>
+                       {
+                           child7.Add().Id("EditEmergencyLMIS_ART").Url(Url.Action("Edit_HSIPRoutineOrders_Emergency", "LMIS_ART")).Text("ART");
+                           child7.Add().Id("EditEmergencyLMIS_HIVTestKits").Url(Url.Action("Edit_HSIPRoutineOrders_Emergency", "LMIS_HIVTestKits")).Text("HIV Test Kits");
+                           child7.Add().Id("EditEmergencyLMIS_Laboratory").Url(Url.Action("Edit_HSIPRoutineOrders_Emergency", "LMIS_Laboratory")).Text("Laboratory");
+                           child7.Add().Id("EditEmergencyLMIS_SMC").Url(Url.Action("Edit_HSIPRoutineOrders_Emergency", "LMIS_SMC")).Text("SMC");
+                           child7.Add().Id("EditEmergencyLMIS_OISTI").Url(Url.Action("Edit_HSIPRoutineOrders_Emergency", "LMIS_OISTI")).Text("OIs");//Referral
+                           child7.Add().Id("EditEmergencyLMIS_ViralLoad").Url(Url.Action("Edit_HSIPRoutineOrders_Emergency", "LMIS_ViralLoad")).Text("Viral Load");//
+                           child7.Add().Id("EditEmergencyLMIS_TB").Url(Url.Action("Edit_HSIPRoutineOrders_Emergency", "LMIS_TB")).Text("TB Prophylaxis");//
+                           child7.Add().Id("EditEmergencyLMIS_r").Url(Url.Action("Edit_HSIPRoutineOrders_Emergency", "LMIS_RUTF")).Text("RUTF");//
+
+                       });
+                   });
+
+               });
+
+               child.Add().Id("Queries2").Url("").Text("Queries").Children(child2 =>
+               {
+                   child2.Add().Id("QueriesProducts").Url(Url.Action("All_Products_Index", "Queries")).Text("All Products");//Queries
+                   child2.Add().Id("OrderQueries").Url("#").Text("Order Queries").Children(child5 =>
+                   {
+                       child5.Add().Id("QueriesART").Url("#").Text("ART").Children(child6 =>
+                       {
+                           child6.Add().Id("QueriesART1").Url(Url.Action("ART_Index", "Queries")).Text("ART Order");
+                           child6.Add().Id("QueriesART2").Url(Url.Action("FluconazoleQuery", "Queries")).Text("Fluconzale");
+                           child6.Add().Id("QueriesART3").Url(Url.Action("PatientQuery", "Queries")).Text("Patient Numbers");
+                       });
+                       child5.Add().Id("QueriesHIV1").Url("#").Text("HIV Test Kits").Children(child6 =>
+                       {
+                           child6.Add().Id("QueriesHIV").Url(Url.Action("TestKits_Index", "Queries")).Text("HIV Order");
+                           child6.Add().Id("QueriesHIVSummary").Url(Url.Action("TestKitsSummary_Index", "Queries")).Text("HIV Test");
+                       });
+                       child5.Add().Id("QueriesLAB").Url(Url.Action("Laboratory_Index", "Queries")).Text("Laboratory");
+                       child5.Add().Id("QueriesSMC1").Url("#").Text("SMC").Children(child6 =>
+                       {
+                           child6.Add().Id("QueriesSMC").Url(Url.Action("SMC_Index", "Queries")).Text("SMC Order");
+                           child6.Add().Id("QueriesSMCSummary").Url(Url.Action("SMCSummary_Index", "Queries")).Text("SMC Summary Circumcised");
+                       });
+                       child5.Add().Id("QueriesOI").Url(Url.Action("OISI_Index", "Queries")).Text("OIs");//Referral
+                       child5.Add().Id("QueriesVL1").Url("#").Text("Viral Load").Children(child6 =>
+                       {
+                           child6.Add().Id("QueriesVL").Url(Url.Action("Viralload_Index", "Queries")).Text("Viral Load Order");
+                           child6.Add().Id("QueriesVLSummary").Url(Url.Action("ViralloadSummary_Index", "Queries")).Text("Tests Done");
+                       });
+                       child5.Add().Id("QueriesTB1").Url("#").Text("TB Prophylaxis").Children(child6 =>
+                       {
+                           child6.Add().Id("QueriesTB").Url(Url.Action("TB_Index", "Queries")).Text("TB Prophylaxis Order");
+                           child6.Add().Id("QueriesTBSummary").Url(Url.Action("TBSummary_Index", "Queries")).Text("TB Prophylaxis Summary");
+                       });
+                       child5.Add().Id("QueriesRuft1").Url("#").Text("RUTF").Children(child6 =>
+                       {
+                           child6.Add().Id("QueriesRuft").Url(Url.Action("Ruft_Index", "Queries")).Text("RUTF Order");
+                           child6.Add().Id("QueriesRuftSummary").Url(Url.Action("RuftSummary_Index", "Queries")).Text("RUTF Summaries");
+                       });
+
+                   });
+                   child2.Add().Id("PhysicalCountQueries").Url("#").Text("Physical Count Queries").Children(child5 =>
+                   {
+                       child5.Add().Id("QueriesPART").Url(Url.Action("QueryHSIPPhysicalCount", "LMIS_ART")).Text("ART");
+                       child5.Add().Id("QueriesPHIV").Url(Url.Action("QueryHSIPPhysicalCount", "LMIS_HIVTestKits")).Text("HIV Test Kits");
+                       child5.Add().Id("QueriesPLAB").Url(Url.Action("QueryHSIPPhysicalCount", "LMIS_Laboratory")).Text("Laboratory");
+                       child5.Add().Id("QueriesPSMC").Url(Url.Action("QueryHSIPPhysicalCount", "LMIS_SMC")).Text("SMC");
+                       child5.Add().Id("QueriesPOI").Url(Url.Action("QueryHSIPPhysicalCount", "LMIS_OISTI")).Text("OIs");//Referral
+                                                                                                                         // child1.Add().Id("QueriesPVL").Url(Url.Action("QueryHSIPPhysicalCount", "LMIS_ViralLoad")).Text("Viral Load");//
+
+                   });
+               });
+
+               child.Add().Id("QSAPExport2").Url("").Text("SAP Export").Children(child2 =>
+               {
+                   child2.Add().Id("SAPART").Url(Url.Action("SAPExportHSIP", "LMIS_ART")).Text("ART");
+                   child2.Add().Id("SAPHIV").Url(Url.Action("SAPExportHSIP", "LMIS_HIVTestKits")).Text("HIV Test Kits");
+                   child2.Add().Id("SAPLAB").Url(Url.Action("SAPExportHSIP", "LMIS_Laboratory")).Text("Laboratory");
+                   child2.Add().Id("SAPSMC").Url(Url.Action("SAPExportHSIP", "LMIS_SMC")).Text("SMC");
+                   child2.Add().Id("SAPOI").Url(Url.Action("SAPExportHSIP", "LMIS_OISTI")).Text("OIs");//Referral
+                   child2.Add().Id("SAPVL").Url(Url.Action("SAPExportHSIP", "LMIS_ViralLoad")).Text("Viral Load");//
+                   child2.Add().Id("SAPTB").Url(Url.Action("SAPExportHSIP", "LMIS_TB")).Text("TB Prophylaxis");//
+                   child2.Add().Id("SAPTr").Url(Url.Action("SAPExportHSIP", "LMIS_RUTF")).Text("RUTF");//
+
+               });
+
+               child.Add().Id("Ordertracking2").Url("").Text("Order Tracking").Children(child2 =>
+               {
+                   child2.Add().Id("Track_CurrentOrder1").Url(Url.Action("LMIS_OrderTracking", "OrderTracking")).Text("Track Your Order");
+                   //child2.Add().Id("Report").Url(Url.Action("OrderTrackingIndex", "ReportsModule")).Text("Order Status Report");
+               });
+           });
+
+           items.Add().Url("#").Text("Customer Care Unit (CCU)").Children(child =>
+           {
+               //child.Add().Id("ComplaintsCCU1").Url(Url.Action("Complaints", "fo_complaint")).Text("Complaint Report Form");
+               //child.Add().Id("ComplaintsCCU").Url(Url.Action("CCU", "fo_complaint")).Text("Complaint Report Form");
+               child.Add().Id("ComplaintsLMISCCU").Url("#").Text("Complaint Report Form").Children(child1 =>
+               {
+                   child1.Add().Url(Url.Action("ADDComplaint", "fo_complaint")).Text("Add Complaint");
+                   child1.Add().Url(Url.Action("CCU", "fo_complaint")).Text("View Complaints");
+               });
+               child.Add().Id("ClientFeedbackCCu").Url(Url.Action("ClientFeedbackHSIP", "fo_ClientFeedback")).Text("Client Feedback");
+               child.Add().Id("CCuReport1").Url(Url.Action("ComplaintReport", "fo_complaint")).Text("Complaint Report");
+               child.Add().Id("ContactPersonCCU").Url("").Text("Contacts").Children(child2 =>
+               {
+                   child2.Add().Id("ContactPersonCCU1").Url(Url.Action("MaulStaff", "fo_contact_person")).Text("Maul Staff Contacts");
+                   child2.Add().Id("ContactPersonCCU2").Url(Url.Action("FacilityContacts", "fo_contact_person")).Text("Facility Contacts");
+                   child2.Add().Id("ContactPersonCCU3").Url(Url.Action("ContactPerson", "fo_contact_person")).Text("Other Stakeholder Contacts");
+               });
+               child.Add().Id("ScheduleEvent1").Url(Url.Action("ScheduleEvent", "ScheduleEvents")).Text("Schedule Events / Tasks");
+               child.Add().Id("SmsID_1").Url("").Text("Ad hoc SMS").Children(child2 =>
+               {
+                   child2.Add().Id("sms_6").Url(Url.Action("Index", "SMS")).Text("Maul Staff");
+                   child2.Add().Id("sms_7").Url(Url.Action("sendSMS", "SMS")).Text("Open Book SMS");
+                   child2.Add().Id("sms_8").Url(Url.Action("FacilitySms", "SMS")).Text("Facility SMS");
+               });
+           });
+
+           items.Add().Url("#").Text("CHSS").Children(child =>
+           {
+               child.Add().Id("CHSS_Dashboard").Url(Url.Action("Index", "CHSS")).Text("Dashboard");
+               child.Add().Id("CHSS_PatientCareAndManagement").Url(Url.Action("PatientCareAndManagement", "CHSS")).Text("Details");
+               //child.Add().Id("CHSS_StockManagement").Url(Url.Action("StockManagement", "CHSS")).Text("Stock management");
+               //child.Add().Id("CHSS_Traceability").Url(Url.Action("Traceability", "CHSS")).Text("Traceability of commodities");
+               //child.Add().Id("CHSS_OrderingAndReporting").Url(Url.Action("OrderingAndReporting", "CHSS")).Text("Ordering and Reporting");
+               //child.Add().Id("CHSS_StoreManagement").Url(Url.Action("StoreManagement", "CHSS")).Text("Store management");
+               //child.Add().Id("CHSS_ExpiryTracking").Url(Url.Action("ExpiryTracking", "CHSS")).Text("Expiry tracking");
+               //child.Add().Id("CHSS_FeedBack").Url(Url.Action("FeedBack", "CHSS")).Text("Feedback details");
+               //child.Add().Id("CHSS_ScoringSummary").Url(Url.Action("ScoringSummary", "CHSS")).Text("Scoring summary");
+           });
+           items.Add().Url("#").Text("M&E").Children(child =>
+           {
+               child.Add().Id("mm").Url(Url.Action("ReportingRatesIndex", "LMIS_Reports")).Text("Reporting Rates Report");
+               child.Add().Id("mm1").Url(Url.Action("AMCIndex", "LMIS_Reports")).Text("AMC Report");
+               child.Add().Id("ConsumptionIndex").Url(Url.Action("ConsumptionIndex", "LMIS_Reports")).Text("Consumption Report");
+               child.Add().Url(Url.Action("FrostReport", "LMIS_Reports")).Text("Frost Summary");
+               child.Add().Url(Url.Action("StockStatusReport", "LMIS_Reports")).Text("Stock Assessment Report");
+           });
+
+           //items.Add().Id("ScheduleEvent").Url("#").Text("Schedule Events Calender").Children(child =>
+           //{
+           //    //child.Add().Id("Register").Url(Url.Action("Register", "Account")).Text("Register Users");
+           //    child.Add().Id("ScheduleEvent1").Url(Url.Action("ScheduleEvent", "ScheduleEvents")).Text("Schedule Events / Tasks");
+           //});
+
+
+           //items.Add().Id("Ma").Url("#").Text("Monitor Status").Children(child =>
+           //{
+           //    child.Add().Id("Maps21").Url(Url.Action("Index", "MonitorStatus")).Text("Monitor Status");
+           //    child.Add().Id("Maps215").Url(Url.Action("SAP_Status", "MonitorStatus")).Text("Monitor SAP Status");
+           //});
+
+       }
+       else if (User.IsInRole("CHSS"))
+       {
+
+           items.Add().Url("#").Text("CHSS").Children(child =>
+           {
+               child.Add().Id("CHSS_Dashboard2").Url(Url.Action("Index", "CHSS")).Text("Dashboard");
+               child.Add().Id("CHSS_PatientCareAndManagement2").Url(Url.Action("PatientCareAndManagement", "CHSS")).Text("Details");
+               //child.Add().Id("CHSS_StockManagement").Url(Url.Action("StockManagement", "CHSS")).Text("Stock management");
+               //child.Add().Id("CHSS_Traceability").Url(Url.Action("Traceability", "CHSS")).Text("Traceability of commodities");
+               //child.Add().Id("CHSS_OrderingAndReporting").Url(Url.Action("OrderingAndReporting", "CHSS")).Text("Ordering and Reporting");
+               //child.Add().Id("CHSS_StoreManagement").Url(Url.Action("StoreManagement", "CHSS")).Text("Store management");
+               //child.Add().Id("CHSS_ExpiryTracking").Url(Url.Action("ExpiryTracking", "CHSS")).Text("Expiry tracking");
+               //child.Add().Id("CHSS_FeedBack").Url(Url.Action("FeedBack", "CHSS")).Text("Feedback details");
+               //child.Add().Id("CHSS_ScoringSummary").Url(Url.Action("ScoringSummary", "CHSS")).Text("Scoring summary");
+           });
+           items.Add().Url("#").Text("M&E").Children(child =>
+           {
+               //child.Add().Id("ComplaintsCCU").Url(Url.Action("Complaints", "fo_complaint")).Text("Customer Care Unit (CCU)");
+           });
+
+       }
+
+       else if (User.IsInRole("CCU"))
+       {
+           items.Add().Url("#").Text("Customer Care Unit (CCU)").Children(child =>
+           {
+               //child.Add().Id("ComplaintsCCU1").Url(Url.Action("Complaints", "fo_complaint")).Text("Complaint Report Form");
+               child.Add().Url("#").Text("Complaint Report Form").Children(child1 =>
+               {
+                   child1.Add().Url(Url.Action("ADDComplaint", "fo_complaint")).Text("Add Complaint");
+                   child1.Add().Url(Url.Action("CCU", "fo_complaint")).Text("View Complaints");
+               });
+               child.Add().Id("CCuReport").Url(Url.Action("ComplaintReport", "fo_complaint")).Text("Complaint Report");
+               child.Add().Id("ClientFeedbackCCu").Url(Url.Action("ClientFeedbackHSIP", "fo_ClientFeedback")).Text("Client Feedback");
+               //child.Add().Id("ContactPersonCCU").Url(Url.Action("ContactPerson", "fo_contact_person")).Text("Contact Person");
+               child.Add().Id("ContactPersonCCU3").Url("").Text("Contacts").Children(child2 =>
+               {
+                   child2.Add().Id("ContactPersonCCU13").Url(Url.Action("MaulStaff", "fo_contact_person")).Text("Maul Staff Contacts");
+                   child2.Add().Id("ContactPersonCCU23").Url(Url.Action("FacilityContacts", "fo_contact_person")).Text("Facility Contacts");
+                   child2.Add().Id("ContactPersonCCU33").Url(Url.Action("ContactPerson", "fo_contact_person")).Text("Other Stakeholder Contacts");
+               });
+               child.Add().Id("ScheduleEvent13").Url(Url.Action("ScheduleEvent", "ScheduleEvents")).Text("Schedule Events / Tasks");
+               child.Add().Id("SmsID_1").Url("").Text("Ad hoc SMS").Children(child2 =>
+               {
+                   child2.Add().Id("sms_6").Url(Url.Action("Index", "SMS")).Text("Maul Staff");
+                   child2.Add().Id("sms_7").Url(Url.Action("sendSMS", "SMS")).Text("Open Book SMS");
+                   child2.Add().Id("sms_8").Url(Url.Action("FacilitySms", "SMS")).Text("Facility SMS");
+               });
+           });
+           //items.Add().Url("#").Text("M&E").Children(child =>
+           //{
+           //    //child.Add().Id("ComplaintsCCU").Url(Url.Action("Complaints", "fo_complaint")).Text("Customer Care Unit (CCU)");
+           //});
+
+           //items.Add().Id("ScheduleEvent3").Url("#").Text("Schedule Events Calender").Children(child =>
+           //{
+           //    //child.Add().Id("Register").Url(Url.Action("Register", "Account")).Text("Register Users");
+           //    child.Add().Id("ScheduleEvent13").Url(Url.Action("ScheduleEvent", "ScheduleEvents")).Text("Schedule Events / Tasks");
+           //});
+       }
+       items.Add().Id("Resources").Url("#").Text("Resources").Children(child =>
+       {
+           //child.Add().Id("Maps2").Url("../GIS_Maps/GISMaps.aspx").Text("GIS Maps");
+           child.Add().Id("Maps1").Url(Url.Action("FacilityMap", "Maps")).Text("MAUL Facility Maps");
+           child.Add().Id("Manuals").Url("#").Text("User Manual").Children(child1 =>
+           {
+               child1.Add().Id("Manual1").Url("../Manual_Facility.pdf").Text("Facility Manual");
+               child1.Add().Id("Manual2").Url("../Manual_LMIS.pdf").Text("LMIS Manual");
+           });
+
+       });
+       // string dash = @Html.Raw(Json.Encode(ViewBag.Dash));
+       if (@ViewBag.Dash == "YES")
+       {
+           items.Add().Url("#").Id("HSIPLogin").Text("Hello " + User.Identity.Name).Children(child =>
+           {
+               if (User.IsInRole("Administrator"))
+               {
+                   //child.Add().Id("Register1").Url(Url.Action("Register", "Account")).Text("Register Users");
+                   // child.Add().Id("ManageUsers1").Url(Url.Action("Usermanagement", "Account")).Text("Manage Users");
+                   //child.Add().Id("ResetPassword1").Url(Url.Action("ResetPassword", "Account")).Text("Reset Password");
+                   child.Add().Id("Logout1").Url(Url.Action("Login", "Account")).Text("Log out");
+               }
+               else
+               {
+                   child.Add().Id("ResetPassword2").Url(Url.Action("ResetPassword", "Account")).Text("Reset Password");
+                   child.Add().Id("Logout2").Url(Url.Action("Login", "Account")).Text("Log out");
+               }
+
+           });
+       }
+
+   }).EnableSeparator(false).CssClass("Black-Menu")
+
+    </div>
+
+    <div class="container body-content">
+        @RenderSection("BreadCrumb", required: false)
+        @RenderBody()
+    </div>
+    <footer>
+        <div class="container body-content">
+            <hr />
+            <p>&copy; @DateTime.Now.Year - Medical Access Uganda LTD  <b style="float:right;"> @String.Format("{0 : dddd, MMMM d, yyyy}", DateTime.Now) </b></p>
+            <hr />
+        </div>
+
+    </footer>
+
+    @Html.EJ().ScriptManager()
+    @Scripts.Render("~/bundles/bootstrap")
+    @*@RenderSection("scripts", required: false)*@
+    <script src="~/Scripts/jquery.signalR-2.4.0.min.js"></script>
+    <script src="~/Signalr/hubs" type="text/javascript"></script>
+    @*<script src="~/signalr/hubs"></script>*@
+    @*<script src="~/Scripts/knockout-3.4.0.js"></script>
+        <script src="~/Scripts/knockout.mapping-latest.js"></script>*@
+    <script src="~/Scripts/knockout-3.4.2.js"></script>
+    <script src="~/Scripts/knockout.mapping-latest.debug.js"></script>
+     
+    <style type="text/css" class="cssStyles">
+        .myclass {
+            float: right;
+        }
+    </style>
+    <script>
+
+    </script>
+
+    <script type="text/javascript">
+        jQuery(function ($) {
+            var menuObj = $("#mainMenu").ejMenu({ width: "100%", enableSeparator: false });
+        });
+
+    </script>
+    <style type="text/css" class="cssStyles">
+        #More, #Utilities, #Register, #Help, #ManageUsers, #Sign_In {
+            float: right;
+        }
+    </style>
+    <style>
+        #HSIPLogin{
+            float:right;
+        }
+    </style>
+    <style type="text/css" class="cssStyles">
+        .Black-Menu .e-menu, .e-menu.e-horizontal .e-list > ul {
+            background: #c9252b;
+            font-family:Cambria;
+        }
+
+            .Black-Menu .e-menu.e-horizontal .e-list > a {
+                color: whitesmoke;
+                font-size: large;
+            }
+    </style>
+    <style>
+        .e-grid .e-groupdroparea, /*GroupDropArea */
+        .e-grid .e-groupdroparea:hover, /*GroupDropArea Hover*/
+        .e-grid .e-cloneproperties, /*Column header clone during dragging header*/
+        .e-grid .e-groupheadercell:hover, /*HeaderCell in GroupDropArea*/
+        .e-grid td.e-active, /*During Row Selected*/
+        /*For pager items and their hover*/
+        .e-pager .e-currentitem,
+        .e-pager .e-currentitem:hover,
+        .e-pager .e-link:hover,
+        .e-pager .e-icon:hover {
+            background-color: #ea1b8d;
+            /*font-size: 12px; 0071bc*/
+        }
+
+        .e-grid .e-gridheader /*For line that separates the grid header and content*/ {
+            border-bottom-color: #c9252b;
+            font-family: Cambria;
+            color: whitesmoke;
+            font-size: medium;
+            /*font-size: 12px;*/
+        }
+
+        .e-grid tr.e-hover /*For row hover*/ {
+            background-color: #0071bc;
+            color: #FFFFFF;
+            /*font-size: 12px;*/
+        }
+
+        .e-grid .e-alt_row /*For Alternate row color*/ {
+            background-color: #E5E4E2; /*#99CFE3;*/
+        /*font-size: 12px;*/
+        }
+    </style>
+
+    <style>
+        .gridfont, .e-grid .e-headercelldiv {
+        /*font-size: 12px;*/
+        }
+
+        .e-grid .e-dialog .gridform .e-rowcell {
+            padding: .5em;
+            border-bottom: 1px solid #c8c8c8;
+            border-left: 1px solid #c8c8c8;
+            /*font-size: 12px; 0071bc*/
+        }
+
+        .e-grid .e-headercell {
+            color: whitesmoke;
+            background-color:#c9252b;
+            /*font-weight: 700;*/
+        /*font-size: 12px;*/
+        }
+    </style>
+    <style>
+        .panel-default > .panel-heading {
+            background-color: #0071bc /*#3e1111*/;
+            color: white;
+            /*font-size: 12px;*/
+            /*background-color:silver;*/
+            /*color: white;*/
+        }
+    </style>
+
+    <style type="text/css" class="cssStyles">
+        .control {
+            margin-left: 30px;
+        }
+
+        .ctrllabel {
+            padding-top: 15px;
+        }
+
+        .control {
+            margin-left: 20px;
+        }
+
+        /*.frame {
+            height: 250px;
+            width: 1000px;
+        }*/
+
+        /*.frame1 {
+            height: 240px;
+            width: 900px;
+        }*/
+
+        .txt {
+            display: block;
+            margin-bottom: 12px;
+        }
+    </style>
+
+    <style>
+        #lblComplaintTitle {
+            /*font-size: 24px;*/
+            background-color: white;
+            color: darkred;
+            vertical-align: top;
+        /*font-size: 12px;*/
+            /*width: 700px;*/
+        }
+
+        .redLabels {
+            /*font-size: 24px;*/
+            background-color: white;
+            color: #ff0000;
+            vertical-align: top;
+            font-weight: bold;
+        /*font-size: 12px;*/
+            /*width: 700px;*/
+        }
+
+        .myDiv {
+        /*font-size: 12px;*/
+            background-color: white;
+            color: orangered;
+            vertical-align: top;
+            text-align: center;
+            /*width: 700px;*/
+        }
+    </style>
+
+    <style>
+        .e-grid .e-dialog .gridform .e-rowcell {
+            padding: .5em;
+            width:100%;
+        }
+
+        .custom.e-js .e-header {
+            background: #c9252b;
+        }
+
+        .custom.e-js .e-content {
+            background: #ddd;
+        }
+
+        .custom .e-rbn-button.e-btn.e-select {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .tabstyle {
+            background: #F9F9F9;
+            border-radius: 10px;
+            border: 1px solid #99CFE3;
+            display: block;
+        /*font-size: 12px;*/
+        }
+
+        .longcolumns {
+            width: 600px !important;
+            margin: 0 auto !important;
+            position: relative !important;
+            border-right: 5px #666 outset !important;
+            border-left: 5px #666 outset !important;
+        /*font-size: 12px;*/
+        }
+    </style>
+
+</body>
+</html>
+<script>
+
+    //$(document)
+    //    .ajaxStart(function () {
+    //        $('#AjaxLoader').show();
+    //    })
+    //    .ajaxStop(function () {
+    //        $('#AjaxLoader').hide();
+    //    });
+</script>

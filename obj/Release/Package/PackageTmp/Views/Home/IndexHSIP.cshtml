@@ -1,0 +1,88 @@
+﻿@{
+    ViewBag.Title = "IndexHSIP";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MASCIS Project - DashboardViewer</title>
+
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        html, body, header, iframe, footer {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        header {
+            height: 34px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: red;
+        }
+
+        iframe {
+            border: none;
+            height: calc(100% - 51px);
+            margin-top: 34px;
+        }
+
+        footer {
+            height: 17px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            background-color: green;
+        }
+    </style>
+
+    <style>
+        body, html, #dashboard {
+            height: 100% !important;
+            width: 100% !important;
+            overflow-y: auto;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            jQuery.support.cors = true;
+        });
+
+        function apiCall() {
+            var dataValue = "";
+            var element = document.getElementById("frame-div").contentWindow;
+            parent.document.getElementById('frame-div').style.height = document['body'].offsetHeight + 'px';
+
+            var apiRequest = new Object();
+            var baseURL = "http://localhost:51159"; //Replace here with the launched Dashboard Server site URL
+            apiRequest.validationkey = ""; //Find the Validation key in Machinekey node of the Dashboard Server web.config file
+            apiRequest.decryptionKey = ""; //Find the Decryption key in Machinekey node of the Dashboard Server web.config file
+            apiRequest.userid = "nimrod85"; //Username/Userid of the user who has permission to the particular Dashboard
+            apiRequest.password = "**Root85"; //Password of the user.Its optional when validationkey and decryptionkey is used.
+            $.ajax({
+                type: "POST",
+                url: baseURL + "/api/get-user-key",
+                data: apiRequest,
+                success: function (data) {
+                    dataValue = data.Token;
+                    element.postMessage(dataValue, "*");
+                },
+                error: function (data) {
+                    element.postMessage("", "*");
+                }
+            });
+        }
+    </script>
+
+</head>
+<body>
+    <div style="height:100%;width:100%;">
+        <iframe id="frame-div" src="http://localhost:60110/dashboards/Sample%20Dashboards/mascis_home" onload="apiCall()"></iframe>
+    </div>
+</body>
+</html>

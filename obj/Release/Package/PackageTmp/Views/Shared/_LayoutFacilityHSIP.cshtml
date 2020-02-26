@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Medical Access Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @*@Styles.Render("~/Content/ej/web/flat-saffron/ej.web.all.min.css")*@
+    @Styles.Render("~/Content/ej/web/bootstrap-theme/ej.web.all.min.css")
+    @Scripts.Render("~/Scripts/jquery-3.1.1.min.js")
+    @Scripts.Render("~/Scripts/jquery.validate.min.js")
+    @Scripts.Render("~/Scripts/jsrender.min.js")
+    @Scripts.Render("~/Scripts/ej/ej.web.all.min.js")
+    @Scripts.Render("~/Scripts/ej/ej.unobtrusive.min.js")
+    @Scripts.Render("~/Scripts/jquery.validate.unobtrusive.min.js")
+ 
+    <style>
+        #Wrapper {
+            /*background-color: #3F51B5;*/
+            z-index: 1;
+            height: 500px;
+            width: 250px;
+            position: fixed;
+        }
+
+        #page-content-wrapper {
+            margin-left: 260px;
+            margin-right: 7px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="navbar navbar-fixed-top">
+
+        @Html.Partial("_LoginPartial")
+
+        @Html.EJ().Menu("mainMenu").Items(items =>
+   {
+       items.Add().Url(Url.Action("IndexFacilityHSIP", "Home")).Text("Dashboard");
+       items.Add().Url("#").Text("Physical Counts").Children(child =>
+       {
+           child.Add().Id("PC_ART").Url(Url.Action("PC_ART", "LMIS_Physical_Count")).Text("ART");
+           child.Add().Id("PC_HIV").Url(Url.Action("PC_HIV", "LMIS_Physical_Count")).Text("HIV Test Kits");
+           child.Add().Id("PC_Lab").Url(Url.Action("PC_Lab", "LMIS_Physical_Count")).Text("Laboratory");
+           child.Add().Id("PC_SMC").Url(Url.Action("PC_SMC", "LMIS_Physical_Count")).Text("SMC");
+           child.Add().Id("PC_OISTI").Url(Url.Action("PC_OISTI", "LMIS_Physical_Count")).Text("OIs");//Referral
+       });
+       items.Add().Url("#").Text("Place Your Order").Children(child =>
+       {
+           child.Add().Url("").Text("Custom HSIP Orders").Children(child1 =>
+           {
+               child1.Add().Id("CustomLMIS_FacilityART").Url(Url.Action("HSIPCustomOrders", "LMIS_FacilityART")).Text("ART");
+               child1.Add().Id("CustomLMIS_FacilityHIVTestKits").Url(Url.Action("HSIPCustomOrders", "LMIS_FacilityHIVTestKits")).Text("HIV Test Kits");
+               child1.Add().Id("CustomLMIS_FacilityLaboratory").Url(Url.Action("HSIPCustomOrders", "LMIS_FacilityLaboratory")).Text("Laboratory");
+               child1.Add().Id("CustomLMIS_FacilitySMC").Url(Url.Action("HSIPCustomOrders", "LMIS_FacilitySMC")).Text("SMC");
+               child1.Add().Id("CustomLMIS_FacilityOISTI").Url(Url.Action("HSIPCustomOrders", "LMIS_FacilityOISTI")).Text("OIs");//Referral
+               child1.Add().Id("CustomLMIS_FacilityViralLoad").Url(Url.Action("HSIPCustomOrders", "LMIS_FacilityViralLoad")).Text("Viral Load");//
+
+           });
+           child.Add().Url("").Text("Routine HSIP Orders").Children(child1 =>
+           {
+               child1.Add().Id("RoutineLMIS_FacilityART").Url(Url.Action("HSIPRoutineOrders", "LMIS_FacilityART")).Text("ART");
+               child1.Add().Id("RoutineLMIS_FacilityHIVTestKits").Url(Url.Action("HSIPRoutineOrders", "LMIS_FacilityHIVTestKits")).Text("HIV Test Kits");
+               child1.Add().Id("RoutineLMIS_FacilityLaboratory").Url(Url.Action("HSIPRoutineOrders", "LMIS_FacilityLaboratory")).Text("Laboratory");
+               child1.Add().Id("RoutineLMIS_FacilitySMC").Url(Url.Action("HSIPRoutineOrders", "LMIS_FacilitySMC")).Text("SMC");
+               child1.Add().Id("RoutineLMIS_FacilityOISTI").Url(Url.Action("HSIPRoutineOrders", "LMIS_FacilityOISTI")).Text("OIs");//Referral
+               child1.Add().Id("RoutineLMIS_FacilityViralLoad").Url(Url.Action("HSIPRoutineOrders", "LMIS_FacilityViralLoad")).Text("Viral Load");//
+
+           });
+       });
+       items.Add().Id("TrackOrder").Url("#").Text("Track Your Order").Children(child =>
+       {
+           //child.Add().Id("Register").Url(Url.Action("Register", "Account")).Text("Register Users");
+           //child.Add().Id("ManageUsers").Url(Url.Action("ManageUsers", "Account")).Text("Manage Users");
+
+       });
+       items.Add().Id("CustomerFeedback").Url("#").Text("Customer Feedback").Children(child =>
+       {
+           //child.Add().Id("Register").Url(Url.Action("Register", "Account")).Text("Register Users");
+           //child.Add().Id("ManageUsers").Url(Url.Action("ManageUsers", "Account")).Text("Manage Users");
+
+       });
+       //Customer Feedback
+
+       //items.Add().Id("Utilities").Url("#").Text("Utilities").Children(child =>
+       //{
+       //    child.Add().Id("Register").Url(Url.Action("Register", "Account")).Text("Register Users");
+       //    //child.Add().Id("ManageUsers").Url(Url.Action("ManageUsers", "Account")).Text("Manage Users");
+
+       //});
+
+   }).EnableSeparator(false).CssClass("Black-Menu")
+    </div>
+
+    <div class="container body-content">
+        @RenderSection("BreadCrumb", required: false)
+        @RenderBody()
+    </div>
+    <footer>
+        <div class="container body-content">
+            <hr />
+            <p>&copy; @DateTime.Now.Year - Medical Access Uganda LTD</p>
+            <hr />
+            <p class="box-title"><b> @String.Format("{0 : dddd, MMMM d, yyyy}", DateTime.Now) </b><span class="label label-primary"></span></p>
+        </div>
+
+    </footer>
+
+    @Html.EJ().ScriptManager()
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <style type="text/css" class="cssStyles">
+        .myclass {
+            float: right;
+        }
+    </style>
+    <script>
+
+    </script>
+
+    <script type="text/javascript">
+        jQuery(function ($) {
+            var menuObj = $("#mainMenu").ejMenu({ width: "100%", enableSeparator: false });
+        });
+
+    </script>
+    <style type="text/css" class="cssStyles">
+        #More, #Utilities, #Register, #Help, #ManageUsers, #Sign_In {
+            float: right;
+        }
+    </style>
+
+    <style type="text/css" class="cssStyles">
+        
+        .Black-Menu .e-menu, .e-menu.e-horizontal .e-list > ul {
+            background: #800000;
+        }
+
+            .Black-Menu .e-menu.e-horizontal .e-list > a {
+                color: white;
+            }
+    </style>
+
+</body>
+</html>

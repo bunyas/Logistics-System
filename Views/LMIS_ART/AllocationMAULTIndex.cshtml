@@ -1,0 +1,282 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutMAULT.cshtml";
+}
+@section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexMAULT", "Home")
+                </li>
+                <li class="active">
+                    <strong>ART: Allocations Index</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+@(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("DataSourceAllocationMAULT").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+         .AllowFiltering().ShowColumnChooser()
+        .AllowTextWrap()
+        .AllowGrouping()
+
+        //.AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+                //fields.Add("Outcome");
+                //fields.Add("Output");
+                //fields.Add("Indicator");
+                //fields.Add("Indicator_2");
+                //fields.Add("PerformanceTargetNotes");
+                //fields.Add("ExplanatoryNotes");
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    //items.AddTool(ToolBarItems.Add);
+                    //items.AddTool(ToolBarItems.Edit);
+                    //items.AddTool(ToolBarItems.Update);
+                    //items.AddTool(ToolBarItems.Cancel);
+                    //items.AddTool(ToolBarItems.Search);
+                });
+            })
+        .Columns(col =>
+        {
+            col.Field("DatePrepared").AllowEditing(false).Width(100).HeaderText("Date Prepared").IsPrimaryKey(true).Format("{0:dd/MM/yyyy}").Add();
+            col.Field("ProductCode").AllowEditing(false).Width(100).HeaderText("Product Code").IsPrimaryKey(true).Add();
+            col.Field("product_description").AllowEditing(false).Width(400).HeaderText("Product").Add();
+            col.HeaderText("Allocation List").Commands(command =>
+            {
+                command.Type("detail")
+                   .ButtonOptions(new Syncfusion.JavaScript.Models.ButtonProperties()
+                   {
+                       Text = "Details",
+                       Width = "100px",
+                       Click = "onClick"
+                   }).Add();
+            })
+                .TextAlign(TextAlign.Center)
+                .Width(150)
+                .Add();
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete"); })
+)
+<script>
+
+    function onClick(args) {
+        var grid = $("#Grid").ejGrid("instance");
+        var start_date = grid.getSelectedRecords()[0].StartDate;
+        var sd_day = start_date.getDate();
+        var sd_month = start_date.getMonth();
+        var sd_year = start_date.getFullYear();
+
+        sd_month++;
+        var mmSd = '';
+        if (sd_month < 10) {
+            mmSd = '0' + sd_month;
+        }
+        else {
+            mmSd = sd_month;
+        }
+
+        var ddSd = '';
+        if (sd_day < 10) {
+            ddSd = '0' + sd_day;
+        }
+        else {
+            ddSd = sd_day;
+        }
+        var yySd = start_date.getFullYear();
+
+        //Manually create a date to introduce '0' in months before Oct and days beo
+        var sd_final = (mmSd + '/' + ddSd + '/' + yySd);
+
+
+        var end_date = grid.getSelectedRecords()[0].EndDate;
+        var ed_day = end_date.getDate();
+        var ed_month = end_date.getMonth();
+        var ed_year = end_date.getFullYear();
+
+
+        ed_month++;
+        var mmSd = '';
+        if (ed_month < 10) {
+            mmEd = '0' + ed_month;
+        }
+        else {
+            mmEd = ed_month;
+        }
+
+        var ddEd = '';
+        if (ed_day < 10) {
+            ddEd = '0' + ed_day;
+        }
+        else {
+            ddEd = ed_day;
+        }
+        var yyEd = end_date.getFullYear();
+
+        var ed_final = (mmEd + '/' + ddEd + '/' + yyEd);
+
+        var product_code = grid.getSelectedRecords()[0].DrugCode;
+        location.href = '@Url.Action("Allocation","LMIS_ART")?product_code=' + product_code + '&end_date=' + ed_final + '&start_date=' + sd_final;
+        //alert(myvistdate);
+    }
+</script>
+
+<style>
+    .e-grid .e-groupdroparea, /*GroupDropArea */
+    .e-grid .e-groupdroparea:hover, /*GroupDropArea Hover*/
+    .e-grid .e-cloneproperties, /*Column header clone during dragging header*/
+    .e-grid .e-groupheadercell:hover, /*HeaderCell in GroupDropArea*/
+    .e-grid td.e-active, /*During Row Selected*/
+    /*For pager items and their hover*/
+    .e-pager .e-currentitem,
+    .e-pager .e-currentitem:hover,
+    .e-pager .e-link:hover,
+    .e-pager .e-icon:hover {
+        background-color: #ea1b8d;
+    }
+
+    .e-grid .e-gridheader /*For line that separates the grid header and content*/ {
+        border-bottom-color: #ea1b8d;
+    }
+
+    .e-grid tr.e-hover /*For row hover*/ {
+        background-color: #e66aae;
+        color: #FFFFFF;
+    }
+
+    .e-grid .e-alt_row /*For Alternate row color*/ {
+        background-color: #E5E4E2; /*#99CFE3;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+        border-bottom: 1px solid #c8c8c8;
+        border-left: 1px solid #c8c8c8;
+    }
+</style>
+<style>
+    .panel-default > .panel-heading {
+        background-color: #451bb1 /*#3e1111*/;
+        color: white;
+        /*background-color:silver;*/
+        /*color: white;*/
+    }
+</style>
+
+<style type="text/css" class="cssStyles">
+    .control {
+        margin-left: 30px;
+    }
+
+    .ctrllabel {
+        padding-top: 15px;
+    }
+
+    .control {
+        margin-left: 20px;
+    }
+
+    .frame {
+        height: 250px;
+        width: 1000px;
+    }
+
+    .frame1 {
+        height: 240px;
+        width: 900px;
+    }
+
+    .txt {
+        display: block;
+        margin-bottom: 12px;
+    }
+</style>
+
+<style>
+    #lblComplaintTitle {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #c9252b;
+        vertical-align: top;
+        /*width: 700px;*/
+    }
+
+    .redLabels {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #ff0000;
+        vertical-align: top;
+        font-weight: bold;
+        /*width: 700px;*/
+    }
+
+    .myDiv {
+        font-size: 18px;
+        background-color: white;
+        color: orangered;
+        vertical-align: top;
+        text-align: center;
+        /*width: 700px;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+    }
+
+    .custom.e-js .e-header {
+        background: #c9252b;
+    }
+
+    .custom.e-js .e-content {
+        background: #ddd;
+    }
+
+    .custom .e-rbn-button.e-btn.e-select {
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    .tabstyle {
+        background: #F9F9F9;
+        border-radius: 10px;
+        border: 1px solid #99CFE3;
+        display: block;
+    }
+
+    .longcolumns {
+        width: 600px !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        border-right: 5px #666 outset !important;
+        border-left: 5px #666 outset !important;
+    }
+</style>

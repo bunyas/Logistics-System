@@ -1,0 +1,44 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+    @Html.AntiForgeryToken()
+        <div class="nav navbar-nav navbar-right">
+            @Html.EJ().Menu("mainMenu1").Items(items =>
+       {
+
+           items.Add().Url("#").Text("Hello " + User.Identity.Name).Children(child =>
+           {
+               if (User.IsInRole("Administrator"))
+               {
+                   //child.Add().Id("Register1").Url(Url.Action("Register", "Account")).Text("Register Users");
+                  // child.Add().Id("ManageUsers1").Url(Url.Action("Usermanagement", "Account")).Text("Manage Users");
+                   //child.Add().Id("ResetPassword1").Url(Url.Action("ResetPassword", "Account")).Text("Reset Password");
+                   child.Add().Id("Logout1").Url(Url.Action("Login", "Account")).Text("Log out");
+               }
+               else
+               {
+                   child.Add().Id("ResetPassword2").Url(Url.Action("ResetPassword", "Account")).Text("Reset Password");
+                   child.Add().Id("Logout2").Url(Url.Action("Login", "Account")).Text("Log out");
+               }
+               
+           });
+
+       }).EnableSeparator(false).CssClass("Black-Menu")
+        </div>
+    @*<ul class="nav navbar-nav navbar-right">
+        <li>
+            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+        </li>
+        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+    </ul>*@
+    }
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        @*<li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>*@
+        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}

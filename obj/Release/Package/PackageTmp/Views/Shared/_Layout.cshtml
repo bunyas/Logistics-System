@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Medical Access Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @*@Styles.Render("~/Content/ej/web/flat-saffron/ej.web.all.min.css")*@
+    @Styles.Render("~/Content/ej/web/bootstrap-theme/ej.web.all.min.css")
+    @Scripts.Render("~/Scripts/jquery-3.1.1.min.js")
+    @Scripts.Render("~/Scripts/jquery.validate.min.js")
+    @Scripts.Render("~/Scripts/jsrender.min.js")
+    @Scripts.Render("~/Scripts/ej/ej.web.all.min.js")
+    @Scripts.Render("~/Scripts/ej/ej.unobtrusive.min.js")
+    @Scripts.Render("~/Scripts/jquery.validate.unobtrusive.min.js")
+    <style>
+        #Wrapper {
+            /*background-color: #3F51B5;*/
+            z-index: 1;
+            height: 500px;
+            width: 250px;
+            position: fixed;
+        }
+
+        #page-content-wrapper {
+            margin-left: 260px;
+            margin-right: 7px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="navbar navbar-fixed-top">
+
+        @Html.Partial("_LoginPartial")
+
+        @Html.EJ().Menu("mainMenu").Items(items =>
+   {
+       items.Add().Url(Url.Action("IndexAdministrator", "Home")).Text("Dashboard");
+       items.Add().Url("#").Text("Adminstrator Entry").Children(child =>
+       {
+           child.Add().Id("ManageRFSOFacility").Url(Url.Action("ManageRFSOFacility", "Utilities")).Text("Manage SCTO Facility");
+           child.Add().Id("Facilities").Url(Url.Action("Facilities", "Utilities")).Text("Facilities");
+           child.Add().Id("Products").Url(Url.Action("Products", "Utilities")).Text("Products");
+           child.Add().Id("DrugRegimens").Url(Url.Action("DrugRegimens", "Utilities")).Text("Drug Regimens");
+           child.Add().Id("CDCRegions").Url(Url.Action("CDCRegions", "Utilities")).Text("CDC Regions");//Referral
+           child.Add().Id("ImplementingPartners").Url(Url.Action("ImplementingPartners", "Utilities")).Text("Implementing Partners");//
+           child.Add().Id("Districts").Url(Url.Action("Districts", "Utilities")).Text("Districts");
+           child.Add().Id("Counties").Url(Url.Action("Counties", "Utilities")).Text("Counties");
+           child.Add().Id("SubCounties").Url(Url.Action("SubCounties", "Utilities")).Text("SubCounties");
+           child.Add().Id("Parishes").Url(Url.Action("Parishes", "Utilities")).Text("Parishes");
+           child.Add().Id("Villages").Url(Url.Action("Villages", "Utilities")).Text("Villages");
+            
+       });
+       items.Add().Id("Utilities").Url("#").Text("Utilities").Children(child =>
+       {
+           child.Add().Id("Register").Url(Url.Action("Register", "Account")).Text("Register Users");
+           child.Add().Id("ManageUsers").Url(Url.Action("ManageUsers", "Account")).Text("Manage Users"); 
+           
+       });
+      
+   }).EnableSeparator(false).CssClass("Black-Menu")
+    </div>
+    
+    <div class="container body-content">
+        @RenderSection("BreadCrumb", required: false)
+        @RenderBody()
+    </div>
+    <footer>
+        <div class="container body-content">
+            <hr />
+            <p>&copy; @DateTime.Now.Year - Medical Access Uganda LTD</p>
+            <hr />
+            <p class="box-title"><b> @String.Format("{0 : dddd, MMMM d, yyyy}", DateTime.Now) </b><span class="label label-primary"></span></p>
+        </div>
+       
+    </footer>
+
+    @Html.EJ().ScriptManager()
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <style type="text/css" class="cssStyles">
+       
+        .myclass {
+            float: right;
+        }
+    </style>
+    <script>
+         
+    </script>
+
+    <script type="text/javascript">
+        jQuery(function ($) {
+            var menuObj = $("#mainMenu").ejMenu({ width: "100%", enableSeparator: false });
+        });
+ 
+     </script>
+    <style type="text/css" class="cssStyles">
+        #More, #Utilities, #Register, #Help, #ManageUsers, #Sign_In {
+            float: right;
+        }
+ 
+    </style>
+
+    <style type="text/css" class="cssStyles">
+        .Black-Menu .e-menu, .e-menu.e-horizontal .e-list > ul {
+            background: #800000;
+        }
+
+            .Black-Menu .e-menu.e-horizontal .e-list > a {
+                color: white;
+            }
+    </style>
+
+</body>
+</html>

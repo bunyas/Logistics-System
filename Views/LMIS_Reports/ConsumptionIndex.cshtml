@@ -1,0 +1,299 @@
+﻿
+@{
+    ViewBag.Title = "consumption Reporting";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+<br />
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="breadcrumb">
+            <li class="active">
+                <strong>Consumption: Consumption </strong>
+            </li>
+        </ol>
+    </div>
+</div>
+@using (Html.BeginForm())
+{<div>
+        <div class="row">
+
+            <div class="col-lg-3">
+                <p>Start Date</p>
+                <p><input type="text" id="EndDate01" name="EndDate01" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>End Date</p>
+                <p><input type="text" id="EndDate02" name="EndDate02" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>Year</p>
+                <p><input type="text" id="Year" name="Year" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>Month</p>
+                <p><input type="text" id="Month" name="Month" class="e-field e-ejinputtext valid" /></p>
+            </div>
+
+        </div>
+        <div class="row">
+
+            <div class="col-lg-3">
+                <p>Facility</p>
+                <p><input type="text" id="FacilityCode" name="FacilityCode" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>Product Category</p>
+                <p><input type="text" id="productCategory" name="productCategory" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>Sector</p>
+                <p><input type="text" id="DeliveryZoneCode" name="DeliveryZoneCode" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>CDC Region</p>
+                <p><input type="text" id="cdc" name="cdc" class="e-field e-ejinputtext valid" /></p>
+            </div>
+
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-3">
+                <p>SCTO</p>
+                <p><input type="text" id="SCTO" name="SCTO" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>IP</p>
+                <p><input type="text" id="IP" name="IP" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <br />
+            <div class="col-lg-3">
+                <input class="btn btn-danger" type="button" value="Load Report">
+            </div>
+
+        </div>
+    </div>
+    <div class="clear"> </div>
+}
+<br />
+
+
+<div id="mqpartial" class="tabstyle">
+
+</div>
+
+
+<script>
+    $("#EndDate01").ejDatePicker(
+        {
+            width: '240px',
+            maxDate: new Date(),
+            dateFormat: "dd/MM/yyyy"
+        }
+    );
+    $("#EndDate02").ejDatePicker(
+        {
+            width: '240px',
+            maxDate: new Date(),
+            dateFormat: "dd/MM/yyyy"
+        }
+    );
+
+    $(function () {
+        $(':button').click(function () {
+
+            var facCode = $('#Year').data("ejDropDownList");
+            var year = facCode.option("value");
+
+            var dateobject = $("#EndDate01").data("ejDatePicker");
+            var StartDate = dateobject.getValue();
+
+            var dateobject1 = $("#EndDate02").data("ejDatePicker");
+            var EndDate = dateobject1.getValue();
+
+            var Month1 = $('#Month').data("ejDropDownList");
+            var Month = Month1.option("value");
+
+            var productCategory1 = $('#productCategory').data("ejDropDownList");
+            var productCategory = productCategory1.option("value");
+
+            var DeliveryZoneCode1 = $('#DeliveryZoneCode').data("ejDropDownList");
+            var DeliveryZoneCode = DeliveryZoneCode1.option("value");
+
+            var cdc1 = $('#cdc').data("ejDropDownList");
+            var cdc = cdc1.option("value");
+
+            var IP1 = $('#IP').data("ejDropDownList");
+            var IP = IP1.option("value");
+
+            var fc1 = $('#FacilityCode').data("ejDropDownList");
+            var fc = fc1.option("value");
+
+            var SCTO1 = $('#SCTO').data("ejDropDownList");
+            var SCTO = SCTO1.option("value");
+
+            // Home is your controller, Index is your action name
+            $("#mqpartial").load("@Url.Action("Consumption", "LMIS_Reports")",
+                {
+                    'Year': year,
+                    'Month': Month,
+                    'productCategory': productCategory,
+                    'DeliveryZoneCode': DeliveryZoneCode,
+                    'cdc': cdc,
+                    'IP': IP,
+                    'SCTO': SCTO,
+                    'fc': fc,
+                    'sdate': StartDate,
+                    'edate': EndDate
+                },
+                                            function (response, status, xhr) {
+                                                if (status == "error") {
+                                                    alert("An error occurred while loading the results.");
+                                                }
+                                            }
+            );
+
+
+        });
+    });
+
+</script>
+<script>
+    //Year
+    $.ajax({
+        url: 'GetYearData',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        type: 'GET',
+        success: function (data) {
+            if (data.length > 0) {
+                var DropDownListDist = $('#Year').ejDropDownList({
+                    dataSource: data,
+                    width: "240px",
+                    fields: { value: "EndYear", text: "EndYear" }, showCheckbox: true,
+                }).data("ejDropDownList");
+            }
+        },
+    });
+
+    //Month
+    $.ajax({
+        url: 'GetMonthData',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        type: 'GET',
+        success: function (data) {
+            if (data.length > 0) {
+                var DropDownListDist = $('#Month').ejDropDownList({
+                    dataSource: data,
+                    width: "240px",
+                    fields: { value: "month_id", text: "month_desc" }, showCheckbox: true,
+                }).data("ejDropDownList");
+            }
+        },
+    });
+        //product category
+    $.ajax({
+        url: 'GetProductCategoryData',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        type: 'GET',
+        success: function (data) {
+            if (data.length > 0) {
+                var DropDownListDist = $('#productCategory').ejDropDownList({
+                    dataSource: data,
+                    width: "240px",
+                    fields: { value: "category_code", text: "category_desc" }, showCheckbox: true,
+                }).data("ejDropDownList");
+            }
+        },
+    });
+
+    //FacilityCode
+    $.ajax({
+        url: 'GetFacilityData',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        type: 'GET',
+        success: function (data) {
+            if (data.length > 0) {
+                var DropDownListDist = $('#FacilityCode').ejDropDownList({
+                    dataSource: data,
+                    width: "240px",
+                    fields: { value: "FacilityCode", text: "Facility" }, showCheckbox: true,
+                }).data("ejDropDownList");
+            }
+        },
+    });
+    //DeliveryZoneCode
+    $.ajax({
+        url: 'GetSectorData',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        type: 'GET',
+        success: function (data) {
+            if (data.length > 0) {
+                var DropDownListDist = $('#DeliveryZoneCode').ejDropDownList({
+                    dataSource: data,
+                    width: "240px",
+                    fields: { value: "ZoneCode", text: "ZoneDescription" }, showCheckbox: true,
+                }).data("ejDropDownList");
+            }
+        },
+    });
+
+    //cdc region
+    $.ajax({
+        url: 'GetRegionData',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        type: 'GET',
+        success: function (data) {
+            if (data.length > 0) {
+                var DropDownListDist = $('#cdc').ejDropDownList({
+                    dataSource: data,
+                    width: "240px",
+                    fields: { value: "CDCRegionId", text: "CDCRegion" }, showCheckbox: true,
+                }).data("ejDropDownList");
+            }
+        },
+    });
+
+    //IP
+    $.ajax({
+        url: 'GetIPData',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        type: 'GET',
+        success: function (data) {
+            if (data.length > 0) {
+                var DropDownListDist = $('#IP').ejDropDownList({
+                    dataSource: data,
+                    width: "240px",
+                    fields: { value: "ImplimentingPartnerCode", text: "ImplementingPartnerDescription" }, showCheckbox: true,
+                }).data("ejDropDownList");
+            }
+        },
+    });
+
+    //SCTO
+    $.ajax({
+        url: 'GetSCTOData',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        type: 'GET',
+        success: function (data) {
+            if (data.length > 0) {
+                var DropDownListDist = $('#SCTO').ejDropDownList({
+                    dataSource: data,
+                    width: "240px",
+                    fields: { value: "SCTO", text: "SCTO" }, //showCheckbox: true,
+                }).data("ejDropDownList");
+            }
+        },
+    });
+</script>
+
+

@@ -1,0 +1,81 @@
+﻿
+@{
+    ViewBag.Title = "SAP_Status";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+@*<table class="table">
+    <thread>
+        <tr>
+            <th>OrderNumber</th>
+            <th>CurrentReccord</th>
+            <th>RecOrderadBySAP</th>
+            <th>DocNum</th>
+        </tr>
+    </thread>
+    <tbody id="tblinfo"></tbody>
+</table>*@
+
+<div id="stockTable">
+    <table border="1">
+        <thead style="background-color:silver">
+            <tr><th>OrderNumber.</th><th>RecOrderadBySAP</th><th>DocNum</th></tr>
+        </thead>
+        <tbody>
+            <tr class="loading"><td colspan="3">loading...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+
+        // Crockford's supplant method
+        if (!String.prototype.supplant) {
+            String.prototype.supplant = function (o) {
+                return this.replace(/{([^{}]*)}/g,
+                    function (a, b) {
+                        var r = o[b];
+                        return typeof r === 'string' || typeof r === 'number' ? r : a;
+                    }
+                );
+            };
+        }
+
+        $(function () {
+            var ticker = $.connection.monitor; // the generated client-side hub proxy
+            var $stockTable = $('#stockTable');
+            var $stockTableBody = $stockTable.find('tbody');
+            var rowTemplate = '<tr data-symbol="{OrderNumber}"><td>{OrderNumber}</td><td>{RecOrderadBySAP}</td><td>{DocNum}</td></tr>';
+
+            function formatStock(stock) {
+                return $.extend(stock, {
+                    //DocNum: stock.DocNum.toFixed(2)
+                });
+            }
+
+            function init() {
+                return ticker.server.getAllStocks().done(function (stocks) {
+                    $stockTableBody.empty();
+
+                    $.each(stocks, function () {
+                        var stock = formatStock(this);
+                        $stockTableBody.append(rowTemplate.supplant(stock));
+                    });
+                });
+            }
+
+            // Add client-side hub methods that the server will call
+            $.extend(ticker.client, {
+                updateStockPrice: function (stock) {
+                    var displayStock = formatStock(stock);
+                    $row = $(rowTemplate.supplant(displayStock)),
+                        $stockTableBody.find('tr[data-symbol=' + stock.OrderNumber + ']').replaceWith($row);
+                }
+            });
+
+            // Start the connection
+            $.connection.hub.start().then(init);
+        });
+
+</script>

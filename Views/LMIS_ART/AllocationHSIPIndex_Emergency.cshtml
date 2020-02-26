@@ -1,0 +1,638 @@
+﻿
+@{
+    ViewBag.Title = "Emergency";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+ 
+<script>
+    function failure(args) {
+        $("#Grid").ejWaitingPopup("hide");
+        var str = "";
+        str = ($($(args.error.responseText).find('b')[0]).text() + ":" + $(args.error.responseText).find('i').text());
+        $("#ErrorList").html('<p style="font-family: cursive;color: red;">' + str + '</p></br><button id="button1" style="size: large; showRoundedCorner: true; cssClass:customCss1">---OK---</button>');
+        $("#button1").ejButton({
+
+            click: function (args) {
+                $("#ErrorList").ejDialog("close");
+            }
+        });
+        $("#ErrorList").ejDialog({ enableModal: true });
+        $("#ErrorList").ejDialog("open");
+    }
+
+    function successSave(args) {
+        //alert(window._Event);
+        if (window._Event == "beginedit" || window._Event == "add") { }
+        else {
+
+            $("#Grid").ejWaitingPopup("hide");
+
+            var proddesc = $('#ClubID').val();
+            var str = "Record" + " Saved Successfully!!!";
+
+            //$("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+            $("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str /*+ '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>'*/);
+
+
+            $("#btn1").ejButton({
+                cssClass: "e-primary",
+                size: "large",
+                showRoundedCorner: true,
+                contentType: "textandimage",
+                prefixIcon: "e-icon e-handup",
+                visible: false,
+                style: "float:right",
+                click: function (args) {
+                    $("#SuccessDial").ejDialog("close");
+                }
+            });
+
+            $("#button1").ejButton({
+                cssClass: "e-success",
+                size: "medium",
+                showRoundedCorner: true,
+                contentType: "textandimage",
+                prefixIcon: "e-icon e-handup",
+
+                click: function (args) {
+                    $("#SuccessDial").ejDialog("close");
+                }
+            });
+            $("#SuccessDial").ejDialog({ enableModal: true });
+            $("#SuccessDial").ejDialog("open");
+        }
+
+
+    }
+
+    function cancelSave(args) {
+        $("#Grid").ejWaitingPopup("hide");
+        var proddesc = $('#ClubID').val();
+        var str = "The edits on "  + " have been Cancelled!!!";
+        //$("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+        $("#CancelDial").html('<p style="font-family: cursive;color: red;">' + str /*+ '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>'*/);
+
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+        $("#btnOK").ejButton({
+            cssClass: "e-danger",
+            size: "large",
+            showRoundedCorner: true,
+            contentType: "textandimage",
+            prefixIcon: "e-icon e-handup",
+            visible: false,
+            style: "float:right",
+            click: function (args) {
+
+                $("#CancelDial").ejDialog("close");
+            }
+        });
+
+        $("#CancelDial").ejDialog({ enableModal: true });
+        $("#CancelDial").ejDialog("open");
+    }
+</script>
+@section BreadCrumb{
+    <script id="sample" type="text/x-jsrender">
+        <div class="footerspan" style="float:right">
+
+            @Html.EJ().Button("btn1").Size(ButtonSize.Medium).Height("30").Width("70").Text("Ok")
+
+            @*@Html.EJ().Button("btn2").Size(ButtonSize.Mini).Height("30").Width("70").Text("Cancel")*@
+
+        </div>
+        @*<div class="condition" style="float:left; margin-left:15px">
+                @Html.EJ().CheckBox("check1").Text("Don't ask me this again")
+            </div>*@
+    </script>
+
+    <script id="cancelfooter" type="text/x-jsrender">
+        <div class="footerspan" style="float:right">
+            @Html.EJ().Button("btnOK").Size(ButtonSize.Medium).Height("30").Width("70").Text("Ok")
+            @Html.EJ().Button("btnCancel").Size(ButtonSize.Mini).Height("30").Width("70").Text("Cancel")
+
+        </div>
+        <div class="condition" style="float:left; margin-left:15px">
+            @Html.EJ().CheckBox("check1").Text("Don't ask me this again")
+        </div>
+    </script>
+    @(Html.EJ().Dialog("ErrorList").Title("Exception Thrown").ShowOnInit(false))
+    @(Html.EJ().Dialog("SuccessDial").Title("Record Saved").ShowFooter(true).FooterTemplateId("sample").ShowOnInit(false))
+    @(Html.EJ().Dialog("CancelDial").Title("Record Not Saved").ShowFooter(true).FooterTemplateId("cancelfooter").ShowOnInit(false))
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexHSIP", "Home")
+                </li>
+                <li class="active">
+                    <strong>ART: Emergency Orders Allocations Index</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+@(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("DataSourceAllocationHSIP_Emergemcy").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+         .AllowFiltering().ShowColumnChooser()
+        .AllowTextWrap()
+        .AllowGrouping()
+
+        //.AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+                //fields.Add("Outcome");
+                //fields.Add("Output");
+                //fields.Add("Indicator");
+                //fields.Add("Indicator_2");
+                //fields.Add("PerformanceTargetNotes");
+                //fields.Add("ExplanatoryNotes");
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })
+       //  .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+       .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+ .ToolbarSettings(toolbar =>
+ {
+     toolbar.ShowToolbar().ToolbarItems(items =>
+     {
+         //items.AddTool(ToolBarItems.Add);
+         items.AddTool(ToolBarItems.Edit);
+         items.AddTool(ToolBarItems.Update);
+         items.AddTool(ToolBarItems.Cancel);
+         items.AddTool(ToolBarItems.Search);
+     });
+ })
+        .Columns(col =>
+        {
+            col.Field("OrderTypeId").AllowEditing(false).Visible(false).Width(100).HeaderText("Order Type").IsPrimaryKey(true).Add();
+            col.Field("OrderType").AllowEditing(false).Width(100).HeaderText("Order Type").IsPrimaryKey(true).Add();
+            col.Field("DrugCode").AllowEditing(false).Width(100).HeaderText("Product Code").IsPrimaryKey(true).Add();
+            col.Field("product_description").AllowEditing(false).Width(400).HeaderText("Product").IsPrimaryKey(true).Add();
+            // col.Field("DatePrepared").AllowEditing(false).Width(100).HeaderText("Date Prepared").IsPrimaryKey(true).Format("{0:dd/MM/yyyy}").Add();
+            col.Field("EmergencyOrder").EditType(EditingType.BooleanEdit).AllowEditing(false).HeaderText("Emergency Order").Width(120).Add();
+            col.HeaderText("Allocation List").Commands(command =>
+            {
+                command.Type("detail")
+                   .ButtonOptions(new Syncfusion.JavaScript.Models.ButtonProperties()
+                   {
+                       Text = "Details",
+                       Width = "100px",
+                       Click = "onClick"
+                   }).Add();
+            })
+                .TextAlign(TextAlign.Center)
+                .Width(150)
+                .Add();
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete").ActionFailure("failure"); })
+)
+<script type="text/template" id="template">
+    <div style="max-width:1450px;">
+        <div class="row">
+            <div class="col-lg-3">
+                <p>SAP Stock on Hand</p>
+                <p><input type="text" id="StockOnHand" readonly name="StockOnHand" value="{{:StockOnHand}}" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>Total Allocation</p>
+                <p><input type="text" id="TotalAllocation" readonly name="TotalAllocation" value="{{:TotalAllocation}}" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>Stock on Hand After:</p>
+                <p><input type="text" id="StockOnHandAfter" readonly name="StockOnHandAfter" value="{{:StockOnHandAfter}}" class="e-field e-ejinputtext valid" /></p>
+            </div>
+
+        </div>
+        <hr />
+        <div id="defaultTab" style="width: 100%;">
+            <ul>
+                <li><a href="#tab1"> ALLOCATIONS BY PRODUCT</a></li>
+            </ul>
+
+            <div id="tab1">
+                <div class="myDiv">
+                </div>
+                <div style="min-height:400px;">
+                    <div id="order_grid"></div>
+                </div>
+            </div>
+        </div>
+        <br />
+        </div>
+</script>
+<script>
+    function open(args) {
+
+        var objDialog = $("#Grid").data("ejGrid");
+        var $dialogWrapper = objDialog.element.find("#" + objDialog._id + "_dialogEdit_wrapper");
+        $dialogWrapper.css("top", "0px");
+        $dialogWrapper.css("left", "0px");
+    }
+
+    function complete(args) {
+        if ((args.requestType == "beginedit" || args.requestType == "add") && args.model.editSettings.editMode == "dialogtemplate") {
+            $('#' + this._id + '_dialogEdit').ejDialog("option", "title", "ART ORDER ALLOCATION TEMPLATE"); //change dialog title
+            $("#" + this._id + "_dialogEdit").ejDialog({ open: "open" });
+            window._Event = args.requestType;
+            $.ajax({
+                //url: 'HAT/Districts',
+                url: 'GetOrderStatusData',
+                //data: JSON.stringify(mid),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: 'GET',
+                success: function (data) {
+                    if (data.length > 0) {
+                        var DropDownListDist = $('#OrderStatusId').ejDropDownList({
+                            dataSource: data,
+                            width: "240px",
+                            fields: { value: "StatusId", text: "Status" },
+                        }).data("ejDropDownList");
+                    }
+                },
+            });
+
+            $("#defaultTab").ejTab({ selectedItemIndex: 0 }).ejTab({ showRoundedCorner: true });;
+
+            if (args.requestType == "beginedit" || args.requestType == "add") {
+                $("#" + this._id + "_dialogEdit").ejDialog({ open: "open" })
+
+                $("#EditDialog_Grid_Save").ejButton("destroy");
+                $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+                $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+                $("#EditDialog_Grid_Cancel").ejButton("destroy");
+                $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+                $("#cancel").css({ "width": "100px", "height": "50px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+
+                var header_grid = $('#Grid').ejGrid('instance');
+
+                if (args.requestType == "beginedit") {
+                    var fc =@Html.Raw(Json.Encode(ViewBag.fc));
+                    var pc =@Html.Raw(Json.Encode(ViewBag.ProductDataSource));
+
+                    var Order_Type = header_grid.getSelectedRecords()[0].OrderTypeId;
+                    var itemcode = header_grid.getSelectedRecords()[0].DrugCode;
+                    window._Order_Type = Order_Type;
+                    window._itemcode = itemcode;
+                    window._StockonHand = 0;
+                      //Stock on Hand
+                    $.ajax({
+                        //url: 'HAT/Districts',
+                        url: 'GetStockOnHandData',
+                        //data: JSON.stringify(mid),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        type: 'GET',
+                        data: {
+                            "Productcode": itemcode
+                },
+                        success: function (data) {
+                            document.getElementById('StockOnHand').value = data.OnHand;
+                            window._StockonHand = data.OnHand;
+                        },
+                    });
+
+                    $("#order_grid").ejGrid({
+                        dataSource: ej.DataManager({ url: "GetAllocationEmergency?param_ot=" + Order_Type + "&param_pc=" + itemcode, batchUrl: "UpdateAllocationHSIPEmergency", adaptor: "UrlAdaptor" }),
+                      allowGrouping: false,
+                      editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                        allowScrolling: true,
+                        scrollSettings: { width: "100%", height: "auto" },
+                        allowPaging: false,
+                        enableAltRow: true,
+                        showColumnChooser: true,
+                        allowSorting: true,
+                        allowTextWrap: true,
+                        textWrapSettings: { wrapMode: "both" },
+                        allowResizeToFit: true,
+                        showStackedHeader: true,
+                        isResponsive: true,
+                        enableResponsiveRow: true,
+                        allowScrolling: true,
+                        allowFiltering: true,
+                        filterSettings: {
+                            filterType: "excel"
+                        },
+                        create: "create",
+                        cellSave: "cellSave",
+                        actionComplete: "successSave",
+                        actionFailure: "failure",
+                       // begin:"begin",
+                        columns: [
+                            { field: "OrderNumber", headerText: "Order No.", visible: false, allowEditing: false, isPrimaryKey: true, width: 160 },
+                            { field: "Facility", headerText: "Facility", visible: true, allowEditing: false, width: 100 },
+                            //{ field: "FacilityCode", headerText: "Facility", visible: false, allowEditing: false, width: 100, foreignKeyField: "FacilityCode", foreignKeyValue: "Facility", dataSource: fc },
+                            { field: "DatePrepared", headerText: "Date Prepared", visible: true, allowEditing: false, width: 90 , format: "{0:dd/MMM/yyyy}" },
+                            //{ field: "EndDate", headerText: "End Date", visible: true, allowEditing: false, format: "{0:dd/MMM/yyyy}" },
+                            { field: "DrugCode", headerText: "Product Code", visible: false, allowEditing: false, width: 70, isPrimaryKey: true },
+                            { field: "DrugCode", headerText: "Product Description", allowEditing: false, width: 230, foreignKeyField: "product_code", foreignKeyValue: "product_description", dataSource: pc  },
+                            //{ field: "Basic_Unit", headerText: "Basic Unit", allowEditing: false, width: 80 },
+                            { field: "OpeningBalance", headerText: "Opening Balance", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center },
+                            { field: "QuantityRecieved", headerText: "Quantity Recieved", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center },
+                            { field: "ART_eMTCT_Consumption", headerText: "ART eMTCT Consumption", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center },
+                            { field: "Losses_Adjustments", headerText: "Losses / Adjustments", visible: false, allowEditing: false, width: 80, textAlign: ej.TextAlign.Center},
+                            { field: "DaysOutOfStockDuring2Months", headerText: "Days Out Of Stock", visible: false, allowEditing: false, width: 80, textAlign: ej.TextAlign.Center },
+                            { field: "AdjustedAMC", headerText: "Adjusted AMC", format: "{0:N0}", visible: false, allowEditing: false, width: 80, textAlign: ej.TextAlign.Center, editType: ej.Grid.EditingType.Numeric, editParams: { decimalPlaces: 2}},
+                            { field: "ClosingBalance", headerText: "Closing Balance", allowEditing: false, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }, textAlign: ej.TextAlign.Center},
+                            { field: "Months_Stock_atHand", headerText: "Months of Stock", format: "{0:N1}", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center },
+                            { field: "Quantity_Required_Current_Patients", headerText: "Quantity Required For Current Patients", allowEditing: false, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }, textAlign: ej.TextAlign.Center },
+                            { field: "Quantity_Allocated", headerText: "Quantity Allocated", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }, cssClass: "customCSS", textAlign: ej.TextAlign.Center/*, format: "{0:C}" */},
+                            { field: "Notes", headerText: "Notes", allowEditing: false, width: 100 },
+                            { field: "RFSONotes", headerText: "SCTO Notes", allowEditing: true, width: 100 }
+                        ]
+                    });
+                }
+
+            }
+        }
+    }
+
+</script>
+
+<script>
+    function savess() {
+            var obj = $("#Grid").ejGrid("instance");
+            var grd_order = $("#order_grid").ejGrid("instance");
+            //obj.endEdit();
+            //grd_order.batchChanges.changed.push(); //add the new data which is in array
+            //grd_order.batchSave();
+            window._Event = "Saved";
+            cancelss1();
+    }
+    function cancelss1() {
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+    }
+    function cancelss() {
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+        window._Event = "add";
+        cancelSave();
+    }
+
+</script>
+<style>
+    .customCSS.e-rowcell {
+        background-color: #EFF5FB;
+        /*font-family: 'Bell MT';
+        font-style: italic;*/
+        /*color: whitesmoke;*/
+        /*font-size: 20px;*/
+        font: large bolder;
+        font-weight: bolder;
+        font-family: 'Times New Roman', Times, serif;
+    }
+</style>
+
+@*<script>
+
+        function onClick(args) {
+            var grid = $("#Grid").ejGrid("instance");
+
+            var order_type = grid.getSelectedRecords()[0].OrderType;
+            var product_code = grid.getSelectedRecords()[0].DrugCode;
+            location.href = '@Url.Action("AllocationHSIP", "LMIS_ART")?order_type=' + order_type + '&product_code=' + product_code ;
+            //alert(myvistdate);
+        }
+    </script>*@
+<style>
+    .e-grid .e-groupdroparea, /*GroupDropArea */
+    .e-grid .e-groupdroparea:hover, /*GroupDropArea Hover*/
+    .e-grid .e-cloneproperties, /*Column header clone during dragging header*/
+    .e-grid .e-groupheadercell:hover, /*HeaderCell in GroupDropArea*/
+    .e-grid td.e-active, /*During Row Selected*/
+    /*For pager items and their hover*/
+    .e-pager .e-currentitem,
+    .e-pager .e-currentitem:hover,
+    .e-pager .e-link:hover,
+    .e-pager .e-icon:hover {
+        background-color: #ea1b8d;
+    }
+
+    .e-grid .e-gridheader /*For line that separates the grid header and content*/ {
+        border-bottom-color: #ea1b8d;
+    }
+
+    .e-grid tr.e-hover /*For row hover*/ {
+        background-color: #e66aae;
+        color: #FFFFFF;
+    }
+
+    .e-grid .e-alt_row /*For Alternate row color*/ {
+        background-color: #E5E4E2; /*#99CFE3;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+        border-bottom: 1px solid #c8c8c8;
+        border-left: 1px solid #c8c8c8;
+    }
+</style>
+<style>
+    .panel-default > .panel-heading {
+        background-color: #451bb1 /*#3e1111*/;
+        color: white;
+        /*background-color:silver;*/
+        /*color: white;*/
+    }
+</style>
+
+<style type="text/css" class="cssStyles">
+    .control {
+        margin-left: 30px;
+    }
+
+    .ctrllabel {
+        padding-top: 15px;
+    }
+
+    .control {
+        margin-left: 20px;
+    }
+
+    .frame {
+        height: 250px;
+        width: 1000px;
+    }
+
+    .frame1 {
+        height: 240px;
+        width: 900px;
+    }
+
+    .txt {
+        display: block;
+        margin-bottom: 12px;
+    }
+</style>
+
+<style>
+    #lblComplaintTitle {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #c9252b;
+        vertical-align: top;
+        /*width: 700px;*/
+    }
+
+    .redLabels {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #ff0000;
+        vertical-align: top;
+        font-weight: bold;
+        /*width: 700px;*/
+    }
+
+    .myDiv {
+        font-size: 18px;
+        background-color: white;
+        color: orangered;
+        vertical-align: top;
+        text-align: center;
+        /*width: 700px;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+    }
+
+    .custom.e-js .e-header {
+        background: #c9252b;
+    }
+
+    .custom.e-js .e-content {
+        background: #ddd;
+    }
+
+    .custom .e-rbn-button.e-btn.e-select {
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    .tabstyle {
+        background: #F9F9F9;
+        border-radius: 10px;
+        border: 1px solid #99CFE3;
+        display: block;
+    }
+
+    .longcolumns {
+        width: 600px !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        border-right: 5px #666 outset !important;
+        border-left: 5px #666 outset !important;
+    }
+</style>
+
+<script>
+
+    function onClick(args) {
+        var grid = $("#Grid").ejGrid("instance");
+        //var param_on = grid.getSelectedRecords()[0].OrderNumber;
+        //var order_status = grid.getSelectedRecords()[0].OrderStatusId;
+        @*location.href = '@Url.Action("GetOrder", "OrderTracking")?param_on=' + param_on;*@
+
+        //var grid = $("#Grid").ejGrid("instance");
+        if (grid.getSelectedRows().length > 0)
+            grid.startEdit(grid.getSelectedRows());
+        else
+            alert(grid.localizedLabels.EditOperationAlert);
+    }
+
+    var total = diff = temp = StockDiff = 0;
+
+    function create(args) {
+        total = 0;
+        $.ajax({
+            url: "GetAllocationsEmergency?param_ot=" + window._Order_Type + "&param_pc=" + window._itemcode,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'GET',
+
+            success: function (result) {
+
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        total = total + parseInt(result[i].Quantity_Allocated);
+                    }
+                }
+                StockDiff = parseInt(window._StockonHand) - total;
+                $("#TotalAllocation").val(total);
+                $("#StockOnHandAfter").val(StockDiff);
+            },
+        });
+
+    }
+    var batch = null;
+    function begin(args) {
+        var grid = $("#order_grid").ejGrid("instance");
+        if (args.requestType = "save") {
+            batch = this.batchChanges;
+        }
+    }
+    var flag = true;
+    function cellSave(args) {
+        
+        if (args.columnName == "Quantity_Allocated") {
+
+            if (args.value == args.previousValue) {
+                total = total;
+                StockDiff = parseInt(window._StockonHand) - total;
+            }
+            else if (parseInt(args.value) > parseInt(args.previousValue)) {
+                diff = parseInt(args.value) - parseInt(args.previousValue);
+                total = parseInt(total) + diff; //+ temp;
+                StockDiff = parseInt(window._StockonHand) - total;
+            }
+
+            else if (parseInt(args.value) < parseInt(args.previousValue)) {
+                diff = parseInt(args.previousValue) - parseInt(args.value);
+                total = parseInt(total) - diff; //+ temp;
+                StockDiff = parseInt(window._StockonHand) - total;
+            }
+            $("#TotalAllocation").val(total);
+            $("#StockOnHandAfter").val(StockDiff);//updating the value of the input control with the total
+            // temp = total;
+
+        }
+        if (flag) {
+            args.cancel = true;
+            if ($.inArray(args.rowData, this.batchChanges.changed) == -1)
+                this.batchChanges.changed.push(args.rowData);
+            var batchData = this.getBatchChanges();
+            if (batchData.changed.length > 0 && !$(args.cell).closest("tr").hasClass("e-insertedrow")) {
+                flag = false;
+                this.batchSave();
+            }
+            else
+                flag = false;
+        }
+        else if (!flag)
+            flag = true;
+    }
+
+</script>
+

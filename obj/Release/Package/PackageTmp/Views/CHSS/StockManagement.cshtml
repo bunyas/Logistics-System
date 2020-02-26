@@ -1,0 +1,154 @@
+﻿
+@{
+    ViewBag.Title = "StockManagement";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb" style="margin-top:30px;">
+    <li class="breadcrumb-item">
+        <a href="#">Dashboard</a>
+    </li>
+    <li class="breadcrumb-item active">Stock Management</li>
+</ol>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Select the month Range</div>
+    <div class="panel-body">
+        <div class="col-md-12">
+            <div class="col-md-1"><h4>From:</h4></div>
+            <div class="col-md-2">
+                @Html.EJ().DropDownList("FromDropDownList").Datasource((IEnumerable<object>)ViewData["DropDownSource"]).DropDownListFields(Df => Df.Text("Description").Value("ID")).WatermarkText("Select the month").Width("100%")
+            </div>
+            <div class="col-md-1"><h4 style="float:right;">TO:</h4></div>
+            <div class="col-md-2">
+                @Html.EJ().DropDownList("ToDropDownList").Datasource((IEnumerable<object>)ViewData["DropDownSource"]).DropDownListFields(Df => Df.Text("Description").Value("ID")).WatermarkText("Select the month").Width("100%")
+            </div>
+            <div class="col-md-1"><h4 style="float:right;">YEAR:</h4></div>
+            <div class="col-md-2">
+                @Html.EJ().DropDownList("YearDropDownList").Datasource((IEnumerable<object>)ViewData["DropDownSource1"]).DropDownListFields(Df => Df.Text("Description").Value("ID")).WatermarkText("Select the month").Width("100%")
+            </div>
+            <div class="col-md-2">
+                <input id="LoadDatabtn" class="btn btn-sm btn-primary" type="button" value="Load Records" onclick="myfunc()" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+    @(Html.EJ().Grid<object>("StockGrid")
+            .Datasource((IEnumerable<object>)ViewBag.Stock)
+            .ShowColumnChooser()
+            .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+            {
+                items.AddTool(ToolBarItems.ExcelExport);
+            }))
+     .AllowSorting().AllowFiltering().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+            .Columns(col =>
+            {
+
+                col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+                col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Level_Desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+                col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:MM/dd/yyyy}").Add();
+                col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+                col.Field("product_description").HeaderText("product Name").Width("200").AllowFiltering(true).Add();
+
+                col.Field("packsize").HeaderText("Unit Pack").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Item_Available").HeaderText("Is the item available ?").TextAlign(TextAlign.Left).Priority(4).Width("70").AllowFiltering(false).Add();
+
+                col.Field("Expired_Quantity").HeaderText("expired quantity of this item during the visit in the whole facility").AllowFiltering(false).Width(100).Add();
+
+                col.Field("Card_Availability").HeaderText("Is the stock card available?").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Monthly_Physical_Count").HeaderText("Is physical count done every month and PC marked in stock card  (check 3 months)").TextAlign(TextAlign.Left).Priority(4).AllowFiltering(false).Width(100).Add();
+
+                col.Field("Correct_Card_Fil").HeaderText("Correct stock card fill").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Stock_Card_Balance").HeaderText("Balance according to stock card").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Store_Quantity").HeaderText("Quantity of medicines in the store").TextAlign(TextAlign.Left).Priority(4).Width("70").AllowFiltering(false).Add();
+
+                col.Field("Balance_Comparison").HeaderText("Does stock card balance & balance on shelf agree 100%?").AllowFiltering(false).Width(100).Add();
+
+                col.Field("Stock_Book_Availability").HeaderText("Is the stock book available?").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Correct_Stock_Book_Use").HeaderText("Is the stock book correctly used?").TextAlign(TextAlign.Left).Priority(4).AllowFiltering(false).Width(100).Add();
+
+                col.Field("AMC").HeaderText("The facility calculated Average Monthly Consumption (AMC)").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Quantity_Issued").HeaderText("Quantity issued in the last 3 months (from the last completed month)").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Out_Of_Stock_Days").HeaderText("Number of days out of stock in the last 3 months  (from the last completed month)").TextAlign(TextAlign.Left).Priority(4).Width("70").AllowFiltering(false).Add();
+
+                col.Field("Pharmacy_Quantity").HeaderText("Quantity of medicines in the pharmacy/Laboratory").AllowFiltering(false).Width(100).Add();
+
+                col.Field("Calculated_AMC").HeaderText("Calculated AMC").Width("90").AllowFiltering(false).Add();
+
+                col.Field("AMC_Comparison").HeaderText(" Is the calculated AMC the same as the recorded").TextAlign(TextAlign.Left).Priority(4).AllowFiltering(false).Width(100).Add();
+
+                col.Field("Facility_Quantity").HeaderText("Total Quantity of commodity in the facility").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Month_Of_Stock").HeaderText("Months of stock").Width("90").AllowFiltering(false).Add();
+
+                col.Field("Stock_Status").HeaderText("Stock Status").TextAlign(TextAlign.Left).Priority(4).Width("70").AllowFiltering(false).Add();
+
+                col.Field("Recommendation").HeaderText("Recommended Stock Movement").AllowFiltering(false).Width(100).Add();
+
+                col.Field("Quantity_ToLend").HeaderText("Quantity to lend out").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Quantity_ToBorrow").HeaderText("Quantity to borrow").TextAlign(TextAlign.Left).Priority(4).AllowFiltering(false).Width(100).Add();
+
+            }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick")))
+    </div>
+</div>
+
+<script>
+    function OnToolbarClick(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["StockData"] = JSON.stringify(this.model.dataSource);
+        }
+    }
+    function myfunc() {
+        var dateobject = $("#FromDropDownList").data("ejDropDownList");
+        var StartDate = dateobject.option('value');
+        var dateobject1 = $("#ToDropDownList").data("ejDropDownList");
+        var EndDate = dateobject1.option('value');
+        var dateobject3 = $("#YearDropDownList").data("ejDropDownList");
+        var Year = dateobject3.option('value');
+        $.ajax({
+            url: "/CHSS/BindStock",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startMonth": StartDate,
+                "endMonth": EndDate,
+                "year": Year,
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#StockGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+    }
+</script>
+

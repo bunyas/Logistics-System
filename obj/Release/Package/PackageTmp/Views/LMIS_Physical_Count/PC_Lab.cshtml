@@ -1,0 +1,546 @@
+﻿
+@{
+    ViewBag.Title = "PhysicalCountLabaratory";
+    Layout = "~/Views/Shared/_LayoutFacilityHSIP.cshtml";
+}
+
+@section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexHSIP", "Home")
+                </li>
+                <li class="active">
+                    <strong>Labaratory: Physical Count Labaratory</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+@(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("DataSourcePC_Labaratory").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+        .AllowFiltering()
+        .AllowTextWrap()
+        .AllowGrouping()
+
+        .AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowKeyboardNavigation(true)
+       .GroupSettings(group => { group.GroupedColumns(col => { col.Add("FacilityCode"); col.Add("DateOfPhysicalCount"); }); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        //.AllowSearching().SearchSettings(search =>
+        //{
+        //    search.Fields(fields =>
+        //    {
+        //        //fields.Add("Outcome");
+        //        //fields.Add("Output");
+        //        //fields.Add("Indicator");
+        //        //fields.Add("Indicator_2");
+        //        //fields.Add("PerformanceTargetNotes");
+        //        //fields.Add("ExplanatoryNotes");
+        //    });
+        //    search.Operator(Operator.Contains);
+        //    search.IgnoreCase(true);
+        //})
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    items.AddTool(ToolBarItems.Add);
+                    items.AddTool(ToolBarItems.Edit);
+                    items.AddTool(ToolBarItems.Update);
+                    items.AddTool(ToolBarItems.Cancel);
+                    //items.AddTool(ToolBarItems.Search);
+                });
+            })
+        .Columns(col =>
+        {
+            col.Field("FacilityCode").AllowEditing(false).Visible(false).HeaderText("Facility").ForeignKeyField("FacilityCode").ForeignKeyValue("Facility").DataSource((IEnumerable<Object>)ViewBag.FacilityDataSource).IsPrimaryKey(true).Width("200").Add();
+            col.Field("DateOfPhysicalCount").AllowEditing(false).HeaderText("Date Of Physical Count").Format("{0:dd/MM/yyyy}").IsPrimaryKey(true).Width("120").Add();
+            col.Field("product_code").AllowEditing(false).HeaderText("Product Code").IsPrimaryKey(true).Width("100").Add();
+            col.Field("product_code").AllowEditing(false).HeaderText("Product").IsPrimaryKey(false).ForeignKeyField("product_code").ForeignKeyValue("product_description").DataSource((IEnumerable<Object>)ViewBag.ProductDataSource).Width("400").Add();
+            col.Field("BatchNo").AllowEditing(false).HeaderText("Batch No").IsPrimaryKey(true).Width("100").Add();
+            col.Field("Quantity_Dispensary").AllowEditing(false).HeaderText("Quantity in Dispensary").Width("100").Add();
+            col.Field("Quantity_Store").AllowEditing(false).HeaderText("Quantity in Store").Width("100").Add();
+            col.Field("ExpiryDate").AllowEditing(false).HeaderText("Expiry Date").Format("{0:dd/MM/yyyy}").Width("100").Add();
+            col.Field("Total").AllowEditing(false).HeaderText("Total").Width("100").Add();
+            col.Field("Comment").AllowEditing(false).HeaderText("Comment").Width("200").Add();
+            col.Field("AddedBy").AllowEditing(false).HeaderText("Added By").Width("150").Add();
+            col.Field("DateAdded").AllowEditing(false).HeaderText("Date Added").Format("{0:dd/MM/yyyy}").Width("100").Add();
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete"); })
+)
+
+<script type="text/template" id="template">
+
+    <div class="row">
+        <div class="col-lg-3">
+            <p>Facility</p>
+            <p><input type="text" id="FacilityCode" name="FacilityCode" value="{{:FacilityCode}}" class="e-field e-ejinputtext valid" onchange="setFacilityDetails(this.value)" /></p>
+        </div>
+        @*<div class="col-lg-3">
+                <p>District</p>
+                <p><input type="text" id="district"  name="district" value="{{:district}}"  class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>Sector</p>
+                <p><input type="text" id="Sector_Type:"  readonly name="Sector_Type" value="{{:Sector_Type}}" class="e-field e-ejinputtext valid" /></p>
+            </div>*@
+        <div class="col-lg-3">
+            <p>Date Of Physical Count</p>
+            <p><input type="text" id="DateOfPhysicalCount" name="DateOfPhysicalCount" value="{{:DateOfPhysicalCount}}" class="e-field e-ejinputtext valid" /></p>
+        </div>
+    </div>
+    <hr />
+    @*<div id="defaultTab" style="width: 100%;">
+        <ul>
+            <li><a href="#tab1">Physical Count Labaratory</a></li>
+            <li><a href="#tab2">Physical Count HIV TEST KITS</a></li>
+        </ul>
+
+        <div id="tab1">
+            <div class="myDiv">
+            </div>
+            <div>
+                <div id="order_grid"></div>
+            </div>
+        </div>
+        <div id="tab2">
+            <div class="myDiv">
+            </div>
+            <div>
+                <div id="summary_grid"></div>
+            </div>
+        </div>
+    </div>*@
+    <div id="defaultTab" style="width: 100%;">
+        <ul>
+            <li><a href="#tab1">Physical Count Labaratory</a></li>
+        </ul>
+
+        <div id="tab1">
+            <div class="myDiv">
+            </div>
+            <div>
+                <div id="order_grid"></div>
+            </div>
+        </div>
+    </div>
+    <br />
+</script>
+
+<script>
+     var mProducts =@Html.Raw(Json.Encode(ViewBag.ProductDataSource));
+    function complete(args) {
+        if ((args.requestType == "beginedit" || args.requestType == "add") && args.model.editSettings.editMode == "dialogtemplate") {
+            $('#' + this._id + '_dialogEdit').ejDialog("option", "title", "Physical Count: Labaratory"); //change dialog title
+
+            $("#defaultTab").ejTab({ selectedItemIndex: 0 }).ejTab({ showRoundedCorner: true });;
+
+            $("#DateOfPhysicalCount").ejDatePicker(
+                {
+                    width: '240px',
+                    dateFormat: "dd/MM/yyyy"}
+            );
+            //$('#district').attr("disabled", "disabled");
+            //$('#Sector').attr("disabled", "disabled");
+            $('#Sector_Type').prop("readonly", true);
+            $('#district').prop("readonly", true);
+
+            $.ajax({
+                //url: 'HAT/Districts',
+                url: 'GetFacilityData',
+                //data: JSON.stringify(mid),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: 'GET',
+                success: function (data) {
+                    if (data.length > 0) {
+                        var DropDownListDist = $('#FacilityCode').ejDropDownList({
+                            dataSource: data,
+                            width: "240px",
+                            fields: { value: "FacilityCode", text: "Facility" },
+                           // change: "setFacilityDetails",
+                        }).data("ejDropDownList");
+                        var ddl2 = $('#FacilityCode').ejDropDownList("instance");
+                        var fc = data[0].FacilityCode;
+                        console.log(JSON.stringify(fc));
+                        ddl2.selectItemByValue(fc);
+                    }
+
+                },
+
+            });
+    
+                $("#EditDialog_Grid_Save").ejButton("destroy");
+                $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+                $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "margin-left": "190px" });
+                $("#EditDialog_Grid_Cancel").ejButton("destroy");
+                $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+                $("#cancel").css({ "width": "100px", "height": "50px", "margin-left": "10px" })
+
+                var objsss = $('#FacilityCode').data("ejDropDownList");//assign the dataSource obtained from serverSide
+                if (objsss != null) {
+                    var benefactor = objsss.option("value");
+                    setFacilityDetails(benefactor);
+                }
+
+                var header_grid = $('#Grid').ejGrid('instance');
+
+                if (args.requestType == "add") {
+
+                    //$("#outerSplitter").ejSplitter({
+                    //    height: 280, width: 501,
+                    //    properties: [{ paneSize: 200 }]
+                    //});
+
+                    $("#order_grid").ejGrid({
+                        dataSource: ej.DataManager({ url: "BatchDataLAB?Code=mn", batchUrl: "BatchUpdateLAB", adaptor: "UrlAdaptor" }),
+                        toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.Add, ej.Grid.ToolBarItems.Edit, ej.Grid.ToolBarItems.Delete, ej.Grid.ToolBarItems.Update, ej.Grid.ToolBarItems.Cancel, 'search'] },
+                        editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+
+                        allowResizeToFit: true,
+                        isResponsive: true,
+                        enableResponsiveRow: true,
+                        allowTextWrap: true,
+                        gridLines: ej.Grid.GridLines.Both,
+                        //gridLines: true,
+                        textWrapSettings: { wrapMode: "both" },
+                        cellEdit: "cellEdit",
+                        //cellEdit: "cellEdit2",
+                        
+                        
+                        columns: [
+                            { field: "FacilityCode", headerText: "FacilityCode", visible: false, allowEditing: true, width: 80/*, isPrimaryKey: true*/ },
+                            { field: "DateOfPhysicalCount", headerText: "DateOfPhysicalCount", visible: false, allowEditing: true, width: 80/*, isPrimaryKey: true*/ },
+                            //{ field: "product_code", headerText: "Product Code", allowEditing: false, visble: true, width: 80},
+                            //{ field: "product_description", headerText: "Description",  visble: true, allowEditing: false, width: 400 },
+                            //{ field: "Basic_Unit", headerText: "Unit Pack", textAlign: 'center', width: 80, allowEditing: false },
+                            //{ field: "Form", allowEditing: true, headerText: "Form", textAlign: 'center', width: 80, allowEditing: false },
+                            { field: "product_code", width: 200, headerText: "Product", isPrimaryKey: true, foreignKeyField: "product_code", foreignKeyValue: "product_description", dataSource: mProducts },
+                            { field: 'Quantity_Dispensary', headerText: 'Quantity in Dispensary', width: 100, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }  },
+                            { field: "Quantity_Store", allowEditing: true, headerText: "Quantity in Store", width: 100, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }  },
+                            { field: "BatchNo", headerText: "Batch No.", width: 90, validationRules: { required: true }},
+                            { field: 'ExpiryDate', headerText: 'Expiry Date', width: 100, editType: "datepicker", format: "{0:dd/MMM/yyyy}", validationRules: { required: true } },
+                            { field: "Total", allowEditing: true, headerText: "Total", width: 100 },
+                            { field: "Comment", headerText: "Comment", width: 190 },
+
+                        ],
+                        editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                        queryCellInfo: "queryCellInfo",
+
+                    });
+                }
+
+
+                if (args.requestType == "beginedit") {
+
+
+                    var ogrid = $('#Grid').ejGrid('instance');
+                    var FacilityCode = ogrid.getSelectedRecords()[0].FacilityCode;
+                    var DateOfPhysicalCount = ogrid.getSelectedRecords()[0].DateOfPhysicalCount;
+                    //var product_code = ogrid.getSelectedRecords()[0].product_code;
+                    //var BatchNo = ogrid.getSelectedRecords()[0].BatchNo;
+
+                    var homevisitdate = $("#DateOfPhysicalCount").ejDatePicker('instance').option('value');
+                    var d = new Date();
+
+                    var st = DateOfPhysicalCount;// "26-04.2013";
+                    var pattern = /(\d{2})\.(\d{2})\.(\d{4})/;
+                    var dt = DateOfPhysicalCount;//new Date(st.replace(pattern, '$3-$2-$1'));
+                    //window.myDate = $("#date_of_visit").ejDatePicker('instance').option('value');
+                    var myday = dt.getDate();
+                    var mymonth = dt.getMonth();
+
+                    //The dt.getMonth(); returns 0..11. This means Jan=0 and Dec=11
+                    //So we have to add 1 to the month
+                    mymonth++;
+                    var mmStr = '';
+                    if (mymonth < 10) {
+                        mmStr = '0' + mymonth;
+                    }
+                    else {
+                        mmStr = mymonth;
+                    }
+
+                    var mmday = '';
+                    if (myday < 10) {
+                        mmday = '0' + myday;
+                    }
+                    else {
+                        mmday = myday;
+                    }
+                    var myyear = dt.getFullYear();
+
+                    //Manually create a date to introduce '0' in months before Oct and days beo
+                    var myvistdate = (mmday + '/' + mmStr + '/' + myyear);
+
+
+                    $("#order_grid").ejGrid({
+                        dataSource: ej.DataManager({ url: "BatchDataEditLAB?FacilityCode=" + FacilityCode + "&DateOfPhysicalCount=" + myvistdate , batchUrl: "BatchUpdateLAB", adaptor: "UrlAdaptor" }),
+                        toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.Add, ej.Grid.ToolBarItems.Edit, ej.Grid.ToolBarItems.Delete, ej.Grid.ToolBarItems.Update, ej.Grid.ToolBarItems.Cancel, 'search'] },
+                        editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+
+                        allowResizeToFit: true,
+                        isResponsive: true,
+                        enableResponsiveRow: true,
+                        allowTextWrap: true,
+                        gridLines: ej.Grid.GridLines.Both,
+                        //gridLines: true,
+                        textWrapSettings: { wrapMode: "both" },
+                        cellEdit: "cellEdit",
+                        //cellEdit: "cellEdit2",
+
+
+                        columns: [
+                            { field: "FacilityCode", headerText: "FacilityCode", visible: false, allowEditing: true, width: 80/*, isPrimaryKey: true*/ },
+                            { field: "DateOfPhysicalCount", headerText: "DateOfPhysicalCount", visible: false, allowEditing: true, width: 80/*, isPrimaryKey: true*/ },
+                            //{ field: "product_code", headerText: "Product Code", allowEditing: false, visble: true, width: 80},
+                            //{ field: "product_description", headerText: "Description",  visble: true, allowEditing: false, width: 400 },
+                            //{ field: "Basic_Unit", headerText: "Unit Pack", textAlign: 'center', width: 80, allowEditing: false },
+                            //{ field: "Form", allowEditing: true, headerText: "Form", textAlign: 'center', width: 80, allowEditing: false },
+                            { field: "product_code", width: 200, headerText: "Product", isPrimaryKey: true, foreignKeyField: "product_code", foreignKeyValue: "product_description", dataSource: mProducts },
+                            { field: 'Quantity_Dispensary', headerText: 'Quantity in Dispensary', width: 100, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 } },
+                            { field: "Quantity_Store", allowEditing: true, headerText: "Quantity in Store", width: 100, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 } },
+                            { field: "BatchNo", headerText: "Batch No.", width: 90, validationRules: { required: true }},
+                            { field: 'ExpiryDate', headerText: 'Expiry Date', width: 100, editType: "datepicker", format: "{0:dd/MMM/yyyy}", validationRules: { required: true } },
+                            { field: "Total", allowEditing: true, headerText: "Total", width: 100 },
+                            { field: "Comment", headerText: "Comment", width: 190 },
+
+                        ],
+                        editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                        queryCellInfo: "queryCellInfo",
+                    });
+                }
+
+        }
+    }
+
+</script>
+
+
+<script type="text/javascript">
+    function rowSelsect(args) {
+        if (args.data["product_code"] == null) {
+            args.cancel = true;
+        }
+        else {
+            ///alert(args.data["product_code"]);
+        }
+    }
+    function BeginAction(args) {
+
+    }
+    function cellEdit(args) {
+
+        var gridObj = $("#order_grid").data("ejGrid");
+        var rowIndex = gridObj.selectedRowsIndexes;
+        var quantity_to_order_cellIndex = 7;
+
+        globalindex = gridObj.selectedRowsIndexes; // Carry this index globally
+        globalhh_code = args.model.selectedRecords[0].FacilityCode;
+        var pc = args.model.selectedRecords[0].product_code;
+        var grid = this._id;
+
+        var facilitycode = $("#FacilityCode").val();
+        var datepickObj = $("#DateOfPhysicalCount").data('ejDatePicker');
+        var myDateX = datepickObj.option('value');
+        
+        $("#order_grid").ejGrid("setCellValue", globalindex, "FacilityCode", facilitycode);
+        $("#order_grid").ejGrid("setCellValue", globalindex, "DateOfPhysicalCount", myDateX);
+        
+        if (args.columnName == "Total") {
+            var htc = 0;
+            if (isNaN(args.rowData.Quantity_Dispensary) == false)
+                htc = args.rowData.Quantity_Dispensary;
+            var smc = 0;
+            if (isNaN(args.rowData.Quantity_Store) == false)
+                smc = args.rowData.Quantity_Store;
+            var quantity = parseInt(htc) + parseInt(smc);
+            // alert(quantity);
+            gridObj.model.columns[7]['allowEditing'] = true;
+            gridObj.setCellText(rowIndex, quantity_to_order_cellIndex, quantity);
+            gridObj.model.columns[7]['allowEditing'] = false;
+        }
+
+        //if (pc == null) {
+        //    //  alert('n');
+        //    // args.cell.cancel = true;
+        //    args.cancel = true;
+        //}
+    }
+
+    function queryCellInfo(args) {
+
+        if (args.column.field == "product_code" && args.data.product_code == null) {
+            $($(args.cell).parent()).css("backgroundColor", "steelblue").css("color", "white");/*custom css applied to the row */
+            args.cell.cancel = true;
+        }
+        if (args.data["product_code"] == null) {
+            // alert(args.data["product_code"]);
+            args.cell.cancel = true;
+            //args.cancel = true;
+        }
+
+        //if (args.rowData..field == "product_code" && args.data.product_code == null) {
+        //    $($(args.cell).parent()).css("backgroundColor", "steelblue").css("color", "white");/*custom css applied to the row */
+        //    args.cancel = true;
+        //}
+
+    }
+
+    function savess() {
+        var facilitycode = $("#FacilityCode").val();
+        var datepickObj = $("#DateOfPhysicalCount").data('ejDatePicker');
+        var pc = datepickObj.option('value');
+
+        if (facilitycode == null || pc == null) {
+            alert('Please fill in the missing Information !..');
+        }
+        else {
+            var obj = $("#Grid").ejGrid("instance");
+            //obj.endEdit();
+            var grd_order = $("#order_grid").ejGrid("instance");
+            grd_order.batchSave();
+            cancelss();
+        }
+    }
+    function cancelss() {
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+    }
+
+    function setFacilityDetails(newVal) {
+        var objsss = $('#FacilityCode').data("ejDropDownList");
+        var facility = objsss.option("value");
+        $.ajax({
+
+            url: 'GetFacility?FacilityCode=' + facility,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'GET',
+            success: function (datahhmember) {
+
+                if (datahhmember.length > 0) {
+                    //console.log(JSON.stringify(datahhmember));
+                    $('#district').val(datahhmember[0].DistrrictCode);
+                    $('#Sector_Type').val(datahhmember[0].DeliveryZoneCode);
+                    findSector(datahhmember[0].DeliveryZoneCode);
+                    findDistrict(datahhmember[0].DistrrictCode);
+                    //alert(datahhmember[0].DistrrictCode);
+                    // alert(datahhmember[0].DeliveryZoneCode);
+                }
+
+            },
+
+        });
+
+    }
+
+    function findSector(sector) {
+        //var objsss = $('#Sector_Type').data("ejDropDownList");
+        //var sect = objsss.option("value");
+        $.ajax({
+            // url: '/Referral/Gender',
+            url: 'FacilitySecto?sector=' + sector,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'GET',
+            success: function (datay) {
+                if (datay.length > 0) {
+                    //for (i = 0; i < datay.length; i++) {
+                    //if (datay[0].ZoneCode == sectorType) {
+                    $('#Sector_Type').val(datay[0].ZoneDescription);
+                    // break;
+                    //}
+                    // }
+
+                }
+            },
+
+        });
+    }
+
+    function findDistrict(District) {
+        //var objsss = $('#district').data("ejDropDownList");
+        //var distric = objsss.option("value");
+        $.ajax({
+            // url: '/Referral/Gender',
+            url: 'DistrictData?District' + District,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'GET',
+            success: function (datahhmember) {
+                if (datahhmember.length > 0) {
+                    $('#district').val(datahhmember[0].District_Name);
+                }
+            },
+
+        });
+    }
+
+
+    function cellEdit2(args) {
+
+        var result = this.getSelectedRecords();
+        //var gridObj = $("#order_grid").data("ejGrid");
+        var gridInstance = $("#order_grid").data("ejGrid");//$("#order_grid").ejGrid("instance");
+        globalindex = gridInstance.selectedRowsIndexes; // Carry this index globally
+        globalhh_code = args.model.selectedRecords[0].FacilityCode;
+        var grid = this._id;
+
+        var facilitycode = this.getSelectedRecords()[0].FacilityCode;//$("#FacilityCode").val();
+        var PCdate = $("#DateOfPhysicalCount").val();
+
+        var st = PCdate;// "26.04.2013";
+        var pattern = /(\d{2})\.(\d{2})\.(\d{4})/;
+        var dt = new Date(st.replace(pattern, '$3-$2-$1'));
+        // alert(dt);
+
+        window.myDate = $("#DateOfPhysicalCount").ejDatePicker('instance').option('value');
+
+        $("#order_grid").ejGrid("setCellValue", globalindex, "FacilityCode", facilitycode);
+        $("#order_grid").ejGrid("setCellValue", globalindex, "DateOfPhysicalCount", dt);
+
+    }
+</script>
+
+@*<script>
+    window.homevisitKount = 0;
+    $.ajax({
+        type: 'GET',
+        url: "BatchDataKount",
+
+        success: function (result) {
+            window.homevisitKount = result;
+        },
+    });
+</script>*@
+
+<style>
+    .customCSS.e-headercell {
+        background-color: #2382c3;
+        color: white;
+        font-family: 'Bell MT';
+        font-size: 20px;
+    }
+
+    .customCSS.e-rowcell {
+        background-color: #ecedee;
+        font-family: 'Bell MT';
+        color: red;
+        font-size: 20px;
+    }
+</style>
+
+

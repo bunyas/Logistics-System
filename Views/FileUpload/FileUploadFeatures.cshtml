@@ -1,0 +1,59 @@
+﻿
+@{
+    ViewBag.Title = "FileUpload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    window.i = 0;
+</script>
+<h2>File Upload:</h2>
+<br />
+<script src="@Url.Content("~/Scripts/ej/i18n/ej.culture.en-US.min.js")"></script>
+<script src="@Url.Content("~/Scripts/ej/l10n/ej.localetexts.en-US.min.js")"></script>
+<div id="ControlRegion">
+    <div class="frame">
+        <div class="control">
+            <div class="posupload" id="uploadDiv">
+                <label> File </label>
+                @Html.EJ().Uploadbox("UploadDefault").SaveUrl("SaveDefault").RemoveUrl("RemoveDefault")
+                <br />
+                <label>File Description </label>
+                <div></div><textarea id="txtarea" style="width: 500px; height: 70px;"></textarea>
+            </div>
+            <br />
+        </div>
+        <br />
+    </div>
+
+    <br />
+    <button onclick="addUploader()">Add another file</button>
+</div>
+<script>
+    function addUploader() {
+       
+        var obj = $('#UploadDefault').data('ejUploadbox');
+        var cloneEle = obj.element.parent()[0].cloneNode(true);
+        cloneEle.id = cloneEle.id + '_new' + window.i;
+        alert(cloneEle.id);
+        console.log(cloneEle);
+        obj.element.parent()[0].parentElement.appendChild(cloneEle);
+        obj._on($(cloneEle).find('input[type="file"]'), "change", obj._inputValueChange);
+        // obj._on($(cloneEle).find('input[type="text"]'), "change", obj._inputValueChange);
+        window.i++;
+    }
+
+    function addUploader2() {
+        var i = 1;
+        var obj = $('#UploadDefault').data('ejUploadbox');
+        var cloneEle = obj.element.parent()[0].cloneNode(true);
+        cloneEle.id = cloneEle.id + '_new' + i;
+        alert(cloneEle.id);
+        console.log(cloneEle);
+        obj.element.parent()[0].parentElement.appendChild(cloneEle);
+        obj._on($(cloneEle).find('input[type="file"]'), "change", obj._inputValueChange);
+
+
+        // obj._on($(cloneEle).find('input[type="text"]'), "change", obj._inputValueChange);
+    }
+</script>
+

@@ -1,0 +1,310 @@
+﻿@using mascis.Models
+@model LoginViewModel
+@{
+
+    ViewBag.Title = "Medical Access Uganda Ltd";
+    Layout = "";
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4CqlA5xUMFKud-JprA9HCckVsfvqf0sk &callback=initMap" type="text/javascript"></script>
+
+
+
+<style>
+    #map_canvas {
+        height: 100%;
+    }
+    /* Optional: Makes the sample page fill the window. */
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+    }
+
+    #divfix {
+        top: 0;
+        left: 0;
+        position: fixed;
+        /*z-index: 3000;*/
+    }
+
+
+
+    #divabs {
+        position: absolute;
+        top: 150px;
+        left: 150px;
+        position: fixed;
+        opacity: 0.3;
+        filter: alpha(opacity=30); /* For IE8 and earlier */
+        /*z-index: 3000;*/
+    }
+
+    #divrel {
+        /*border-radius: 5px;*/
+        border: 2px solid #73AD21;
+        background-color: rgba(0,0,0,0.2) !important;
+        /*background: rgba(76, 175, 80, 0.3);*/
+        /* Green background with 30% opacity */
+        /*background: #fcf5f5;*/
+        position: relative;
+        padding: 10px;
+        top: 10px;
+        left: 10px;
+        position: fixed;
+        width: 230px;
+        height: 300px;
+        float: right;
+    }
+</style>
+
+
+
+
+<style>
+    /*#map_canvas img {
+        max-width: none;
+        top: 0;
+        left: 0;
+        position: fixed;
+    }*/
+</style>
+
+<!-- This css is to give a nice big popup "info window" when a marker is clicked on the map -->
+<style>
+    /*.infoDiv {
+        height: 200px;
+        width: 300px;
+        -webkit-user-select: none;
+        background-color: white;
+    }*/
+</style>
+
+<!-- This is the div that will contain the Google Map -->
+
+
+
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/jquery")
+@*@Styles.Render("~/Content/ej/web/flat-saffron/ej.web.all.min.css")*@
+@Styles.Render("~/Content/ej/web/bootstrap-theme/ej.web.all.min.css")
+@Scripts.Render("~/Scripts/jquery-3.1.1.min.js")
+@Scripts.Render("~/Scripts/jquery.validate.min.js")
+@Scripts.Render("~/Scripts/jsrender.min.js")
+@Scripts.Render("~/Scripts/ej/ej.web.all.min.js")
+@Scripts.Render("~/Scripts/ej/ej.unobtrusive.min.js")
+@Scripts.Render("~/Scripts/jquery.validate.unobtrusive.min.js")
+
+<link href="~/LoginScrips/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/LoginScrips/animate/animate.css" rel="stylesheet" />
+<link href="~/LoginScrips/css-hamburgers/hamburgers.min.css" rel="stylesheet" />
+<link href="~/LoginScrips/animsition/css/animsition.min.css" rel="stylesheet" />
+<script src="~/LoginScrips/select2/select2.min.js"></script>
+<link href="~/LoginScrips/daterangepicker/daterangepicker.css" rel="stylesheet" />
+<link href="~/LoginScrips/css/util.css" rel="stylesheet" />
+<link href="~/LoginScrips/css/main.css" rel="stylesheet" />
+
+
+<div class="limiter" style="margin-top:-50px">
+    <div class="container-login100">
+        <div class="login100-more">
+            <div  id="map_canvas" style="height: 850px; width:100%;"></div>
+        </div>
+        <div class="wrap-login100 p-l-50 p-r-50 p-t-72 p-b-50">
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "login100-form", role = "form" }))
+            {
+                    @Html.AntiForgeryToken()
+                        
+                    @*<span class="login100-form-title p-b-59">
+                        Login
+                    </span>*@
+                    <img id="profile-img" alt="" src="~/Images/mascislog1.png" style="width: 100%; height: 150px; align-content:center;display: block; margin-top:-10px;" />
+                    @*<img id="profile-img" style="width: 85px; height: 80px; align-content:center;display: block; margin: 0 auto;" class="profile-img-card" src="~/Images/mascislog3.png" />*@
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="wrap-input100">
+                        @Html.LabelFor(m => m.Email, new { @class = "label-input100" })
+                        <div class="form-signin">
+                            @Html.TextBoxFor(m => m.Email, new { @class = "input100", @placeholder = "Please enter your User Name" })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "focus-input100" })
+                        </div>
+                    </div>
+                    <div class="wrap-input100">
+                        @Html.LabelFor(m => m.Password, new { @class = "label-input100" })
+                        <div class="form-signin">
+                            @Html.PasswordFor(m => m.Password, new { @class = "input100" })
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "focus-input100", @placeholder = "Please enter your Password" })
+                        </div>
+                    </div>
+                    <div class="flex-m w-full p-b-33">
+                        <div class="contact100-form-checkbox">
+                            <div class="checkbox" style="font-size:medium; font:bolder;">
+                                @Html.CheckBoxFor(m => m.RememberMe@*, new {@class= "input-checkbox100" }*@)
+                                @Html.LabelFor(m => m.RememberMe@*, new { @class = "label-checkbox100" }*@)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-login100-form-btn">
+                        <div class="wrap-login100-form-btn">
+                            <div class="login100-form-bgbtn"></div>
+                            <button class="login100-form-btn">
+                                Sign in
+                            </button>
+                        </div>
+                    </div>
+                    @*<div class="btn btn-lg btn-primary btn-block btn-signin">
+                        <button style="float:right;" class="login100-form-btn" type="submit">Sign in</button>
+
+                    </div>*@
+
+                }
+        </div>
+    </div>
+</div>
+
+
+@*<div class="navbar navbar-fixed-top">
+    <div id="map_canvas" style="height: 750px;"></div>
+    <div id="divrel">
+        <div>
+            <section id="loginForm">
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                    @Html.AntiForgeryToken()
+
+                    <img id="profile-img" style="width: 85px; height: 80px; align-content:center;display: block; margin: 0 auto;" class="profile-img-card" src="~/Images/mascislog3.png" />
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-signin">
+                        @Html.LabelFor(m => m.Email, new { @class = "col-md-3 control-label" })
+                        <div class="form-signin">
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Please enter your User Name" })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-signin">
+                        @Html.LabelFor(m => m.Password, new { @class = "col-md-3 control-label" })
+                        <div class="form-signin">
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger", @placeholder = "Please enter your Password" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <div class="checkbox" style="font-size:medium; font:bolder;">
+                                @Html.CheckBoxFor(m => m.RememberMe)
+                                @Html.LabelFor(m => m.RememberMe)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn btn-lg btn-primary btn-block btn-signin">
+                        <button style="float:right;" class="btn btn-lg btn-primary btn-sm btn-signin" type="submit">Sign in</button>
+
+                    </div>
+
+                }
+            </section>
+        </div>
+
+    </div>
+</div>*@
+
+
+
+<script>
+    $(document).ready(function () {
+        $("form :input").attr("autocomplete", "off");
+        Initialize();
+    });
+
+    // Where all the fun happens
+    function Initialize() {
+       //  alert('Initialise ');
+        var markers =@Html.Raw(Json.Encode(ViewBag.GISdata));
+        // Google has tweaked their interface somewhat - this tells the api to use that new UI
+        google.maps.visualRefresh = true;
+        //var Uganda = new google.maps.LatLng(1.3707, 32.3032);
+
+        // Original map options
+        var mapOptions = {
+            center: new google.maps.LatLng(markers[0].Latititude, markers[0].Longtitude),
+            zoom: 8,
+            //mapTypeId: google.maps.MapTypeId.ROADMAP
+            mapTypeId: google.maps.MapTypeId.G_NORMAL_MAP
+            //marker:true
+        };
+
+        var infoWindow = new google.maps.InfoWindow();
+
+
+        var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+        for (i = 0; i < markers.length; i++) {
+            var data = markers[i]
+            var city = markers[i].Longtitude
+            //alert(data.description)
+            var myLatlng = new google.maps.LatLng(data.Latititude, data.Longtitude);
+            var marker = new google.maps.Marker({
+                position: myLatlng,
+                map: map,
+                title: data.Facility,
+                desc: data.District_Name
+            });
+            (function (marker, data) {
+
+                // Make the marker-pin blue!
+                // marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png')
+                // Attaching a click event to the current marker
+                google.maps.event.addListener(marker, "click", function (e) {
+                    infoWindow.setContent(
+                        '<b>Facility:</b> ' + data.Facility + '<br> ' /*+ '<hr> '*/
+                        + '<b>District Name:</b> ' + data.District_Name + '<br> ' /*+ '<hr> '*/
+                        /*+ '<b>Facility Type:</b> ' + data.FacilityType + '<br>'*/  /*+ '<hr> '*/
+                        + '<b>Sector:</b> ' + data.ZoneDescription + '<br> ' /*+ '<hr> '*/
+                        + '<b>Implementing Partner:</b> ' + data.ImplementingPartnerDescription + '<br> ' /*+ '<hr> '*/
+                        + '<b>level of Care:</b> ' + data.level_of_care + '<br> ' /*+ '<hr> '*/
+                       /* + '<b>Client Type:</b> ' + data.client_type_desc + '<br> '*//* + '<hr> '*/
+                        + '<b>CDC Region:</b> ' + data.CDCRegion + '<br> ' /*+ '<hr> '*/
+                        + '<b>OwnershipDescription:</b> ' + data.OwnershipDescription + '<br> ' /*+ '<hr> '*/
+                        + '<b>GIS Coordinates (Longtitude):</b> ' + data.Latititude + '<br> ' /*+ '<hr> '*/
+                        + '<b>GIS Coordinates (Latititude):</b> ' + data.Longtitude + '<br> ');
+                    // alert(data.lat);Latititude
+                    infoWindow.open(map, marker);
+                });
+            })(marker, data);
+        }
+    }
+</script>
+
+
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script src="~/LoginScrips/jquery/jquery-3.2.1.min.js"></script>
+<script src="~/LoginScrips/animsition/js/animsition.min.js"></script>
+<script src="~/LoginScrips/bootstrap/js/popper.js"></script>
+<script src="~/LoginScrips/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/LoginScrips/select2/select2.min.js"></script>
+<script src="~/LoginScrips/daterangepicker/moment.min.js"></script>
+<script src="~/LoginScrips/daterangepicker/daterangepicker.js"></script>
+<script src="~/LoginScrips/countdowntime/countdowntime.js"></script>
+<script src="~/LoginScrips/js/main.js"></script>
+

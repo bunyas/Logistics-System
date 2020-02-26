@@ -1,0 +1,145 @@
+﻿
+@{
+    ViewBag.Title = "Query";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+@section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexHSIP", "Home")
+                </li>
+                <li class="active">
+                    <strong>Laboratory: Query</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+@*@using (Html.BeginForm("QueryHSIP", "LMIS_Laboratory", FormMethod.Post))
+    {
+    }*@
+<div class="row">
+    <div class="col-lg-3">
+        <p>Start Of Reporting Period</p>
+        <p><input type="text" id="dp_start_date" name="dp_start_date" class="e-field e-ejinputtext valid" /></p>
+    </div>
+    <div class="col-lg-3">
+        <p>End Of Reporting Period</p>
+        <p><input type="text" id="dp_end_date" name="dp_end_date" class="e-field e-ejinputtext valid" /></p>
+    </div>
+    <div class="col-lg-3">
+        <br />
+        <input id="LoadDatabtn" style="margin-top:7px;" class="btn btn-block btn-primary" type="button" value="Load Query" onclick="myfunc()" />
+    </div>
+</div>
+<br />
+@(Html.EJ().Grid<object>
+        ("grid")
+        //.Datasource(datasource => datasource.URL("DataSourceGetAll").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+        .AllowFiltering()
+        .AllowTextWrap()
+        .AllowGrouping()
+        .ShowColumnChooser()
+        .AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+         //.AllowSearching().SearchSettings(search =>
+         //{
+         //    search.Fields(fields =>
+         //    {
+         //        //fields.Add("Outcome");
+         //        //fields.Add("Output");
+         //        //fields.Add("Indicator");
+         //        //fields.Add("Indicator_2");
+         //        //fields.Add("PerformanceTargetNotes");
+         //        //fields.Add("ExplanatoryNotes");
+         //    });
+         //    search.Operator(Operator.Contains);
+         //    search.IgnoreCase(true);
+         //})
+         .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+         {
+             items.AddTool(ToolBarItems.ExcelExport);
+         }))
+        .Columns(col =>
+        {
+            col.Field("SAP_Code").HeaderText("SAP Code").Width("80px").Add();
+            col.Field("FacilityCode").HeaderText("Facility").ForeignKeyField("FacilityCode").ForeignKeyValue("Facility").DataSource((IEnumerable<object>)ViewBag.FacilityDataSource).Width("180px").Add();
+            col.Field("DeliveryZoneCode").HeaderText("Sector").Width("90px").ForeignKeyField("ZoneCode").ForeignKeyValue("ZoneDescription").DataSource((IEnumerable<object>)ViewBag.DVDataSource).Add();
+            col.Field("ImplimentingPartnerCode").HeaderText("IP").ForeignKeyField("ImplimentingPartnerCode").ForeignKeyValue("ImplementingPartnerDescription").DataSource((IEnumerable<object>)ViewBag.IPDataSource).Width("90px").Add();
+            col.Field("level_of_care").HeaderText("Level of Care").ForeignKeyField("level_of_care_code").ForeignKeyValue("level_of_care").DataSource((IEnumerable<object>)ViewBag.LoCDataSource).Width("90px").Add();
+            col.Field("DistrrictCode").HeaderText("District").ForeignKeyField("District_Code").ForeignKeyValue("District_Name").DataSource((IEnumerable<object>)ViewBag.DistrictDataSource).Width("100px").Add();
+            // col.Field("product_code").HeaderText("Product Code").Width("80px").Add();
+            col.Field("Product_SAP_Code").HeaderText("Product SAP Code").Width("90px").Add();
+            col.Field("product_description").HeaderText("Product").Width("200px").Add();
+            // col.Field("FacilityCode").HeaderText("Category").Width("80px").Add();
+            col.Field("OrderNumber").HeaderText("Tracking ID").Width("170px").Add();
+            col.Field("Basic_Unit").HeaderText("Basic Unit").AllowFiltering(false).Width("80px").Add();
+            col.Field("opening_balance").Width("80px").AllowFiltering(false).HeaderText("Opening Balance").Add();
+            col.Field("quantity_recieved").Width("80px").AllowFiltering(false).HeaderText("Quantity Received").Add();
+            col.Field("consumption").Width("90px").AllowFiltering(false).HeaderText("Consumption").Add();
+            col.Field("losses_adjustment").Width("95px").AllowFiltering(false).HeaderText("Losses / Adjustments").Add();
+            col.Field("closing_balance").HeaderText("Closing Balance").AllowFiltering(false).Width("80px").Add();
+            //col.Field("AdjustedAMC").Format("{0:N1}").HeaderText("Adjusted AMC").AllowFiltering(false).Width("80px").Add();
+            //col.Field("Maximum_Stock").Format("{0:N1}").Width("80px").AllowFiltering(false).HeaderText("Months Of Stock").Add();
+            col.Field("quantity_to_order").AllowFiltering(true).Width("80px").HeaderText("Quantity Required").Add();
+            col.Field("quantity_allocated").Width("80px").AllowFiltering(true).HeaderText("Quantity Allocated").Add();
+            col.Field("comments").HeaderText("Notes").AllowFiltering(false).Width("200px").Add();
+
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete"); eve.ToolbarClick("OnToolbarClick"); })
+)
+
+<script>
+    $(function () {
+        $("#dp_start_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+        $("#dp_end_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+    });
+    function OnToolbarClick(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["QueryData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function myfunc() {
+        var dateobject = $("#dp_start_date").data("ejDatePicker");
+        var StartDate = dateobject.getValue();
+        var dateobject1 = $("#dp_end_date").data("ejDatePicker");
+        var EndDate = dateobject1.getValue();
+        $.ajax({
+            url: "DataSourceGetAll",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startdate": StartDate,
+                "enddate": EndDate,
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#grid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+    }
+</script>

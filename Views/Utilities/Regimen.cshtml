@@ -1,0 +1,507 @@
+﻿
+@{
+    ViewBag.Title = "Regimen";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Regimen Details</h2>
+@(Html.EJ().Dialog("basicDialog").Title("Warning")@*.ShowFooter(true).FooterTemplateId("sample")*@.ShowOnInit(false))
+<div id="ControlRegion">
+    @(Html.EJ().Grid<object>("Grid")
+       // .Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.datasource))
+
+       .Datasource(datasource => datasource.URL("GetRegimen")/*.UpdateURL("DialogUpdate").InsertURL("DialogInsert")*/.RemoveURL("DeleteRegimen").Adaptor(AdaptorType.UrlAdaptor))
+       .AllowSearching(true)
+    .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+
+    .ContextMenuSettings(contextMenu =>
+    {
+        contextMenu.EnableContextMenu();
+    }).AllowScrolling()
+    .ScrollSettings(col => { col.Width(1300); })
+    .AllowPaging()
+     .AllowFiltering().ShowColumnChooser().AllowResizing()
+    .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+    .ToolbarSettings(toolbar =>
+    {
+        toolbar.ShowToolbar().ToolbarItems(items =>
+        {
+            items.AddTool(ToolBarItems.Add);
+            items.AddTool(ToolBarItems.Edit);
+            items.AddTool(ToolBarItems.Update);
+            //items.AddTool(ToolBarItems.Delete);
+            items.AddTool(ToolBarItems.Cancel);
+            items.AddTool(ToolBarItems.Search);
+            items.AddTool(ToolBarItems.ExcelExport);
+        });
+    })
+    .Columns(col =>
+    {
+        //col.Type("checkbox").Width(50).Add();
+        col.Field("RegimenCode").IsPrimaryKey(true).Visible(true).HeaderText("Regimen code").TextAlign(TextAlign.Justify).Width(100).Add();
+        col.Field("RegimenDesc").HeaderText("Regimen Description").TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("ExtraInfo").Visible(true).HeaderText("Extra Information").TextAlign(TextAlign.Justify).Width(100).Add();
+        col.Field("DrugCombination").HeaderText("Drug Combination").TextAlign(TextAlign.Justify).Width(100).Add();
+        col.Field("RegimenCategoryCode").Visible(true).HeaderText("Regimen Category").TextAlign(TextAlign.Justify).ForeignKeyField("RegimenCategoryCode").ForeignKeyValue("RegimenCategoryDesc").DataSource((IEnumerable<object>)ViewBag.RegCategory).Width(100).Add();
+        col.Field("RegimenClassification").HeaderText("Regimen Classification").TextAlign(TextAlign.Justify).ForeignKeyField("regimen_classification_code").ForeignKeyValue("regimen_classification_desc").DataSource((IEnumerable<object>)ViewBag.RegClassification).Width(100).Add();
+        col.Field("StandardRegimen").Visible(true).HeaderText("Standard Regimen").TextAlign(TextAlign.Justify).Width(100).Add();
+        col.Field("IsExtra").HeaderText("Is Extra Regimen").TextAlign(TextAlign.Justify).Width(100).Add();
+
+    })
+    .ClientSideEvents(eve => { /*eve.Load("onLoad");*/ eve.ActionComplete("edit").ToolbarClick("OnToolbarClick"); }))
+
+</div>
+<button class="btn btn-danger btn-lg" style="margin:10px;" onclick="DeleteRecord()">DELETE</button>
+<script>
+    function DeleteRecord() {
+        // Create grid object.
+        var gridObj = $("#Grid").data("ejGrid");
+        // Gets the selected row element list
+        var records = gridObj.getSelectedRows();
+
+        if (records.length) {
+            var count = 0;
+            for (var i = 0; i < records.length; i++) {
+                var regcode = gridObj.getSelectedRecords()[i].RegimenCode;
+                //var facility = gridObj.getSelectedRecords()[i].FacilityCode;
+                //var enddate = gridObj.getSelectedRecords()[i].EndDate;
+                //var prepareddate = gridObj.getSelectedRecords()[i].DatePrepared;
+
+                //alert(enddate); alert(prepareddate);
+                $.ajax({
+                    url: "DeleteRegimen?value=" + regcode,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    //data: { values: mymsg },
+                    type: 'GET',
+
+                    success: function (result) {
+                        alert(result);
+                        var obj = $("#Grid").ejGrid("instance");
+                        obj.refreshContent();
+                    },
+                }
+                )
+            }
+        }
+    }
+</script>
+
+<script type="text/template" id="template">
+    <b>Drug Regimen</b>
+    <div id="defaultTab" style="width:900px">
+        <table cellspacing="5">
+            <tr>
+                <td colspan="6" style="color:red;"> The fields with an asterisk(<span style="color:red;">*</span>) are considered mandatory</td>
+            </tr>
+            <tr>
+
+                <td style="text-align: right;">Regimen Code <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="RegimenCode" name="RegimenCode" value="{{:RegimenCode}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Regimen Description <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="RegimenDesc" name="RegimenDesc" value="{{:RegimenDesc}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+            <tr>
+
+                <td style="text-align: right;">Extra Information</td>
+                <td style="text-align: left"> <textarea type="text" id="ExtraInfo" name="ExtraInfo" value="{{:ExtraInfo}}" class="e-field e-ejinputtext valid ">{{:ExtraInfo}}</textarea> </td>
+                <td style="text-align: right;">Drug Combination</td>
+                <td style="text-align: left"> <input type="text" id="DrugCombination" name="DrugCombination" value="{{:DrugCombination}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+            <tr>
+
+                <td style="text-align: right;">Regimen Category <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="RegimenCategoryCode" name="RegimenCategoryCode" value="{{:RegimenCategoryCode}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Regimen Classification <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="RegimenClassification" name="RegimenClassification" value="{{:RegimenClassification}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+            <tr>
+
+                <td style="text-align: right;">Standard Regimen</td>
+                <td style="text-align: left"> <input type="checkbox" id="StandardRegimen" name="StandardRegimen" checked="checked" class="e-field e-checkbox" style="width:30px" /></td>
+                <td style="text-align: right;">Is Extra Regimen</td>
+                <td style="text-align: left"> <input type="checkbox" id="IsExtra" name="IsExtra" checked="checked" class="e-field e-checkbox" style="width:30px" /> </td>
+
+            </tr>
+        </table>
+        <div id="dialog">
+
+        </div>
+    </div>
+
+</script>
+
+@*<script>
+    $(function () {
+
+        $.ajax({
+            url: "GetRegimen",
+            type: "GET",
+            dataType: "json",
+            //data: {
+            //    date1: f1,
+            //    date2: f2
+            //},
+            success: function (result) {
+                var formatData = ej.parseJSON(result);
+                var obj = $("#Grid").ejGrid("instance");
+                obj.dataSource(result);
+                obj.dataSource(formatData);
+            }
+        });
+    });
+</script>*@
+<script>
+    function OnToolbarClick(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["Regimen"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function edit(args) {
+
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            window._requestType = args.requestType;
+            $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+            $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+            $("#EditDialog_Grid_Cancel").ejButton("destroy");
+            $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+            $("#cancel").css({ "width": "100px", "height": "50px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+                     var mCategory =@Html.Raw(Json.Encode(ViewBag.RegCategory));
+                     var DropDownListDist = $('#RegimenCategoryCode').ejDropDownList({
+                          dataSource: mCategory,
+                         width: "240px",
+                         fields: { value: "RegimenCategoryCode", text: "RegimenCategoryDesc" },
+                      }).data("ejDropDownList");
+
+
+                     var mClassification =@Html.Raw(Json.Encode(ViewBag.RegClassification));
+                     var DropDownListDist = $('#RegimenClassification').ejDropDownList({
+                         dataSource: mClassification,
+                         width: "240px",
+                         fields: { value: "regimen_classification_code", text: "regimen_classification_desc" },
+                     }).data("ejDropDownList");
+
+
+            if (args.requestType == "add") {
+                document.getElementById("StandardRegimen").checked = false;
+                document.getElementById("IsExtra").checked = false;
+                //$.ajax({
+                //    url: "CheckCDCRegionNo",
+                //    type: "Get",
+                //    dataType: "json",
+                //    success: function (data) {
+                //       // alert(data);
+                //        var count = (data + 1);
+                //        $('#RegionCode').val(count);
+
+                //        //cancelss();
+                //    }
+                //});
+            }
+
+            if (args.requestType == "beginedit") {
+                var cpname = $('#RegimenDesc').val();
+                $('#' + this._id + '_dialogEdit').ejDialog("option", "title", "Edit " + cpname + "'s details"); //change dialog title
+                document.getElementById("StandardRegimen").checked = false;
+                document.getElementById("IsExtra").checked = false;
+                var gridObj = $("#Grid").data("ejGrid");
+                var _StandardRegimen = gridObj.getSelectedRecords()[0].StandardRegimen;
+                var _IsExtra = gridObj.getSelectedRecords()[0].IsExtra;
+                if (_StandardRegimen == true) {
+                    document.getElementById("StandardRegimen").checked = true;
+                }
+                if (_IsExtra == true) {
+                    document.getElementById("IsExtra").checked = true;
+                }
+            }
+        }
+
+    }
+
+    ///Function to return the dd-mm-YYYY format
+      $.validator.setDefaults({
+        //to validate all fields(hidden also)
+        ignore: [],
+
+        errorClass: 'e-validation-error',
+        //it specifies the error message display position
+        errorPlacement: function (error, element) {
+            $(error).insertAfter(element.closest(".e-widget"));
+        },
+    });
+
+
+</script>
+
+<script>
+      function savess() {
+
+          var _RegimenCode = $('#RegimenCode').val();
+          var _RegimenDesc = $('#RegimenDesc').val();
+          var _ExtraInfo = $('#ExtraInfo').val();
+          var _DrugCombination = $('#DrugCombination').val();
+          var IP = $('#RegimenCategoryCode').data("ejDropDownList");
+          var _RegimenCategoryCode = IP.option("value");
+          var Region = $('#RegimenClassification').data("ejDropDownList");
+          var _RegimenClassification = Region.option("value");
+          var _StandardRegimen = $("#StandardRegimen").is(":checked");
+          var _IsExtra = $("#IsExtra").is(":checked");
+
+
+          if (_RegimenCode == null || _RegimenCode == "") {
+              var str = "Please fill in the Regimen code";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_RegimenDesc == null || _RegimenDesc == "") {
+              var str = "Please fill in the Regmen description";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_RegimenCategoryCode == null || _RegimenCategoryCode == "") {
+              var str = "Please fill in the Regimen Category";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_RegimenClassification == null || _RegimenClassification == "") {
+              var str = "Please fill in the Regimen Classification";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else {
+              var _type = 0;
+              if (window._requestType == "beginedit") {
+                  _type = 2;
+              }
+              else if (window._requestType == "add") {
+                  _type = 1;
+              }
+              $.ajax({
+                  url: "SaveRegimen",
+                  type: "Get",
+                  dataType: "json",
+                  data: {
+                      "RegimenCode": _RegimenCode,
+                      "RegimenDesc": _RegimenDesc,
+                      "ExtraInfo": _ExtraInfo,
+                      "DrugCombination": _DrugCombination,
+                      "RegimenCategoryCode": _RegimenCategoryCode,
+                      "RegimenClassification": _RegimenClassification,
+                      "StandardRegimen": _StandardRegimen,
+                      "IsExtra": _IsExtra,
+                      "_type": _type
+                  },
+                  success: function (data) {
+                      alert(data);
+                      cancelss();
+                      var obj = $("#Grid").ejGrid("instance");
+                      obj.refreshContent();
+                  }
+              });
+          }
+
+          
+      }
+    function cancelss() {
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+    }
+</script>
+
+<style>
+    .e-grid .e-groupdroparea, /*GroupDropArea */
+    .e-grid .e-groupdroparea:hover, /*GroupDropArea Hover*/
+    .e-grid .e-cloneproperties, /*Column header clone during dragging header*/
+    .e-grid .e-groupheadercell:hover, /*HeaderCell in GroupDropArea*/
+    .e-grid td.e-active, /*During Row Selected*/
+    /*For pager items and their hover*/
+    .e-pager .e-currentitem,
+    .e-pager .e-currentitem:hover,
+    .e-pager .e-link:hover,
+    .e-pager .e-icon:hover {
+        background-color: #ea1b8d;
+    }
+
+    .e-grid .e-gridheader /*For line that separates the grid header and content*/ {
+        border-bottom-color: #ea1b8d;
+    }
+
+    .e-grid tr.e-hover /*For row hover*/ {
+        background-color: #e66aae;
+        color: #FFFFFF;
+    }
+
+    .e-grid .e-alt_row /*For Alternate row color*/ {
+        background-color: #E5E4E2; /*#99CFE3;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+        border-bottom: 1px solid #c8c8c8;
+        border-left: 1px solid #c8c8c8;
+    }
+</style>
+<style>
+    .panel-default > .panel-heading {
+        background-color: #451bb1 /*#3e1111*/;
+        color: white;
+        /*background-color:silver;*/
+        /*color: white;*/
+    }
+</style>
+
+<style type="text/css" class="cssStyles">
+    .control {
+        margin-left: 30px;
+    }
+
+    .ctrllabel {
+        padding-top: 15px;
+    }
+
+    .control {
+        margin-left: 20px;
+    }
+
+    .frame {
+        height: 250px;
+        width: 1000px;
+    }
+
+    .frame1 {
+        height: 240px;
+        width: 900px;
+    }
+
+    .txt {
+        display: block;
+        margin-bottom: 12px;
+    }
+</style>
+
+<style>
+    #lblComplaintTitle {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #c9252b;
+        vertical-align: top;
+        /*width: 700px;*/
+    }
+
+    .redLabels {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #ff0000;
+        vertical-align: top;
+        font-weight: bold;
+        /*width: 700px;*/
+    }
+
+    .myDiv {
+        font-size: 18px;
+        background-color: white;
+        color: orangered;
+        vertical-align: top;
+        text-align: center;
+        /*width: 700px;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+    }
+
+    .custom.e-js .e-header {
+        background: #c9252b;
+    }
+
+    .custom.e-js .e-content {
+        background: #ddd;
+    }
+
+    .custom .e-rbn-button.e-btn.e-select {
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    .tabstyle {
+        background: #F9F9F9;
+        border-radius: 10px;
+        border: 1px solid #99CFE3;
+        display: block;
+    }
+
+    .longcolumns {
+        width: 600px !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        border-right: 5px #666 outset !important;
+        border-left: 5px #666 outset !important;
+    }
+</style>
+
+
+
+

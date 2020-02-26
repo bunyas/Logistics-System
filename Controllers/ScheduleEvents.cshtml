@@ -1,0 +1,540 @@
+@*@model IEnumerable<mascis.ScheduleEvent>*@
+
+@using System.Collections;
+
+@{
+    ViewBag.Title = "ScheduleEvent";
+    DateTime mdate = DateTime.Today;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Schedule Event</h2>
+<div class="row">
+    <div class="col-md-2">
+        <div class="tabbable-panel">
+            <div class="tabbable-line">
+                <ul class="nav nav-tabs ">
+                    <li class="active">
+                        <a href="#tab_default_1" data-toggle="tab">Filter by venue</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_default_1">
+
+                        <p>
+                            @Html.EJ().CheckBox("ArushaSecretariat").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>Arusha</span>
+                        </p>
+
+                        <p>
+                            @Html.EJ().CheckBox("Burundi").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>Burundi</span>
+                        </p>
+                        <p>
+                            @Html.EJ().CheckBox("International").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>International</span>
+                        </p>
+                        <p>
+                            @Html.EJ().CheckBox("Kenya").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>Kenya</span>
+                        </p>
+                        <p>
+                            @Html.EJ().CheckBox("Rwanda").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>Rwanda</span>
+                        </p>
+                        <p>
+                            @Html.EJ().CheckBox("SouthSudan").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>South Sudan</span>
+                        </p>
+
+
+                        <p>
+                            @Html.EJ().CheckBox("Tanzania").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>Tanzania</span>
+                        </p>
+                        <p>
+                            @Html.EJ().CheckBox("Uganda").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>Uganda</span>
+                        </p>
+                        <p>
+                            @Html.EJ().CheckBox("VideoConference").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>Video Conference</span>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-10">
+
+        @{List<string> view = new List<string>() { "Day", "Week", "WorkWeek", "Month", "Agenda" };}
+        @(Html.EJ().Schedule("Schedule1")
+        .Width("100%")
+        .Height("600px")
+        .CellWidth("97px")
+        .Views(view)
+        .CurrentView(CurrentView.Month)
+        .DateFormat("MM/dd/yyyy")
+        .EnableLoadOnDemand(true)
+        .CurrentDate(mdate)
+        .ShowAppointmentNavigator(false)
+        .ShowQuickWindow(false)
+         .ScheduleClientSideEvents(x => x.AppointmentWindowOpen("onAppointmentWindowOpen"))
+         //Configure the blockout settings
+         .BlockoutSettings(f => f.Enable(true).TemplateId("#blocktemplate")
+              .Datasource((IEnumerable)ViewBag.blockDataSource)
+              .Id("Id")
+              .Subject("Subject")
+              .StartTime("StartTime")
+              .EndTime("EndTime")
+              .IsBlockAppointment("IsBlockAppointment")
+              .ResourceId("ResourceId")
+              .IsAllDay("IsAllDay"))
+
+         .Resources(res =>
+         {
+             res.Field("VenueCode").Title("Owner").Name("Owners").AllowMultiple(true)
+             .ResourceSettings(flds => flds.Datasource((System.Collections.IEnumerable)ViewBag.Owners)
+             .Text("Text").Id("Id").GroupId("GroupId").Color("Color")).Add();
+         })
+        .Group(gr =>
+        {
+            gr.Resources(ViewBag.Resources);
+        })
+            .AppointmentSettings(fields => fields.Datasource(ds => ds.URL("GetRecords").InsertURL("Batch").UpdateURL("Batch").RemoveURL("Batch").Adaptor(AdaptorType.UrlAdaptor))
+            .Id("Id")
+            .Subject("Subject")
+            .StartTime("StartTime")
+            .EndTime("EndTime")
+            .Description("Description")
+            .AllDay("AllDay")
+            .StartTimeZone("StartTimeZone")
+            .EndTimeZone("EndTimeZone")
+            .Recurrence("Recurrence")
+            .RecurrenceRule("RecurrenceRule")
+            .ResourceFields("VenueCode"))
+)
+    </div>
+</div>
+<div id="customWindow" style="display: none">
+    <div id="appWindow">
+        <form id="custom">
+            <table width="100%" cellpadding="5">
+                <tbody>
+                    <tr style="display: none">
+                        <td>
+                           Id:
+                        </td>
+                        <td colspan="2">
+                            <input id="customId" type="text" name="Id" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Subject:</b> 
+                        </td>
+                        <td colspan="2">
+                            <input id="subject" type="text" value="" name="Subject" onfocus="temp()" style="width: 100%" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Description:</b> 
+                        </td>
+                        <td colspan="2">
+                            <textarea id="customdescription" name="Description" rows="3" cols="50" style="width: 100%; resize: vertical"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Attendees (Invited):</b>
+                        </td>
+                        <td colspan="2">
+                            <textarea id="participation" name="participation" rows="3" cols="50" style="width: 100%; resize: vertical"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Attendees (attended):</b>
+                        </td>
+                        <td colspan="2">
+                            <textarea id="participationattended" name="participationattended" rows="3" cols="50" style="width: 100%; resize: both"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>StartTime:</b>
+                            
+                        </td>
+                        <td>
+                            @Html.EJ().DateTimePicker("StartTime").Width("150px")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>EndTime:</b>
+                            
+                        </td>
+                        <td>
+                            @Html.EJ().DateTimePicker("EndTime").Width("150px")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="customcheck">AllDay:</div>
+                            <div class="customcheck">
+                                <input id="allDay" type="checkbox" name="AllDay" onchange="allDayCheck()" />
+                            </div>
+                            <div class="customcheck">Recurrence:</div>
+                            <div>
+                                <input id="recurrence" type="checkbox" name="Recurrence" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr id="summaryTr" style="display:none;">
+                        <td colspan="3">
+                            <div class="recSummary">Summary:</div>
+                            <div>
+                                <label id="recSummary" name="Summary"></label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr id="editor" style="display:none;">
+                        <td colspan="3">
+                            <div><a id="recedit" onclick="recurrenceRule()">Edit</a></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        <div>
+            <button type="submit" onclick="cancel()" id="buttonCancel" style="float:right;margin-right:20px;margin-bottom:10px;">Cancel</button>
+            <button type="submit" onclick="save()" id="buttonSubmit" style="float:right;margin-right:20px;margin-bottom:10px;">Submit</button>
+        </div>
+    </div>
+    <div id="recWindow" style="display: none">
+        <div style="margin: 0 15%;">
+            @(Html.EJ().RecurrenceEditor("recurrenceEditor").SelectedRecurrenceType(0).Frequencies(new List<string> { "daily", "weekly", "monthly", "yearly", "everyweekday" }))
+        </div>
+        <div>
+            <button type="submit" id="recCancel">Cancel</button>
+            <button type="submit" id="recSubmit">Submit</button>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        // defining sub-controls used within custom appointment window
+        $("#buttonCancel").ejButton({ width: '85px' });
+        $("#buttonSubmit").ejButton({ width: '85px' });
+        $("#recurrence").ejCheckBox({ change: "recurCheck" });
+        $("#recCancel,#recSubmit").ejButton({ click: "onRecurrenceClick" });
+        // defining dialog control to be used as custom appointment window
+        $("#customWindow").ejDialog({
+            width: 600,
+            height: "auto",
+            position: { X: 200, Y: 100 },
+            showOnInit: false,
+            enableModal: true,
+            title: "Events Window",
+            enableResize: false,
+            allowKeyboardNavigation: false,
+            close: "clearFields"
+        });
+    });
+
+    function onAppointmentWindowOpen(args) {
+        args.cancel = true; // prevents the display of default appointment window
+        var schObj = $("#Schedule1").data("ejSchedule");
+        // When double clicked on the Scheduler cells, fills the StartTime and EndTime fields appropriately
+        $("#StartTime").ejDateTimePicker({ value: args.startTime });
+        $("#EndTime").ejDateTimePicker({ value: args.endTime });
+        $("#recWindow").css("display", "none");
+        $("#appWindow").css("display", "");
+        if (!ej.isNullOrUndefined(args.target)) {
+            // When double clicked on the Scheduler cells, if the target is allDay or month cells – only then enable check mark on the allDay checkbox
+            if ($(args.target.currentTarget).hasClass("e-alldaycells") || (args.startTime.getHours() == 0 && args.endTime.getHours() == 23))
+                $("#allDay").prop("checked", true);
+            else
+                args.model.currentView == "month" ? $("#allDay").prop("checked", true) : $("#allDay").prop("checked", false);
+            // If the target is allDay or month cells – disable the StartTime and EndTime fields
+            $("#StartTime,#EndTime").ejDateTimePicker({
+                enabled: ($(args.target.currentTarget).hasClass("e-alldaycells") || (args.startTime.getHours() == 0 && args.endTime.getHours() == 23) || $(args.target.currentTarget).hasClass("e-monthcells") || args.model.currentView == "month") ? false : true
+            });
+        }
+        // If double clicked on the appointments, fill the custom appointment window fields with appropriate values.
+        if (!ej.isNullOrUndefined(args.appointment)) {
+            $("#customId").val(args.appointment.Id);
+            $("#subject").val(args.appointment.Subject);
+            $("#StartTime").ejDateTimePicker({ value: new Date(args.appointment.StartTime) });
+            $("#EndTime").ejDateTimePicker({ value: new Date(args.appointment.EndTime) });
+            $("#recurrence").ejCheckBox({ checked: args.appointment.Recurrence });
+            if (args.appointment.Recurrence) {
+                $("#editor").css("display", "");
+                $("#recSummary").html(args.appointment.RecurrenceRule);
+                $("#summaryTr").css("display", "");
+                recObj._recRule = args.appointment.RecurrenceRule; // app recurrence rule is stored in Recurrence editor object
+                recObj.recurrenceRuleSplit(args.appointment.RecurrenceRule, args.appointment.recurrenceExDate); //splitting the recurrence rule
+                recObj.showRecurrenceSummary(args.appointment.Id); // updating the recurrence rule in Recurrence editor
+            }
+        }
+        $("#customWindow").ejDialog("open");
+    }
+
+    function save() {
+        // checks if the subject value is not left blank before saving it.
+        if ($.trim($("#subject").val()) == "") {
+            $("#subject").addClass("error");
+            return false;
+        }
+        var obj = {}, temp = {}, rType;
+        var formElement = $("#customWindow").find("#custom").get(0);
+        // looping through the custom form elements to get each value and form a JSON object
+        for (var index = 0; index < formElement.length; index++) {
+            var columnName = formElement[index].name, $element = $(formElement[index]);
+            if (columnName != undefined) {
+                if (columnName == "")
+                    columnName = formElement[index].id.replace(this._id, "");
+                if (columnName != "" && obj[columnName] == null) {
+                    var value = formElement[index].value;
+                    if (columnName == "Id" && value != "")
+                        value = parseInt(value);
+                    if ($element.hasClass("e-datetimepicker"))
+                        value = new Date(value);
+                    if (formElement[index].type == "checkbox")
+                        value = formElement[index].checked;
+                    obj[columnName] = value;
+                }
+            }
+        }
+        obj["RecurrenceRule"] = (obj.Recurrence) ? recurRule : null;
+        $("#customWindow").ejDialog("close");
+        var object = $("#Schedule1").data("ejSchedule");
+        object.saveAppointment(obj);
+        clearFields();
+    }
+
+    // This function executes when the submit/cancel button in the recurrence editor window is pressed.
+    function onRecurrenceClick(args) {
+        if ($(args.e.currentTarget).attr("id") == "recSubmit") {
+            recObj = $("#recurrenceEditor").ejRecurrenceEditor('instance');
+            recObj.closeRecurPublic();
+            recurRule = recObj._recRule;
+            $("#recSummary").html(recurRule);
+        }
+        else
+            if (($(args.e.currentTarget).attr("id") == "recCancel")) {
+                if ($("#recSummary").html() == "") {
+                    $("#editor").css("display", "none");
+                    $("#recurrence").ejCheckBox({ checked: false });
+                }
+                else
+                    $("#recurrence").ejCheckBox({ checked: true });
+            }
+        $("#recWindow").css("display", "none");
+        $("#appWindow").css("display", "");
+        if ($("#recSummary").html() != "")
+            $("#summaryTr").css("display", "");
+    }
+
+    // This function executes when the Edit anchor tag in the edit appointment window is clicked.
+    function recurrenceRule() {
+        $("#recWindow").css("display", "");
+        $("#appWindow").css("display", "none");
+    }
+
+    // Clears all the field values of the custom window after saving appointments
+    function clearFields() {
+        $("#customId").val("");
+         
+        $("#subject").val("");
+        $("#recSummary").html("");
+        $("#summaryTr").css("display", "none");
+        $("#recurrence").ejCheckBox({ checked: false });
+        $("#editor").css("display", "none");
+        $("#StartTime,#EndTime").ejDateTimePicker({ enabled: true });
+    }
+
+    // This function executes when the recurrence checkbox is checked in the custom appointment window
+    function recurCheck(args) {
+        if (args.isInteraction) {
+            if ($("#recurrence").get(0).checked == true) {  // Displays the recurrence field, when recurrence checkbox is checked.
+                $("#recWindow").css("display", "");
+                $("#appWindow").css("display", "none");
+                $("#editor").css("display", "");
+            }
+            else {
+                $("#recWindow").css("display", "none");
+                $("#editor").css("display", "none");
+                $("#recSummary").html("");
+                $("#summaryTr").css("display", "none");
+            }
+        }
+    }
+
+    // This function executes when the All-day checkbox is checked in the custom appointment window
+    function allDayCheck() {
+        // Disables and sets the specific hours to the StartTime and EndTime fields, when the all-day checkbox is checked
+        if ($("#allDay").prop("checked")) {
+            var a = $("#StartTime").data("ejDateTimePicker").model.value;
+            a.setHours(0, 0, 0);
+            var b = $("#EndTime").data("ejDateTimePicker").model.value;
+            b.setHours(23, 59, 0);
+            $("#StartTime").ejDateTimePicker({
+                value: new Date(a),
+                enabled: false
+            });
+            $("#EndTime").ejDateTimePicker({
+                value: new Date(b),
+                enabled: false
+            });
+        } else {
+            $("#StartTime").ejDateTimePicker({
+                enabled: true
+            });
+            $("#EndTime").ejDateTimePicker({
+                enabled: true
+            });
+        }
+    }
+
+    // This function executes when the subject text field is currently being focused
+    function temp() {
+        $("#subject").removeClass("error");
+    }
+
+    // This function executes when the cancel button in the custom appointment window is pressed.
+    function cancel() {
+        recObj = $("#recurrenceEditor").ejRecurrenceEditor('instance');
+        clearFields();
+        $("#customWindow").ejDialog("close");
+    }
+</script>
+
+
+
+
+ <script>
+     // This function executes when the subject text field is currently being focused
+     function temp() {
+         $("#subject").removeClass("error");
+     }
+
+ </script>
+
+<script type="text/javascript">
+
+     // To Validate the Subject field.
+     $("#subject").focusout(function () {
+         if ($.trim($("#subject").val()) == "") {
+             $("#subject").addClass("validation"); 
+             return false;
+         }
+
+     })
+    
+     // To Validate the Time duration of the appointments
+     $("#EndTime").focusout(function () {
+ //Validation that start date is not later than end date
+         //var objactvc = $("#MeetingType").data("ejDropDownList");
+         //var objDistAct = $("#DistributionOfActivityId").data("ejDropDownList");
+
+         //if (objactvc.option("value") == null)
+         //{ }
+         //else {
+              
+         //}
+       
+     })
+
+     // To Validate the Time duration of the appointments
+     $("#StartTime").focusout(function () {
+         var days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+         var dateTimeObj = $("#StartTime").ejDateTimePicker('instance');
+         var startdate = dateTimeObj.option('value');
+         var dayofweek = startdate.getDay();
+          
+         
+          
+     })
+
+     $("#City").focusout(function () {
+         if ($.trim($("#City").val()) == "") {
+             $("#City").addClass("validation");
+             return false;
+         }
+     })
+
+    //$("#City").val("");
+
+
+</script>
+
+ 
+<style>
+     
+    #ejArushaSecretariat div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #2EDFF3;
+        color: white;
+    }
+
+    #ejBurundi div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #FF0000;
+        color: white;
+    }
+
+    #ejInternational div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #800080;
+        color: white;
+    }
+
+    #ejKenya div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #FF1493;
+        color: white;
+    }
+
+    #ejRwanda div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #A9A9A9;
+        color: white;
+    }
+
+    #ejSouthSudan div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #FFE5CC;
+        color: white;
+    }
+
+    #ejTanzania div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #3422DA;
+        color: white;
+    }
+
+    #ejUganda div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #6B8E23;
+        color: white;
+    }
+
+    #ejVideoConference div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #FFA500;
+        color: white;
+    }
+
+    .row .cols-prop-area {
+        margin-left: 0px;
+        width: 100%;
+    }
+ 
+    .customcheck {
+        float: left;
+        margin-right: 10px;
+    }
+
+    .error {
+        background-color: #FF8A8A;
+    }
+
+    #custom table td {
+        padding: 5px;
+    }
+</style>
+

@@ -1,0 +1,142 @@
+﻿
+@using System.Web.Mvc.Html
+@{
+    ViewBag.Title = "OrderTracking";
+    Layout = "~/Views/Shared/_LayoutFacilityHSIP.cshtml";
+}
+ 
+<br />
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="breadcrumb">
+            @*<li>
+                <a href="~/Secretariat/Dashboards/db_secretariat_overall.aspx" runat="server">Home</a>
+            </li>*@
+            <li class="active">
+                <strong>Order Tracking Details: Detailed Report </strong>
+            </li>
+        </ol>
+    </div>
+</div>
+@using (Html.BeginForm())
+{<div>
+        <div class="row">
+            <div class="col-lg-3">
+
+                <p> Order Number <input type="text" id="OrderNumber" name="OrderNumber" class="e-fields e-editable" /></p>
+            </div>
+
+            @*<div class="col-lg-3">
+                    <p>Product Category</p>
+                    <p><input type="text" id="ProductCategoryId"  /></p>
+                </div>*@
+
+
+            <div class="col-lg-3">
+
+                <input class="btn btn-danger" type="button" value="Load Report">
+            </div>
+
+        </div>
+    </div>
+        <div class="clear"> </div>
+}
+<br />
+ 
+
+<div id="mqpartial" class="tabstyle">
+
+</div>
+
+
+<script>
+    $(function () {
+        $(':button').click(function () {
+            //var Product_CategoryId = $('#ProductCategoryId').data("ejDropDownList");
+            //var Category = Product_CategoryId.option('value');
+
+            var Order_No = $('#OrderNumber').val();//$("#household_code").val();
+
+            // Home is your controller, Index is your action name
+            $("#mqpartial").load("@Url.Action("OrderTracking", "ReportsModule")",
+                {
+                    //'ProductCategory': Category, 
+                    'Order_Number': Order_No
+                },
+                                            function (response, status, xhr) {
+                                                if (status == "error") {
+                                                    alert("An error occurred while loading the results.");
+                                                }
+                                            }
+            );
+
+            //$.ajax({
+            //    url: "OrderTracking_1",
+            //    type: "Get",
+            //    dataType: "json",
+            //    data: {
+            //        "ProductCategory": Category,
+            //        "Order_Number": Order_No,
+            //    },
+            //    success: function (data) {
+            //        //var formatData = ej.parseJSON(data);
+            //        //var grid = $("#grid").ejGrid("instance");
+            //        //grid.dataSource(data);
+            //        //grid.dataSource(formatData);
+            //    }
+                  
+            //});
+        });
+    });
+
+</script>
+<script>
+
+    function myfunc() {
+
+        var Product_CategoryId = $('#ProductCategoryId').data("ejDropDownList");
+        var Category = Product_CategoryId.option('value');
+        var Order_No = $('#OrderNumber').val();//$("#household_code").val();
+
+        $.ajax({
+            url: "OrderTracking_1",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "ProductCategory": Category,
+                "Order_Number": Order_No,
+            },
+            success: function (data) {
+                //var formatData = ej.parseJSON(data);
+                //var grid = $("#grid").ejGrid("instance");
+                //grid.dataSource(data);
+                //grid.dataSource(formatData);
+            }
+        });
+    }
+
+    $.ajax({
+        //url: 'HAT/Districts',
+        url: 'GetProductCategoryData',
+        //data: JSON.stringify(mid),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        type: 'GET',
+        success: function (data) {
+            if (data.length > 0) {
+                var DropDownListDist = $('#ProductCategoryId').ejDropDownList({
+                    dataSource: data,
+                    width: "250px",
+                    fields: { value: "category_code", text: "category_desc" },
+                }).data("ejDropDownList");
+            }
+        },
+    });
+    
+
+</script>
+
+
+
+
+

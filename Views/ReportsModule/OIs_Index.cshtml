@@ -1,0 +1,142 @@
+﻿
+@{
+    ViewBag.Title = "OIs_Index";
+    Layout = "~/Views/Shared/_LayoutFacilityHSIP.cshtml";
+}
+
+<br />
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="breadcrumb">
+            @*<li>
+                    <a href="~/Secretariat/Dashboards/db_secretariat_overall.aspx" runat="server">Home</a>
+                </li>*@
+            <li class="active">
+                <strong>Order Details: Detailed OIs Report </strong>
+            </li>
+        </ol>
+    </div>
+</div>
+@using (Html.BeginForm())
+{<div>
+        <div class="row">
+
+            <div class="col-lg-3">
+                <p>Facility</p>
+                <p><input type="text" id="FacilityCode" name="FacilityCode" value="{{:FacilityCode}}" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>Start Date</p>
+                <p><input type="text" id="StartDate" name="StartDate" value="{{:StartDate}}" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>End Date</p>
+                <p><input type="text" id="EndDate" name="EndDate" value="{{:EndDate}}" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <br />
+            <div class="col-lg-3">
+                <input class="btn btn-danger" type="button" value="Load Report">
+            </div>
+
+        </div>
+    </div>
+    <div class="clear"> </div>
+}
+<br />
+
+
+<div id="mqpartial" class="tabstyle">
+
+</div>
+
+
+<script>
+    $("#StartDate").ejDatePicker(
+        {
+            width: '240px',
+            maxDate: new Date(),
+            dateFormat: "dd/MM/yyyy"
+        }
+    );
+    $("#EndDate").ejDatePicker(
+        {
+            width: '240px',
+            maxDate: new Date(),
+            dateFormat: "dd/MM/yyyy"
+        }
+    );
+
+    $(function () {
+        $(':button').click(function () {
+
+            var facCode = $('#FacilityCode').data("ejDropDownList");
+            var fcCode = facCode.option("value");
+
+            var dateobject = $("#StartDate").data("ejDatePicker");
+            var StartDate = dateobject.getValue();
+
+            var dateobject1 = $("#EndDate").data("ejDatePicker");
+            var EndDate = dateobject1.getValue();
+
+            //var datepickObj = $("#DateOfPhysicalCount01").data('ejDatePicker');
+            //var StartDate = datepickObj.option('value');
+
+            //var st = $("#DateOfPhysicalCount02").data('ejDatePicker');
+            //var EndDate = st.option('value');//StartDate
+
+            // Home is your controller, Index is your action name
+            $("#mqpartial").load("@Url.Action("OIs", "ReportsModule")",
+                {
+                    'FacilityCode': fcCode,
+                    'sdate': StartDate,
+                    'edate': EndDate
+                },
+                                            function (response, status, xhr) {
+                                                if (status == "error") {
+                                                    alert("An error occurred while loading the results.");
+                                                }
+                                            }
+            );
+
+
+        });
+    });
+
+</script>
+<script>
+
+    $.ajax({
+        //url: 'HAT/Districts',
+        url: 'GetFacilityData',
+        //data: JSON.stringify(mid),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        type: 'GET',
+        success: function (data) {
+            if (data.length > 0) {
+                var DropDownListDist = $('#FacilityCode').ejDropDownList({
+                    dataSource: data,
+                    width: "240px",
+                    fields: { value: "FacilityCode", text: "Facility" }, readOnly: true
+                }).data("ejDropDownList");
+                var ddl2 = $('#FacilityCode').ejDropDownList("instance");
+                var fc = data[0].FacilityCode;
+                console.log(JSON.stringify(fc));
+                ddl2.selectItemByValue(fc);
+            }
+
+        },
+
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+

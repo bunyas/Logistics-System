@@ -1,0 +1,152 @@
+﻿
+@{
+    ViewBag.Title = "Query";
+    Layout = "~/Views/Shared/_LayoutMAULT.cshtml";
+}
+@section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexMAULT", "Home")
+                </li>
+                <li class="active">
+                    <strong>Laboratory: Query</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+@using (Html.BeginForm("Query", "LMIS_Laboratory", FormMethod.Post))
+{
+    <div class="row">
+
+        <div class="col-lg-3">
+            <p>Start Of Reporting Period</p>
+            <p><input type="text" id="dp_start_date" name="dp_start_date" class="e-field e-ejinputtext valid" /></p>
+        </div>
+        <div class="col-lg-3">
+            <p>End Of Reporting Period</p>
+            <p><input type="text" id="dp_end_date" name="dp_end_date" class="e-field e-ejinputtext valid" /></p>
+        </div>
+        <div class="col-lg-3">
+            <br />
+            @Html.EJ().Button("Load").Type(ButtonType.Submit).Size(ButtonSize.Large).Text("Load")
+        </div>
+    </div>
+
+}<br />
+@(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("DataSourceGetAll").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+         .AllowFiltering().ShowColumnChooser()
+        .AllowTextWrap()
+        .AllowGrouping()
+        .ShowColumnChooser()
+        .AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+                //fields.Add("Outcome");
+                //fields.Add("Output");
+                //fields.Add("Indicator");
+                //fields.Add("Indicator_2");
+                //fields.Add("PerformanceTargetNotes");
+                //fields.Add("ExplanatoryNotes");
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    items.AddTool(ToolBarItems.Add);
+                    items.AddTool(ToolBarItems.Edit);
+                    items.AddTool(ToolBarItems.Update);
+                    items.AddTool(ToolBarItems.Cancel);
+                    items.AddTool(ToolBarItems.Search);
+                });
+            })
+        .Columns(col =>
+        {
+            col.Field("DeliveryZoneCode").HeaderText("Sector").Width("80px").Add();
+            col.Field("ImplimentingPartnerCode").HeaderText("IP").ForeignKeyField("ImplementingPartnerCode").ForeignKeyValue("ImplementingPartnerDescription").DataSource((IEnumerable<object>)ViewBag.IPDataSource).Width("150px").Add();
+            col.Field("DistrrictCode").HeaderText("District").ForeignKeyField("ID").ForeignKeyValue("DESC").DataSource((IEnumerable<object>)ViewBag.DistrictDataSource).Width("100px").Add();
+            col.Field("SAP_Code").HeaderText("SAP Code").Width("80px").Add();
+            col.Field("FacilityCode").HeaderText("Facility").Width("80px").Add();
+            col.Field("FacilityCode").HeaderText("Facility").ForeignKeyField("ID").ForeignKeyValue("DESC").DataSource((IEnumerable<object>)ViewBag.FacilityDataSource).Width("250px").Add();
+            col.Field("SupportedByMAUL").HeaderText("Supported By MAUL").Width("80px").Add();
+            col.Field("IsAccredited").HeaderText("Accredited").Width("90px").Add();
+            col.Field("level_of_care").HeaderText("LoC").ForeignKeyField("level_of_care_code").ForeignKeyValue("level_of_care").DataSource((IEnumerable<object>)ViewBag.LoCDataSource).Width("80px").Add();
+            col.Field("StartDate").HeaderText("Start Date").Width("80px").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("EndDate").HeaderText("End Date").Width("80px").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("DatePrepared").HeaderText("Date Prepared").Width("80px").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("product_code").HeaderText("Product Code").Width("80px").Add();
+            col.Field("Product_SAP_Code").HeaderText("Product SAP Code").Width("80px").Add();
+            col.Field("product_description").HeaderText("Product").Width("300px").Add();
+            col.Field("strength").HeaderText("Strength").Width("80px").Add();
+            col.Field("packsize").HeaderText("Packsize").Width("80px").Add();
+            col.Field("carton_size_pkt").HeaderText("Carton Size (ptk)").Width("80px").Add();
+            col.Field("carton_weight_kg").HeaderText("Carton Weight (kg)").Width("80px").Add();
+            col.Field("Basic_Unit").HeaderText("Basic Unit").Width("80px").Add();
+            col.Field("approved_MOH_NTG").HeaderText("Approved MOH NTG").Width("80px").Add();
+            col.Field("approved_WHO").HeaderText("Approved WHO").Width("80px").Add();
+            col.Field("approved_FDA").HeaderText("Approved FDA").Width("80px").Add();
+            col.Field("nda_registration").Width("80px").HeaderText("NDA Registration").Add();
+
+            col.Field("lab_cat_1_desc").Width("80px").HeaderText("NDA Registration").Add();
+            col.Field("lab_cat_2_desc").Width("80px").HeaderText("NDA Registration").Add();
+            col.Field("lab_cat_3_desc").Width("80px").HeaderText("NDA Registration").Add();
+            col.Field("opening_balance").Width("80px").HeaderText("Opening Balance").Add();
+            col.Field("quantity_recieved").Width("80px").HeaderText("Quantity Received").Add();
+            col.Field("consumption").Width("80px").HeaderText("Consumption").Add();
+            col.Field("losses_adjustment").Width("80px").HeaderText("Losses / Adjustment").Add();
+            col.Field("closing_balance").Width("80px").HeaderText("Closing Balance").Add();
+            col.Field("quantity_to_order").Width("80px").HeaderText("Quantity To Order").Add();
+            col.Field("quantity_allocated").Width("80px").HeaderText("Quantity Allocated").Add();
+            col.Field("total_cost").Width("80px").HeaderText("Total Cost").Add();
+            col.Field("comments").Width("80px").HeaderText("Comments").Add();
+            col.Field("EditedBy").Width("80px").HeaderText("Edited By").Add();
+            col.Field("EditedDate").Width("80px").HeaderText("Edited Date").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("RecordStatus").Width("80px").HeaderText("Record Status").Add();
+            col.Field("OnlyConsummableProducts").Width("80px").HeaderText("Consummable Products").Add();
+            col.Field("FinalSubmission").Width("80px").HeaderText("Final Submission").Add();
+            col.Field("Facility_UserName").Width("80px").HeaderText("Facility UserName").Add();
+            col.Field("RFSO_SentBackTofacility").Width("80px").HeaderText("RFSO Sent Back To Facility").Add();
+            col.Field("RFSO_SentBackBy").Width("80px").HeaderText("RFSO Sent Back By").Add();
+            col.Field("RFSO_SentBackDate").Width("80px").HeaderText("RFSO Sent Back Date").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("RFSO_ApprovedBy").Width("80px").HeaderText("RFSO Approved By").Add();
+            col.Field("RFSO_DateOfApproval").Width("80px").HeaderText("RFSO Date Of Approval").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("RFSO_ApproveOrder").Width("80px").HeaderText("RFSO Approve Order").Add();
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete"); })
+)
+
+<script>
+    $(function () {
+        $("#dp_start_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"}
+        );
+        $("#dp_end_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"}
+        );
+    });
+</script>

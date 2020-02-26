@@ -1,0 +1,302 @@
+﻿
+@{
+    ViewBag.Title = "OrderTracking";
+    Layout = "~/Views/Shared/_LayoutFacilityHSIP.cshtml";
+}
+
+<h2>Order Tracking History Module</h2>
+
+ @section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexFacilityHSIP", "Home")
+                </li>
+                <li class="active">
+                    <strong>Facility: Order Tracking Module</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+
+@using (Html.BeginForm("OrderTracking", "OrderTracking", FormMethod.Post))
+{
+    <div class="col-lg-3">
+        <p>Order Number</p>
+        <p><input type="text" id="OrderNumber" width="250" class="e-field e-ejinputtext valid" /></p>
+    </div>
+
+    <div class="col-lg-3">
+        <p>Product Category</p>
+        <p><input type="text" id="ProductCategoryId" name="ProductCategoryId" value="{{:ProductCategoryId}}" class="e-field e-ejinputtext valid" /></p>
+        </div>
+<hr/>
+    <div class="col-lg-3">
+        <div class="col-sm-2">
+            @*<hr />*@
+            @Html.EJ().Button("Load").Type(ButtonType.Submit).Size(ButtonSize.Large).Text("Search")
+        </div>
+    </div>
+}
+<br />
+
+<script>
+
+    $.ajax({
+        //url: 'HAT/Districts',
+        url: 'GetProductCategoryData',
+        //data: JSON.stringify(mid),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        type: 'GET',
+        success: function (data) {
+            if (data.length > 0) {
+                var DropDownListDist = $('#ProductCategoryId').ejDropDownList({
+                    dataSource: data,
+                    width: "250px",
+                    fields: { value: "category_code", text: "category_desc" },
+                }).data("ejDropDownList");
+            }
+        },
+    });
+       @*var mfacility =@Html.Raw(Json.Encode(ViewBag.FacilityDataSource));
+       var mStatus =@Html.Raw(Json.Encode(ViewBag.OrderStatusDataSource));*@
+
+</script>
+
+@(Html.EJ().Grid<object>
+        ("grd")
+        .Datasource(datasource => datasource.URL("GetData").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+         .AllowFiltering().ShowColumnChooser()
+        .AllowTextWrap()
+        .AllowGrouping()
+
+        .EnableAltRow(true)
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .EditSettings(edit => { edit.AllowEditing().EditMode(EditMode.Batch); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    items.AddTool(ToolBarItems.PrintGrid);
+                    items.AddTool(ToolBarItems.Search);
+                    //items.AddTool(ToolBarItems.Cancel);
+                });
+            })
+        .Columns(col =>
+        {
+            col.Field("OrderStatusId").AllowEditing(false).HeaderText("Order Status").ForeignKeyField("StatusId").ForeignKeyValue("Status").DataSource((IEnumerable<Object>)ViewBag.OrderStatusDataSource).Add();
+            col.Field("OrderNumber").AllowEditing(false).HeaderText("OrderNumber").Add();
+            col.Field("OrderType").AllowEditing(false).HeaderText("Order Type").Add();
+            col.Field("category_desc").AllowEditing(false).HeaderText("Product Category").Add();
+            col.Field("DatePrepared").AllowEditing(false).HeaderText("Date prepared").Format("{0:MM//yyyy}").Add();
+            col.Field("OrderStatusDateChanged").AllowEditing(false).HeaderText("Date Changed").Format("{0:MM//yyyy}").Add();
+            col.HeaderText("Order Status Rating").Template("#columnTemplate").Add();
+        })
+         .ChildGrid(child =>
+         {
+             child.Datasource(ds => ds.Json(ViewBag.Orders).Adaptor(AdaptorType.RemoteSaveAdaptor))
+               .QueryString("OrderNumber")
+               .EnableAltRow(true)
+               .AllowPaging()
+               // .AllowFiltering().ShowColumnChooser()
+
+               .AllowTextWrap()
+               .AllowGrouping()
+               .AllowKeyboardNavigation(true)
+               .GroupSettings(group => { group.ShowGroupedColumn(true); })
+               .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+               //.FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+               //.EditSettings(edit => { edit.AllowEditing().EditMode(EditMode.Batch); })
+               .ToolbarSettings(toolbar =>
+               {
+                   toolbar.ShowToolbar().ToolbarItems(items =>
+                   {
+                       items.AddTool(ToolBarItems.PrintGrid);
+                       items.AddTool(ToolBarItems.Search);
+                       //items.AddTool(ToolBarItems.Cancel);
+                   });
+               })
+                .Columns(col =>
+                {
+                    col.Field("SAP_code").Width("100px").HeaderText("Product SAP Code").TextAlign(TextAlign.Right).Add();
+                    col.Field("product_description").Width("250px").HeaderText("Product").Add();
+                    col.Field("packsize").Width("100px").HeaderText("Packsize").Add();
+                    col.Field("strength").Width("100px").HeaderText("Strength").Add();
+                    col.Field("Quantity_Required").Width("120px").HeaderText("Quantity Required").Add();
+                    col.Field("Quantity_Allocated").Width("120px").HeaderText("Quantity Allocated").Add();
+                    col.Field("Notes").Width("150px").HeaderText("Facility Comments").Add();
+                    col.Field("RFSONotes").Width("150px").HeaderText("SCTO Comments").Add();
+                });
+         }).ClientSideEvents(eve => { eve.QueryCellInfo("queryCellInfo"); eve.TemplateRefresh("template"); })
+)
+
+<script>
+
+    //   $(function () {
+
+    //    $("#grd").ejGrid({
+    //        dataSource: ej.DataManager({ url: "GetData", adaptor: "UrlAdaptor" }),
+    //        toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.PrintGrid, 'search'] },
+    //        //editSettings: { allowEditing: true, editMode: 'batch' },
+    //        isResponsive: true,
+    //        enableResponsiveRow: true,
+    //        allowPaging: true,
+    //        allowFiltering: true,
+    //        //selectionType: "multiple",
+    //        filterSettings: {
+    //            filterType: "excel"
+    //        },
+
+    //        allowTextWrap: true,
+    //        allowResizeToFit: true,
+    //        showStackedHeader: true,
+    //        minWidth: 400,
+    //        allowSorting: true,
+    //        allowScrolling: true,
+    //        allowReordering: true,
+    //        scrollSettings: { width: "100%", height: "100%" },
+    //        queryCellInfo:"queryCellInfo",
+    //        columns: [
+    //            //{ field: "Status", width: 200, headerText: "Order Status", allowEditing: false },
+    //            { field: "OrderStatusId", width: 100, headerText: "Order Status", foreignKeyField: "StatusId", foreignKeyValue: "Status", dataSource: mStatus },
+    //           // { field: "District_Name", headerText: "District Name", allowEditing: false, width: 100, visible: true },
+    //            //{ field: "ImplementingPartnerDescription", width: 80, headerText: "Implementing Partner", allowEditing: false },
+    //           // { field: "level_of_care", width: 100, headerText: "Level of Care", allowEditing: false },
+    //           // { field: "Facility", width: 100, headerText: "Facility", allowEditing: false },
+    //            { field: "OrderNumber", width: 100, headerText: "Order Number", allowEditing: false},
+    //            { field: "OrderType", width: 100, headerText: "Order Type", allowEditing: false },
+    //            { field: "category_desc", width: 100, headerText: "Product Category", allowEditing: false },
+    //            //{ field: "OrderStatusChangedBy", width: 100, headerText: "Order Status Changed By", allowEditing: false },
+    //           // { field: "OrderStatusDateChanged", width: 100, headerText: "Date Changed", allowEditing: false, format: "{0:dd/MM/yyyy}" },
+    //            { field: "DatePrepared", width: 100, headerText: "Date Prepared", allowEditing: false, format: "{0:dd/MM/yyyy}" },
+    //        ]
+    //    });
+    //});
+</script>
+
+ 
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+        grid-row-gap: 50px;
+        grid-column-gap: 10px;
+        /*background-color: #2196F3;*/
+        padding: 10px;
+    }
+
+        .grid-container > div {
+            /*background-color: rgba(255, 255, 255, 0.8);*/
+            text-align: center;
+            padding: 20px 0;
+            font-size: 30px;
+        }
+</style>
+
+<script type="text/javascript">
+    function queryCellInfo(args) {
+        //if (args.column.field == "OrderStatusId" && args.data.OrderStatusId == "1")
+        //    $(args.cell).addClass("green");
+        //else if (args.column.field == "OrderStatusId" && args.data.OrderStatusId == "3")
+        //    $(args.cell).addClass("red");
+        if (args.column.field == "OrderStatusId")
+        {
+            if (args.data.OrderStatusId == "1") {
+                $(args.cell).addClass("amber badge");
+            }
+            if (args.data.OrderStatusId == "2") {
+                $(args.cell).addClass("stop badge");
+            }
+            if (args.data.OrderStatusId == "3") {
+                $(args.cell).addClass("green badge");
+            }
+            if (args.data.OrderStatusId == "4") {
+                $(args.cell).addClass("green badge");
+            }
+            if (args.data.OrderStatusId == "6") {
+                $(args.cell).addClass("start badge");
+            }
+        }
+            
+    }
+    
+</script>
+<style type="text/css">
+    .red {
+        background-color: #c9252b;
+        color: whitesmoke;
+        font-size: larger;
+        /*font-weight: 700;*/
+        animation: mymove 5s infinite;
+    }
+
+    .green {
+        background-color: darkgreen;
+        color: whitesmoke;
+        font-size: larger;
+        /*font-weight:700;*/
+        animation: mymove 5s infinite;
+    }
+
+    .amber {
+        background-color: crimson;
+        color: whitesmoke;
+        font-size: larger;
+        /*font-weight: 700;*/ 
+        animation: mymove 5s infinite;
+    }
+
+    .stop {
+        background-color: red !important;
+        color: whitesmoke;
+        font-size: larger;
+        /*font-weight: 700;*/
+        animation: mymove 5s infinite;
+    }
+
+    .start {
+        background-color: yellow;
+        color: whitesmoke;
+        font-size: larger;
+        /*font-weight: 700;*/
+        animation: mymove 5s infinite;
+    }
+
+</style>
+
+<script type="text/x-jsrender" id="columnTemplate">
+    {{if OrderStatusId==1}}
+
+    <input type="text" class="rating" value="1" />
+
+    {{else OrderStatusId==6 }}
+
+    <input type="text" class="rating" value="2" />
+
+    {{else OrderStatusId==2 }}
+
+    <input type="text" class="rating" value="3" />
+
+    {{else OrderStatusId==3 }}
+
+    <input type="text" class="rating" value="4" />
+
+    {{else OrderStatusId==4}}
+    <input type="text" class="rating" value="5" />
+
+    {{/if}}
+</script>
+
+<script type="text/javascript">
+    function template(args) {
+        $(args.cell).find(".rating").ejRating({ allowReset: false });
+    }
+</script>

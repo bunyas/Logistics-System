@@ -1,0 +1,894 @@
+﻿@*@model IEnumerable<mascis.ScheduleEvent>*@
+
+@using System.Collections;
+@using mascis.Models;
+@{
+    ViewBag.Title = "ScheduleEvent";
+    DateTime mdate = DateTime.Today;
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+    if (User.IsInRole("MonitoringAndEvaluationOfficer"))
+    {
+        Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+    }
+    else if (User.IsInRole("CCU"))
+    {
+        Layout = "~/Views/Shared/_LayoutCCU.cshtml";
+    }
+    else if (User.IsInRole("SCTO"))
+    {
+        Layout = "~/Views/Shared/_LayoutRFSO.cshtml";
+    }
+}
+<script>
+    window.eventId = '';
+</script>
+@*<h2>Schedule Events</h2>*@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="breadcrumb">
+            @*<li>
+                    <a href="~/Secretariat/Dashboards/db_secretariat_overall.aspx" runat="server">Home</a>
+                </li>*@
+            <li class="active">
+                <strong>MAUL Calendar of activities</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-2">
+        <div class="tabbable-panel">
+            <div class="tabbable-line">
+                <ul class="nav nav-tabs ">
+                    <li class="active">
+                        <a href="#tab_default_1" data-toggle="tab">Filter by venue</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_default_1">
+
+                        <p>
+                            @Html.EJ().CheckBox("ArushaSecretariat").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>Bunga</span>
+                        </p>
+
+                        <p>
+                            @Html.EJ().CheckBox("Bunga").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>Nakasero</span>
+                        </p>
+                        <p>
+                            @Html.EJ().CheckBox("CDC").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>CDC</span>
+                        </p>
+                        <p>
+                            @Html.EJ().CheckBox("Nakasero").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>Skype</span>
+                        </p>
+                        <p>
+                            @Html.EJ().CheckBox("Warehouse").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>Ware-House</span>
+                        </p>
+
+                        <p>
+                            @Html.EJ().CheckBox("VideoConference").Checked(true).ClientSideEvents(eve => { eve.Change("onChange"); })
+                            <span>Video Conference</span>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-10">
+
+        @{List<string> view = new List<string>() { "Day", "Week", "WorkWeek", "Month", "Agenda" };}
+        @(Html.EJ().Schedule("Schedule1")
+                                                                        .Width("100%")
+                                                                        .Height("650px")
+                                                                        .CellWidth("150px")
+                                                                        .Views(view)
+                                                                        .CurrentView(CurrentView.Month)
+                                                                        .DateFormat("MM/dd/yyyy")
+                                                                        .EnableLoadOnDemand(true)
+                                                                        .CurrentDate(mdate)
+                                                                        .ShowAppointmentNavigator(false)
+                                                                        .ShowQuickWindow(false)
+                                                                        .EnableAppointmentResize(true)
+                                                                        .ReminderSettings(rem => rem.Enable(true).AlertBefore(10))
+                                                                        .ScheduleClientSideEvents(x => x.AppointmentWindowOpen("onAppointmentWindowOpen").Reminder("reminderCustom").ActionComplete("complete").AppointmentSaved("eventSaved"))
+                                                                 //Configure the blockout settings
+                                                                 .BlockoutSettings(f => f.Enable(true).TemplateId("#blocktemplate")
+                                                                      .Datasource((IEnumerable)ViewBag.blockDataSource)
+                                                                      .Id("SheduleID")
+                                                                      .Subject("Subject")
+                                                                      .StartTime("StartTime")
+                                                                      .EndTime("EndTime")
+                                                                      .IsBlockAppointment("IsBlockAppointment")
+                                                                      .ResourceId("ResourceId")
+                                                                      .IsAllDay("IsAllDay"))
+
+//.Resources(res =>
+//{
+//    res.Field("VenueCode").Title("Owner").Name("Owners").AllowMultiple(true)
+//    .ResourceSettings(flds => flds.Datasource((System.Collections.IEnumerable)ViewBag.Owners)
+//    .Text("Text").Id("Id").GroupId("GroupId").Color("Color")).Add();
+//}
+//)
+//.Group(gr =>
+//    {
+//        gr.Resources(ViewBag.Resources);
+//    }
+//)
+.AppointmentSettings(fields => fields.Datasource(ds => ds.URL("GetRecords").InsertURL("Add").UpdateURL("Update").RemoveURL("Delete").Adaptor(AdaptorType.UrlAdaptor))
+                                                            //.AppointmentSettings(fields => fields.Datasource(ds => ds.URL("GetRecords").InsertURL("Batch").UpdateURL("Batch").RemoveURL("Batch").Adaptor(AdaptorType.UrlAdaptor))
+                                                            .Id("SheduleID")
+                                                            .Subject("Subject")
+                                                            .StartTime("StartTime")
+                                                            .EndTime("EndTime")
+                                                            .Description("Description")
+                                                            .AllDay("AllDay")
+                                                            .StartTimeZone("StartTimeZone")
+                                                            .EndTimeZone("EndTimeZone")
+                                                            .Recurrence("Recurrence")
+                                                            .RecurrenceRule("RecurrenceRule")
+                                                            .ResourceFields("VenueCode"))
+        )
+    </div>
+</div>
+
+<div id="customWindow" style="display: none">
+    <div id="appWindow">
+        <form id="custom" style="padding-left:30px;">
+            <table cellpadding="5" style="width:150%; margin-left:-20px; margin-right:-20px;">
+                <tbody>
+                    <tr style="display: none">
+                        <td>
+                            Shedule ID:
+                        </td>
+                        <td colspan="2">
+                            <input id="Id" type="text" value="{{:Id}}" name="Id" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Subject:
+                        </td>
+                        <td colspan="2">
+                            <textarea id="subject" name="subject" rows="3" onfocus="temp()" cols="50" style="width: 100%; resize: vertical"></textarea>
+                            @*<input id="subject" type="text" value="" name="Subject" onfocus="temp()" style="width: 100%" />*@
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Description:
+                        </td>
+                        <td colspan="2">
+                            <textarea id="Description" name="Description" rows="3" cols="50" style="width: 100%; resize: vertical"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            StartTime:
+                        </td>
+                        <td>
+                            @Html.EJ().DateTimePicker("StartTime").Width("150px")
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>
+                            EndTime:
+                        </td>
+                        <td>
+                            @Html.EJ().DateTimePicker("EndTime").Width("150px")
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Invitees:
+                        </td>
+                        <td colspan="2">
+                            <input id="ParticipationInvitee" type="text" value="{{:ParticipationInvitee}}" name="ParticipationInvitee" style="width: 100%" />
+                        </td>
+                    </tr>
+                    @*<tr>
+            <td>
+                Attendees:
+            </td>
+            <td colspan="2">
+                <input id="ParticipationAttendee" type="text" value="{{:ParticipationAttendee}}" name="ParticipationAttendee" style="width: 100%" />
+            </td>
+        </tr>*@
+                    <tr>
+                        <td>
+                            Venue:
+                        </td>
+                        <td colspan="2">
+                            <input id="VenueCode" type="text" value="{{:VenueCode}}" name="VenueCode" style="width: 100%" />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td id="Venue_dec">
+                            Venue Location:
+                        </td>
+                        <td id="Venue_dec1" colspan="2">
+                            <input id="VenueList" type="text" value="{{:VenueList}}" name="VenueList" style="width: 100%" />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td id="Specify_dec">
+                            if Others?, Please Specify..:
+                        </td>
+                        <td id="Specify_dec1" colspan="2">
+                            <textarea id="NoEventOccuredComment" name="NoEventOccuredComment" rows="3" cols="50" style="width: 100%; resize: vertical"></textarea>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Event Category/Type:
+                        </td>
+                        <td colspan="2">
+                            <input id="EventCategory" type="text" value="{{:EventCategory}}" name="EventCategory" style="width: 100%" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="customcheck">AllDay:</div>
+                            <div class="customcheck">
+                                <input id="allDay" type="checkbox" name="AllDay" onchange="allDayCheck()" />
+                            </div>
+                            <div class="customcheck">Recurrence:</div>
+                            <div>
+                                <input id="recurrence" type="checkbox" name="Recurrence" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Select a file to upload :
+                        </td>
+                        <td>
+                            <div class="posupload">
+                                <div id="UploadInput"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div id="uploaded"></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="3">
+                            <div id="partialPlaceHolder" style="width:100%"> </div>
+                        </td>
+                    </tr>
+
+                    <tr id="summaryTr" style="display:none;">
+                        <td colspan="3">
+                            <div class="recSummary">Summary:</div>
+                            <div>
+                                <label id="recSummary" name="Summary"></label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr id="editor" style="display:none;">
+                        <td colspan="3">
+                            <div><a id="recedit" onclick="recurrenceRule()">Edit</a></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        <div>
+            <button type="submit" onclick="cancel()" id="buttonCancel" class="btn-danger" style="float:right;margin-right:20px;margin-bottom:10px;background-color:red">Cancel</button>
+            <button type="submit" onclick="save()" id="buttonSubmit" class="btn-success" style="float:right;margin-right:20px;margin-bottom:10px;background-color:green">Submit</button>
+        </div>
+    </div>
+    <div id="recWindow" style="display: none">
+        <div style="margin: 0 15%;">
+            @(Html.EJ().RecurrenceEditor("recurrenceEditor").SelectedRecurrenceType(0).Frequencies(new List<string> { "daily", "weekly", "monthly", "yearly", "everyweekday" }))
+        </div>
+        <div>
+            <button type="submit" id="recCancel">Cancel</button>
+            <button type="submit" id="recSubmit">Submit</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        // defining sub-controls used within custom appointment window
+        $("#buttonCancel").ejButton({ width: '85px' });
+        $("#buttonSubmit").ejButton({ width: '85px' });
+        $("#recurrence").ejCheckBox({ change: "recurCheck" });
+        $("#recCancel,#recSubmit").ejButton({ click: "onRecurrenceClick" });
+        // defining dialog control to be used as custom appointment window
+        $("#customWindow").ejDialog({
+            width: 900,
+            height: "auto",
+            // position: { X: 200, Y: 100 },
+            showOnInit: false,
+            enableModal: true,
+            title: "Event Scheduler",
+            enableResize: false,
+            allowKeyboardNavigation: false,
+            close: "clearFields"
+        });
+    });
+
+    function reminderCustom(args) {
+        // We should be sending emails and SMSs to the attendees
+        alert("Event Reminder");
+    }
+
+    function complete(args) {
+        // We should be sending emails and SMSs to the attendees
+        // alert(args.requestType);
+
+       if (args.requestType == "appointmentSave" || args.requestType == "appointmentEdit") {
+            //alert("This happens when the save has taken place");
+        }
+    }
+
+    function eventSaved(args) {
+        // This triggers before the save takes place
+        alert("event Saved");
+    }
+</script>
+<script>
+    var ddlinvitees;
+    var maul_staff =@Html.Raw(Json.Encode(ViewBag.MAUL_Staff));
+    //$(function () {
+    //    $('#ParticipationInvitee').ejDropDownList({
+    //        dataSource: maul_staff,
+    //        fields: { value: "cp_code", text: "cp_name" },
+    //        width: "300px",
+    //        showCheckbox: true,
+    //    });
+
+    //    ddlinvitees = $('#ParticipationInvitee').data("ejDropDownList");
+
+    //    $("#toggle").ejToggleButton({
+    //        "change": "onCheckUncheckAll",
+    //        "defaultText": "Check All",
+    //        "activeText": "Uncheck All"
+    //    });
+    //});
+
+     $(function () {
+         $.ajax({
+             url: 'getParticipationData',
+             contentType: "application/json; charset=utf-8",
+             dataType: "json",
+             type: 'GET',
+             success: function (data) {
+                 if (data.length > 0) {
+
+                     var DropDownList = $('#ParticipationInvitee').ejDropDownList({
+                         dataSource: data,
+                         width: "240px",
+                         fields: { value: "cp_code", text: "cp_name" },
+                         showCheckbox: true,
+                         //multiSelectMode: ej.MultiSelectMode.VisualMode
+                     }).data("ejDropDownList");
+                 }
+             },
+         });
+     });
+
+    function onCheckUncheckAll(args) {
+        if (args.isChecked) target.checkAll();
+        else target.unCheckAll();
+    }
+
+    function onAppointmentWindowOpen(args) {
+        if (args.requestType == "appointmentSave" || args.requestType == "appointmentEdit") {
+            //alert("This happens when the save has taken place");
+        }
+        if (args.requestType != "appointmentEdit")
+        {
+
+            $.ajax({
+
+                url: 'CompaintCount',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: 'GET',
+                data: {
+
+                },
+                success: function (data) {
+
+                    window.count = data;
+
+                    window.SheduleID = "APPOINT-" + "MED" + "-" + (window.count + 1);
+                    $('#SheduleID').val(window.SheduleID);
+                    //alert(window.SheduleID);
+                },
+
+            });
+        }
+
+        var eventCategories =@Html.Raw(Json.Encode(ViewBag.EventCategories));
+        var venues =@Html.Raw(Json.Encode(ViewBag.Venues));
+        var venuesList =@Html.Raw(Json.Encode(ViewBag.VenuesList));
+        var targetAttendees;
+        $('#Venue_dec').hide();
+        $('#Venue_dec1').hide();
+        //specify
+        $('#Specify_dec').hide();
+        $('#Specify_dec1').hide();
+        args.cancel = true; // prevents the display of default appointment window
+        var schObj = $("#Schedule1").data("ejSchedule");
+
+        var ddlinvitees = $("#ParticipationInvitee").data("ejDropDownList");
+
+
+        //clear custom values
+
+        ddlinvitees.setModel({ selectedIndex: -1 });
+        var ddlattendees = $('#ParticipationAttendee').ejDropDownList({
+            dataSource: maul_staff,
+            width: "300px",
+            showCheckbox: true,
+            fields: { value: "cp_code", text: "cp_name" },
+            //change: "selectContact",
+        }).data("ejDropDownList");
+
+        var ddlvenues = $('#VenueCode').ejDropDownList({
+            dataSource: venues,
+            width: "300px",
+            //showCheckbox: true,
+            fields: { value: "id", text: "VenueName" },
+            cascadeTo: 'VenueList',
+            cascade: "cascadeEvent",
+            change: "setVenuedetails",
+        }).data("ejDropDownList");
+
+        var ddlvenuesList = $('#VenueList').ejDropDownList({
+            dataSource: venuesList,
+            width: "300px",
+            showCheckbox: true,
+            fields: { value: "VenueListName", text: "VenueListName" },
+            //cascadeTo: 'VenueList',
+            //cascade: "cascadeEvent",
+            //change: "setVenuedetails",
+        }).data("ejDropDownList");
+        
+        var ddleventCategory = $('#EventCategory').ejDropDownList({
+            dataSource: eventCategories,
+            width: "300px",
+            //showCheckbox: true,
+            fields: { value: "CategoryId", text: "CategoryDesc" },
+            //change: "selectContact",
+        }).data("ejDropDownList");
+
+        var regcode = $('#SheduleID').val();
+        //alert(regcode);
+        $('#UploadInput').ejUploadbox({
+            saveUrl: "SaveSupportDoc?UploadInput_data=" + regcode,
+            dialogAction: { closeOnComplete: true },
+            multipleFilesSelection: true,
+            showFileDetails: false,
+            begin: "onbegin", //This passes the UploadInput_data value to the save method
+            //success: "onsuccess",
+
+            success:function (args) {
+                $("#ListFiles").append('<tr><td>' + args.files.name + " has been uploaded successfully" + '</td></tr>');
+            },
+            fileSelect: "fileselect",// function (args) { alert(args.files[0].name);},
+
+
+        });
+        //clear custom values
+
+        //ddlinvitees.setModel({ selectedIndex: -1 });
+        //ddlattendees.setModel({ selectedIndex: -1 });
+
+        // When double clicked on the Scheduler cells, fills the StartTime and EndTime fields appropriately
+        $("#StartTime").ejDateTimePicker({ value: args.startTime, dateFormat: "dd/MM/yyyy" });
+        $("#EndTime").ejDateTimePicker({ value: args.endTime, dateFormat: "dd/MM/yyyy" });
+        $("#recWindow").css("display", "none");
+        $("#appWindow").css("display", "");
+        if (!ej.isNullOrUndefined(args.target)) {
+            // When double clicked on the Scheduler cells, if the target is allDay or month cells – only then enable check mark on the allDay checkbox
+            if ($(args.target.currentTarget).hasClass("e-alldaycells") || (args.startTime.getHours() == 0 && args.endTime.getHours() == 23))
+                $("#allDay").prop("checked", true);
+            else
+                args.model.currentView == "month" ? $("#allDay").prop("checked", true) : $("#allDay").prop("checked", false);
+            // If the target is allDay or month cells – disable the StartTime and EndTime fields
+            $("#StartTime,#EndTime").ejDateTimePicker({
+                enabled: ($(args.target.currentTarget).hasClass("e-alldaycells") || (args.startTime.getHours() == 0 && args.endTime.getHours() == 23) || $(args.target.currentTarget).hasClass("e-monthcells") || args.model.currentView == "month") ? false : true
+            });
+        }
+
+        // If double clicked on the appointments, fill the custom appointment window fields with appropriate values.
+        if (!ej.isNullOrUndefined(args.appointment)) {
+           // alert('Appointment #' + args.appointment.Id);
+            window.SheduleID = args.appointment.SheduleID;// $("#Id").val();
+            //alert(window.eventId);
+            //Load existing documents
+            loadpics();
+            $("#SheduleID").val(args.appointment.SheduleID);
+            $("#subject").val(args.appointment.Subject);
+            $("#Description").val(args.appointment.Description);
+            $("#StartTime").ejDateTimePicker({ value: new Date(args.appointment.StartTime), dateFormat: "dd/MM/yyyy" });
+            $("#EndTime").ejDateTimePicker({ value: new Date(args.appointment.EndTime), dateFormat: "dd/MM/yyyy"});
+            $("#recurrence").ejCheckBox({ checked: args.appointment.Recurrence });
+
+            ddlinvitees.option({ value: args.appointment.ParticipationInvitee });
+           // ddlattendees.option({ value: args.appointment.ParticipationAttendee });
+            ddlvenues.option({ value: args.appointment.VenueCode });
+            ddlvenuesList.option({ value: args.appointment.VenueList });
+            ddleventCategory.option({ value: args.appointment.EventCategory });
+
+            if (args.appointment.Recurrence) {
+                $("#editor").css("display", "");
+                $("#recSummary").html(args.appointment.RecurrenceRule);
+                $("#summaryTr").css("display", "");
+                recObj._recRule = args.appointment.RecurrenceRule; // app recurrence rule is stored in Recurrence editor object
+                recObj.recurrenceRuleSplit(args.appointment.RecurrenceRule, args.appointment.recurrenceExDate); //splitting the recurrence rule
+                recObj.showRecurrenceSummary(args.appointment.Id); // updating the recurrence rule in Recurrence editor
+            }
+        }
+        $("#customWindow").ejDialog("open");
+    }
+    function save() {
+        // checks if the subject value is not left blank before saving it.
+        if ($.trim($("#subject").val()) == "") {
+            $("#subject").addClass("error");
+            return false;
+        }
+
+        var myvalues = $("#ParticipationInvitee").val();
+        //alert(myvalues);
+
+        var obj = {}, temp = {}, rType;
+        var formElement = $("#customWindow").find("#custom").get(0);
+        // looping through the custom form elements to get each value and form a JSON object
+        for (var index = 0; index < formElement.length; index++) {
+            var columnName = formElement[index].name, $element = $(formElement[index]);
+            if (columnName != undefined) {
+                if (columnName == "")
+                    columnName = formElement[index].id.replace(this._id, "");
+                if (columnName != "" && obj[columnName] == null) {
+                    var value = formElement[index].value;
+                    if (columnName == "SheduleID" && value != "")
+                        value = parseInt(value);
+                    if ($element.hasClass("e-datetimepicker"))
+                        value = new Date(value);
+                    if (formElement[index].type == "checkbox")
+                        value = formElement[index].checked;
+                    obj[columnName] = value;
+                }
+            }
+        }
+        //alert(window.SheduleID);
+        //window.SheduleID = $("#SheduleID").val();
+        obj["SheduleID"] = window.SheduleID;// $("#ParticipationInvitee")[0].value;
+        obj["ParticipationInvitee"] = $("#ParticipationInvitee")[0].value;
+        obj["VenueCode"] = $("#VenueCode")[0].value;
+        obj["VenueList"] = $("#VenueList")[0].value;
+        obj["NoEventOccuredComment"] = $("#NoEventOccuredComment")[0].value;
+        obj["RecurrenceRule"] = (obj.Recurrence) ? recurRule : null;
+        $("#customWindow").ejDialog("close");
+        var object = $("#Schedule1").data("ejSchedule");
+        object.saveAppointment(obj);
+        clearFields();
+
+        //Save the Files
+        var upload = $('#UploadInput').ejUploadbox("instance");
+        if (upload != null && upload != undefined) {
+            if (upload.diaObj != null && upload.diaObj != undefined) {
+                var wrapper = upload.diaObj.wrapper;
+                var fileItem = wrapper.find(".e-ul li.e-upload-file");
+                for (var i = 0; i < fileItem.length; i++) {
+                   // alert('Using begin(args) ------');
+                    upload._xhrPerformUpload($(fileItem[i]).data("file"));
+                }
+            }
+        }
+    }
+
+    // This function executes when the submit/cancel button in the recurrence editor window is pressed.
+    function onRecurrenceClick(args) {
+        if ($(args.e.currentTarget).attr("id") == "recSubmit") {
+            recObj = $("#recurrenceEditor").ejRecurrenceEditor('instance');
+            recObj.closeRecurPublic();
+            recurRule = recObj._recRule;
+            $("#recSummary").html(recurRule);
+        }
+        else
+            if (($(args.e.currentTarget).attr("id") == "recCancel")) {
+                if ($("#recSummary").html() == "") {
+                    $("#editor").css("display", "none");
+                    $("#recurrence").ejCheckBox({ checked: false });
+                }
+                else
+                    $("#recurrence").ejCheckBox({ checked: true });
+            }
+        $("#recWindow").css("display", "none");
+        $("#appWindow").css("display", "");
+        if ($("#recSummary").html() != "")
+            $("#summaryTr").css("display", "");
+    }
+
+    // This function executes when the Edit anchor tag in the edit appointment window is clicked.
+    function recurrenceRule() {
+        $("#recWindow").css("display", "");
+        $("#appWindow").css("display", "none");
+    }
+
+    // Clears all the field values of the custom window after saving appointments
+    function clearFields() {
+        $("#SheduleID").val("");
+        //recObj.clearRecurrenceFields();
+        $("#subject").val("");
+        $("#recSummary").html("");
+        $("#summaryTr").css("display", "none");
+        $("#recurrence").ejCheckBox({ checked: false });
+        $("#editor").css("display", "none");
+        $("#StartTime,#EndTime").ejDateTimePicker({ enabled: true, dateFormat: "dd/MM/yyyy" });
+    }
+
+    // This function executes when the recurrence checkbox is checked in the custom appointment window
+    function recurCheck(args) {
+        if (args.isInteraction) {
+            if ($("#recurrence").get(0).checked == true) {  // Displays the recurrence field, when recurrence checkbox is checked.
+                $("#recWindow").css("display", "");
+                $("#appWindow").css("display", "none");
+                $("#editor").css("display", "");
+            }
+            else {
+                $("#recWindow").css("display", "none");
+                $("#editor").css("display", "none");
+                $("#recSummary").html("");
+                $("#summaryTr").css("display", "none");
+            }
+        }
+    }
+
+    // This function executes when the All-day checkbox is checked in the custom appointment window
+    function allDayCheck() {
+        // Disables and sets the specific hours to the StartTime and EndTime fields, when the all-day checkbox is checked
+        if ($("#allDay").prop("checked")) {
+            var a = $("#StartTime").data("ejDateTimePicker").model.value;
+            a.setHours(0, 0, 0);
+            var b = $("#EndTime").data("ejDateTimePicker").model.value;
+            b.setHours(23, 59, 0);
+            $("#StartTime").ejDateTimePicker({
+                value: new Date(a),
+                enabled: false
+                , dateFormat: "dd/MM/yyyy"
+            });
+            $("#EndTime").ejDateTimePicker({
+                value: new Date(b),
+                enabled: false
+                , dateFormat: "dd/MM/yyyy"
+            });
+        } else {
+            $("#StartTime").ejDateTimePicker({
+                enabled: true
+                , dateFormat: "dd/MM/yyyy"
+            });
+            $("#EndTime").ejDateTimePicker({
+                enabled: true
+                , dateFormat: "dd/MM/yyyy"
+            });
+        }
+    }
+
+    // This function executes when the subject text field is currently being focused
+    function temp() {
+        $("#subject").removeClass("error");
+    }
+
+    // This function executes when the cancel button in the custom appointment window is pressed.
+    function cancel() {
+        recObj = $("#recurrenceEditor").ejRecurrenceEditor('instance');
+        clearFields();
+        $("#customWindow").ejDialog("close");
+    }
+
+    function onbegin(args) {
+        var eventcode = window.SheduleID;// $('#Id').val();
+        //This passes the UploadInput_data value to the save method
+        args.data = eventcode;
+    }
+
+    function onsuccess(args) {
+       // alert('Succeded');
+        //var msg = "<li class='green'><span style='display:inline-block;'><span class='e-icon e-file-empty'></span></span><span style='display:inline-block;margin-left:20px;'><span style='display:block'>" + args.files.path + ' - ' + args.files.name + "</span><span style='display:block;font-size: 10px;'>" + (args.files.size / 1024).toFixed(2) + "KB</span></li>"
+        //$("#uploaded").append(msg);
+    }
+
+
+    function fileselect(args) {
+        //console.log(JSON.stringify(args));
+        for (i = 0; i < args.files.length; i++) {
+           //  alert(args.files[i].name);
+           // var msg = "<li class='green'><span style='display:inline-block;'><span class='e-icon e-file-empty'></span></span><span style='display:inline-block;margin-left:20px;'><span style='display:block'>" + args.files[i].name + "</span><span style='display:block;font-size: 10px;'>" + (args.files[i].size / 1024).toFixed(2) + "KB</span></li>"
+            var msg = "<li style='display:block;color:green'>" + args.files[i].name + "</span><span style='display:block;font-size: 10px;color:blue'>" + (args.files[i].size / 1024).toFixed(2) + "KB</span></li>"
+
+            // msg = args.files[i].name;
+            $("#uploaded").append(msg);
+            //if (args.files[i].name == "Drag-and-Drop-img1.png") // set the file name or extension based on your requirement
+            //{
+            //    this._removeFile(args.files[i]); // remove the file
+            //    this._currentElement.find(".e-uploadinput").val("");
+            //    this._resetFileInput(this._currentElement.find(".e-uploadinput")); //reset the upload box input
+            //}
+        }
+    }
+
+ function loadpics() {
+     var regcode = window.SheduleID;// $('#e_reg_complaint_code').val();
+        $("#partialPlaceHolder").load("@Url.Action("loadEvidence", "fo_complaint")",
+            { 'e_reg_complaint_code': regcode },
+                function (response, status, xhr) {
+                    if (status == "error") {
+                        errormessage();
+                    }
+                });
+    };
+
+
+     //Resources: begin
+     var resourceData;
+     $(function () {
+         //Get the resource data from controller page
+         resourceData =@Html.ToJson(ViewData["Owners"]);
+     });
+
+     function onChange(args) {
+         //Create schedule object
+         var schObj = $("#Schedule1").data("ejSchedule");
+         //Get the resource object which we select to remove or add
+         var resourceObject = ej.DataManager(resourceData).executeLocal(ej.Query().where("Text", ej.FilterOperators.equal, args.model.id));
+         if (args.isChecked)
+             changeClick(resourceObject);
+         else
+             removeClick(resourceObject);
+     }
+</script>
+
+
+
+<style>
+    .customcheck {
+        float: left;
+        margin-right: 10px;
+    }
+
+    .error {
+        background-color: #FF8A8A;
+    }
+
+    #custom table td {
+        padding: 5px;
+    }
+</style>
+
+<style>
+    /*
+          Resources: start
+      */
+    #ejArushaSecretariat div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #2EDFF3;
+        color: white;
+    }
+
+    #ejBunga div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #FF0000;
+        color: white;
+    }
+
+    #ejCDC div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #800080;
+        color: white;
+    }
+
+    #ejNakasero div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #FF1493;
+        color: white;
+    }
+
+    #ejSkype div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #A9A9A9;
+        color: white;
+    }
+
+    #ejWarehouse div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #FFE5CC;
+        color: white;
+    }
+
+    #ejVideoConference div > span.e-chk-act > span.e-icon.e-checkmark {
+        background: #FFA500;
+        color: white;
+    }
+
+    .row .cols-prop-area {
+        margin-left: 0px;
+        width: 100%;
+    }
+
+    /*
+                 Dialog: start
+             */
+    .customcheck {
+        float: left;
+        margin-right: 10px;
+    }
+
+    .error {
+        background-color: #FF8A8A;
+    }
+
+    #custom table td {
+        padding: 5px;
+    }
+</style>
+
+<script id="FileURLtemplate" type="text/x-template">
+
+    <a rel='nofollow' href=" DownloadFile?fileNamePath={{:FileURL}}">{{:FileURL}}</a>
+
+</script>
+
+<script id="urltemp" type="text/x-template">
+
+    <div>
+        <script>
+            if (FileURL != null)
+            {
+            @Html.ActionLink("${{:FileURL}}", "Edit", new { id = "${{:FileURL}}" })
+            }
+        </script>
+    </div>
+
+</script>
+
+<script>
+    window.uploadedfiles = [];
+    window.FilesUpload = [];
+    window.count = 0;
+    window.SheduleID = '';//details
+    window.details = '';
+
+    function setVenuedetails(e) {
+        var Venuevalue = e.value;
+        //alert(e.value);
+        if ((Venuevalue == 1) || (Venuevalue == 2)) {
+            $('#Venue_dec').show();
+            $('#Venue_dec1').show();
+        }
+        else {
+            $('#Venue_dec').hide();
+            $('#Venue_dec1').hide();
+        }
+
+        if ((Venuevalue == 5)) {
+            $('#Specify_dec').show();
+            $('#Specify_dec1').show();
+        }
+        else {
+            $('#Specify_dec').hide();
+            $('#Specify_dec1').hide();
+        }
+    }
+
+    function cascadeEvent(args) {
+        args.requiresDefaultFilter = false; // restrict the built-in mapping for cascading dropdown
+
+        args.cascadeQuery = ej.Query().where("ID", "equal", args.cascadeValue); // query to filter value based id
+    }
+
+</script>

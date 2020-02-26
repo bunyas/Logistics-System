@@ -1,0 +1,52 @@
+﻿<style type="text/css">
+
+</style>
+<div class="controlframe">
+    @{Html.EJ().Accordion("basicAccordion").ShowRoundedCorner(true).Width("240px").Height("100%").Items(data =>
+        {
+        data.Add().Text("Status").ContentTemplate(@<div>
+          
+            <div class="emp-list">
+                <b class="headername">Order Status</b><br />
+                <table class="table">
+                    <tr>
+                        <td>
+                            <div><img style="width: 30px; height: 30px" class="imgId" src="~/Images/6.png" alt="PS" /><div class="ename">Order Received </div>  </div>
+                            <ul id="OrderVerified"></ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div><img style="width: 30px; height: 30px" class="imgId" src="~/Images/4.png" alt="PS" /><div class="ename"> Order Confirmed </div> </div>
+                            <ul id="OrderProcessed"></ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div><img style="width: 30px; height: 30px" class="imgId" src="~/Images/7.png" alt="PS" /><div class="ename"> Order Processed </div> </div>
+                            <ul id="OrderTransit"></ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div><img style="width: 30px; height: 30px" class="imgId" src="~/Images/8.png" alt="PS" /><div class="ename"> Order Dispatched </div> </div>
+                            <ul id="OrderTransit"></ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div><img style="width: 30px; height: 30px" class="imgId" src="~/Images/9.PNG" alt="PS" /><div class="ename">Order Delivered </div>  </div>
+                            <ul id="OrderDeliverd"></ul>
+                        </td>
+                    </tr>
+                   
+                    <tr>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        
+        </div>);
+
+        }).HeightAdjustMode(HeightAdjustMode.Content).Render();}
+</div>

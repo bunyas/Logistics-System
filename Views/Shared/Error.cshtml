@@ -1,0 +1,49 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    ViewBag.Title = "Error";
+    if (User.IsInRole("Administrator"))
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    else if (User.IsInRole("MonitoringAndEvaluationOfficer"))
+    {
+        Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+    }
+    else if (User.IsInRole("HSIPClient"))
+    {
+        Layout = "~/Views/Shared/_LayoutFacilityHSIP.cshtml";
+    }
+    else if (User.IsInRole("LMISCordinator"))
+    {
+        Layout = "~/Views/Shared/_LayoutCordinator.cshtml";
+    }
+    else if (User.IsInRole("MAULClient"))
+    {
+        Layout = "~/Views/Shared/_LayoutFacilityMAULT.cshtml";
+    }
+    else if (User.IsInRole("MAULT"))
+    {
+        Layout = "~/Views/Shared/_LayoutMAULT.cshtml";
+    }
+    //else if (User.IsInRole("SCTO"))
+    //{
+    //    Layout = "~/Views/Shared/_LayoutFacilityHSIP.cshtml";
+    //}
+    else if (User.IsInRole("CHSS"))
+    {
+        Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+    }
+    else if (User.IsInRole("CCU"))
+    {
+        Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+    }
+    else 
+    {
+        Layout = "";
+    }
+}
+
+<h1 class="text-danger">Error.</h1>
+<h2 class="text-danger">An error occurred while processing your request.</h2>
+

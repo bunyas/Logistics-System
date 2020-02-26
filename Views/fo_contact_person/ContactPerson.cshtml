@@ -1,0 +1,603 @@
+﻿
+@{
+    ViewBag.Title = "ContactPerson";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+<h2>Contact Persons</h2>
+@(Html.EJ().Dialog("basicDialog").Title("Warning")@*.ShowFooter(true).FooterTemplateId("sample")*@.ShowOnInit(false))
+
+<div id="ControlRegion">
+    @(Html.EJ().Grid<object>("Grid")
+         .Datasource(ds => ds.URL("DataSourceContacts").UpdateURL("DialogInsert").InsertURL("DialogInsert").RemoveURL("DialogDelete").Adaptor(AdaptorType.UrlAdaptor))
+
+       // .Datasource(datasource => datasource.URL("GetComplaints")/*.UpdateURL("DialogUpdate").InsertURL("DialogInsert")*/.RemoveURL("DialogDelete").Adaptor(AdaptorType.UrlAdaptor))
+       .AllowSearching(true)
+    .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+
+    .ContextMenuSettings(contextMenu =>
+    {
+        contextMenu.EnableContextMenu();
+    }).AllowScrolling()
+    .ScrollSettings(col => { col.Width(1300)/*.Height(700)*/; })
+    .AllowPaging()
+     .AllowFiltering().ShowColumnChooser().AllowResizing()
+    .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+    .ToolbarSettings(toolbar =>
+    {
+        toolbar.ShowToolbar().ToolbarItems(items =>
+        {
+            items.AddTool(ToolBarItems.Add);
+            items.AddTool(ToolBarItems.Edit);
+            items.AddTool(ToolBarItems.Update);
+            items.AddTool(ToolBarItems.Cancel);
+            items.AddTool(ToolBarItems.Search);
+        });
+    })
+    .Columns(col =>
+    {
+        col.Field("cp_code").HeaderText("cp_code").IsPrimaryKey(true).Visible(false).TextAlign(TextAlign.Justify).Width(100).Add();
+        col.Field("cp_name").HeaderText("Names").Visible(true).TextAlign(TextAlign.Justify).Width(200).Add();
+        col.Field("AddedBy").HeaderText("AddedBy ").Visible(false).TextAlign(TextAlign.Justify).Width(100).Add();
+        col.Field("AddedDate").HeaderText("AddedDate").Visible(false).TextAlign(TextAlign.Justify).Width(100).Add();
+
+        col.Field("User_ID").HeaderText("User Name").ForeignKeyField("Id").ForeignKeyValue("UserName").DataSource((IEnumerable<object>)ViewBag.Users).Visible(false).TextAlign(TextAlign.Justify).Width(200).Add();
+        //col.Field("UserId").HeaderText("UserId").ForeignKeyField("Id").ForeignKeyValue("UserName").DataSource((IEnumerable<object>)ViewBag.Users).Visible(false).TextAlign(TextAlign.Justify).Width(100).Add();
+        col.Field("cp_title").HeaderText("Title").ForeignKeyField("title_code").ForeignKeyValue("title_desc").DataSource((IEnumerable<object>)ViewBag.Titles).Visible(true).TextAlign(TextAlign.Justify).Width(200).Add();
+        col.Field("cp_facility").HeaderText("Health Facility").ForeignKeyField("FacilityCode").ForeignKeyValue("Facility").DataSource((IEnumerable<object>)ViewBag.Facilities) .Visible(true).TextAlign(TextAlign.Justify).Width(200).Add();
+        col.Field("cp_district").HeaderText("District").ForeignKeyField("District_Code").ForeignKeyValue("District_Name").DataSource((IEnumerable<object>)ViewBag.Districts).Visible(true).TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("cp_category").HeaderText("Category") .ForeignKeyField("category_id").ForeignKeyValue("category_desc").DataSource((IEnumerable<object>)ViewBag.ContactCategories).Visible(true).TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("cp_ip").HeaderText("Implementing Partner").ForeignKeyField("ImplimentingPartnerCode").ForeignKeyValue("ImplementingPartnerDescription").DataSource((IEnumerable<object>)ViewBag.Partners).Visible(true).TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("cp_supplier_code").HeaderText("Supplier").ForeignKeyField("supplier_code").ForeignKeyValue("supplier_desc").DataSource((IEnumerable<object>)ViewBag.Suppliers).Visible(true).TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("ct_telephon").HeaderText("Tel. No 1") .Visible(true).TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("ct_telephone_2").HeaderText("Tel. No 2") .Visible(true).TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("ce_email").HeaderText("Email") .Visible(true).TextAlign(TextAlign.Justify).Width(250).Add();
+        col.Field("Personal_email").HeaderText("Personal email").Visible(true).TextAlign(TextAlign.Justify).Width(250).Add();
+        col.Field("IsActive").HeaderText("Is Active").Visible(true).TextAlign(TextAlign.Justify).Width(250).Add();
+
+    })
+    .ClientSideEvents(eve => { /*eve.Load("onLoad");*/ eve.ActionComplete("edit"); }))
+
+</div>
+
+
+<script type="text/template" id="template">
+    <b>Contact Person</b>
+    <div id="defaultTab">
+        <table cellspacing="5">
+            <tr>
+                <td colspan="4" style="color:red;"> The fields with an asterisk(<span style="color:red;">*</span>) are considered mandatory</td>
+            </tr>
+            <tr>
+
+                <td style="text-align: left;">Name <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="cp_name" name="cp_name" value="{{:cp_name}}" class="e-field e-ejinputtext valid" /> </td>
+                <td style="text-align: left;">UserName</td>
+                <td style="text-align: left"> <input type="text" id="User_ID" name="User_ID" value="{{:User_ID}}" class="e-field e-ejinputtext valid" /> </td>
+                <td style="text-align: left;" hidden="hidden">cp_code</td>
+                <td style="text-align: left" hidden="hidden"> <input type="text" id="cp_code" name="cp_code" value="{{:cp_code}}" class="e-field e-ejinputtext valid" /> </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">Title <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="cp_title" name="cp_title" value="{{:cp_title}}" class="e-field e-ejinputtext valid" /> </td>
+                <td style="text-align: left;">Health Facility <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="cp_facility" name="cp_facility" value="{{:cp_facility}}" class="e-field e-ejinputtext valid" /> </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: left;">District <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="cp_district" name="cp_district" value="{{:cp_district}}" class="e-field e-ejinputtext valid" /> </td>
+                <td style="text-align: left;">Category <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="cp_category" name="cp_category" value="{{:cp_category}}" class="e-field e-ejinputtext valid" /> </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: left;">Implementing Partner <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="cp_ip" name="cp_ip" value="{{:cp_ip}}" class="e-field e-ejinputtext valid" /> </td>
+                <td style="text-align: left;">Supplier </td>
+                <td style="text-align: left"> <input type="text" id="cp_supplier_code" name="cp_supplier_code" value="{{:cp_supplier_code}}" class="e-field e-ejinputtext valid" /> </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: left;">Tel. No 1 <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="ct_telephon" name="ct_telephon" value="{{:ct_telephon}}" class="e-field e-ejinputtext valid" /> </td>
+                <td style="text-align: left;">Tel. No 2</td>
+                <td style="text-align: left"> <input type="text" id="ct_telephone_2" name="ct_telephone_2" value="{{:ct_telephone_2}}" class="e-field e-ejinputtext valid" /> </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: left;">Email <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="ce_email" name="ce_email" value="{{:ce_email}}" class="e-field e-ejinputtext valid" /> </td>
+                <td style="text-align: left;">Personal Email</td>
+                <td style="text-align: left"> <input type="text" id="Personal_email" name="Personal_email" value="{{:Personal_email}}" class="e-field e-ejinputtext valid" /> </td>
+                @*<td style="text-align: left;" hidden="hidden"><input type="text" id="AddedBy" name="AddedBy" value="{{:AddedBy}}" class="e-field e-ejinputtext valid" /> </td>
+            <td style="text-align: left" hidden="hidden"><input type="text" id="AddedDate" name="AddedDate" value="{{:AddedDate}}" class="e-field e-ejinputtext valid" />  </td>*@
+            </tr>
+            <tr>
+                <td style="text-align: left;">Is Active</td>
+                <td><input type="checkbox" id="IsActive" name="IsActive" checked="checked" class="e-field e-checkbox" style="width:30px" /></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align: left; background-color:#0071bc; color:white; text-align:center;"> Notification Section (Please select those notifications to be disabled)</td>
+            </tr>
+            <tr>
+                <td>Order Received</td>
+                <td><input type="checkbox" id="DisableReceived" name="DisableReceived" class="e-field e-checkbox" style="width:30px" /></td>
+                <td>Order Confirmed</td>
+                <td><input type="checkbox" id="DisableComfirmed" name="DisableComfirmed" class="e-field e-checkbox" style="width:30px" /></td>
+            </tr>
+            <tr>
+                <td>Order Processed</td>
+                <td><input type="checkbox" id="DisableProcessed" name="DisableProcessed" class="e-field e-checkbox" style="width:30px" /></td>
+                <td>Order Dispatched</td>
+                <td><input type="checkbox" id="DisableDispatched" name="DisableDispatched" class="e-field e-checkbox" style="width:30px" /></td>
+            </tr>
+            <tr>
+                <td>Order Delivered</td>
+                <td><input type="checkbox" id="DisableDelivered" name="DisableDelivered" class="e-field e-checkbox" style="width:30px" /></td>
+                <td>Disable All Emails</td>
+                <td><input type="checkbox" id="DisableAll" name="DisableAll" class="e-field e-checkbox" style="width:30px" /></td>
+            </tr>
+             
+</table>
+        @*<div id="dialog">
+
+        </div>*@
+
+    </div>
+
+</script>
+
+
+
+<script>
+    function edit(args) {
+
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess()" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+            $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+            $("#EditDialog_Grid_Cancel").ejButton("destroy");
+            $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+            $("#cancel").css({ "width": "100px", "height": "50px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+
+            $("#AddedDate").ejDatePicker(
+                {
+                    /*maxDate: new Date(),*/
+                    value: new Date(new Date($("#AddedDate").attr("value"))),
+                    //validationRules: {
+                    //    required: true
+                    //},
+                    //validationMessage: {
+                    //    required: "Date recieved is Required"
+                    //},
+                }
+            );
+
+
+            var users=@Html.Raw(Json.Encode(ViewBag.Users));
+            var YesNo =@Html.Raw(Json.Encode(ViewBag.YesNo));
+            var Facilities =@Html.Raw(Json.Encode(ViewBag.Facilities ));
+            var contacts =@Html.Raw(Json.Encode(ViewBag.Contacts));
+            var maul_Services =@Html.Raw(Json.Encode(ViewBag.MAUL_Service));
+
+            var ASDropDownList = $('#cp_facility').ejDropDownList({
+                dataSource: Facilities,
+                width: "240px",
+                fields: { value: "FacilityCode", text: "Facility" }, readOnly: false
+
+            }).data("ejDropDownList");
+
+            var usersList = $('#User_ID').ejDropDownList({
+                dataSource: users,
+                width: "240px",
+                fields: { value: "Id", text: "UserName" },
+
+            }).data("ejDropDownList");
+
+            var titlesList = $('#cp_title').ejDropDownList({
+                dataSource: @Html.Raw(Json.Encode(ViewBag.Titles)),
+                width: "240px",
+                fields: { value: "title_code", text: "title_desc" },
+            }).data("ejDropDownList");
+            var districtsList = $('#cp_district').ejDropDownList({
+                dataSource: @Html.Raw(Json.Encode(ViewBag.Districts)),
+                width: "240px",
+                fields: { value: "District_Code", text: "District_Name" },
+            }).data("ejDropDownList");
+
+            var categoriesList = $('#cp_category').ejDropDownList({
+                dataSource: @Html.Raw(Json.Encode(ViewBag.ContactCategories)),
+                width: "240px",
+                fields: { value: "category_id", text: "category_desc" },
+            }).data("ejDropDownList");
+
+            var IPsList = $('#cp_ip').ejDropDownList({
+                dataSource: @Html.Raw(Json.Encode(ViewBag.Partners)),
+                width: "240px",
+                fields: { value: "ImplimentingPartnerCode", text: "ImplementingPartnerDescription" },
+            }).data("ejDropDownList");
+            var IPsList = $('#cp_supplier_code').ejDropDownList({
+                dataSource: @Html.Raw(Json.Encode(ViewBag.Suppliers)),
+                width: "240px",
+                fields: { value: "supplier_code", text: "supplier_desc" },
+            }).data("ejDropDownList");  
+
+            if (args.requestType == "beginedit") {
+                var cpname = $('#cp_name').val();
+                $('#' + this._id + '_dialogEdit').ejDialog("option", "title", "Edit " + cpname + "'s details"); //change dialog title
+                document.getElementById("IsActive").checked = false;
+                var gridObj = $("#Grid").data("ejGrid");
+                var is_Active = gridObj.getSelectedRecords()[0].IsActive;
+                if (is_Active == true) {
+                    document.getElementById("IsActive").checked = true;
+                }
+                //order notifications
+                document.getElementById("DisableReceived").checked = false;
+                var disableReceived = gridObj.getSelectedRecords()[0].DisableReceived;
+                if (disableReceived == true) {
+                    document.getElementById("DisableReceived").checked = true;
+                }
+
+                document.getElementById("DisableComfirmed").checked = false;
+                var disableComfirmed = gridObj.getSelectedRecords()[0].DisableComfirmed;
+                if (disableComfirmed == true) {
+                    document.getElementById("DisableComfirmed").checked = true;
+                }
+
+                document.getElementById("DisableProcessed").checked = false;
+                var disableProcessed = gridObj.getSelectedRecords()[0].DisableProcessed;
+                if (disableProcessed == true) {
+                    document.getElementById("DisableProcessed").checked = true;
+                }
+
+                document.getElementById("DisableDispatched").checked = false;
+                var disableDispatched = gridObj.getSelectedRecords()[0].DisableDispatched;
+                if (disableDispatched == true) {
+                    document.getElementById("DisableDispatched").checked = true;
+                }
+                
+                document.getElementById("DisableDelivered").checked = false;
+                var disableDelivered = gridObj.getSelectedRecords()[0].DisableDelivered;
+                if (disableDelivered == true) {
+                    document.getElementById("DisableDelivered").checked = true;
+                }
+                document.getElementById("DisableAll").checked = false;
+                var disableAll = gridObj.getSelectedRecords()[0].DisableAll;
+                if (disableAll == true) {
+                    document.getElementById("DisableAll").checked = true;
+                }
+            }
+        }
+
+    }
+
+    ///Function to return the dd-mm-YYYY format
+      $.validator.setDefaults({
+        //to validate all fields(hidden also)
+        ignore: [],
+
+        errorClass: 'e-validation-error',
+        //it specifies the error message display position
+        errorPlacement: function (error, element) {
+            $(error).insertAfter(element.closest(".e-widget"));
+        },
+    });
+
+
+</script>
+
+<script>
+      function savess() {
+          var UserName = $('#User_ID').data("ejDropDownList");
+          var _UserName = UserName.option("value");
+          var _cp_name = $('#cp_name').val();
+          var _ce_email = $('#ce_email').val();
+          var _ct_telephon = $('#ct_telephon').val();
+          var _cp_category = $('#cp_category').data("ejDropDownList").option("value");
+          var _cp_title = $('#cp_title').data("ejDropDownList").option("value");
+
+          var _cp_ip = $('#cp_ip').data("ejDropDownList").option("value");
+          var _cp_district = $('#cp_district').data("ejDropDownList").option("value");
+          var _cp_facility = $('#cp_facility').data("ejDropDownList").option("value");
+          //var _cp_title = $('#cp_title').data("ejDropDownList").option("value");
+          if (_cp_name == null || _cp_name == "") {
+              var str = "PLease fill in the name of the user";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_ce_email == null || _ce_email == "") {
+             var str = "PLease fill in the email of the user";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_cp_ip == null || _cp_ip == "") {
+             var str = "PLease select in the Complementing partner of the user";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_cp_facility == null || _cp_facility == "") {
+              var str = "PLease select in the facility of the user";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_cp_district == null || _cp_district == "") {
+             var str = "PLease select in the district of the use";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_ct_telephon == null || _ct_telephon == "") {
+             var str = "PLease fill in the tel No 1 of the user";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_cp_category == null || _cp_category == "") {
+             var str = "PLease select in the Category of the user";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_cp_title == null || _cp_title == "") {
+              var str = "PLease select in the title of the user";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else {
+              var obj = $("#Grid").ejGrid("instance");
+              obj.endEdit();
+              obj.refreshContent();
+          }
+    }
+    function cancelss() {
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+    }
+</script>
+
+
+<style>
+    .e-grid .e-groupdroparea, /*GroupDropArea */
+    .e-grid .e-groupdroparea:hover, /*GroupDropArea Hover*/
+    .e-grid .e-cloneproperties, /*Column header clone during dragging header*/
+    .e-grid .e-groupheadercell:hover, /*HeaderCell in GroupDropArea*/
+    .e-grid td.e-active, /*During Row Selected*/
+    /*For pager items and their hover*/
+    .e-pager .e-currentitem,
+    .e-pager .e-currentitem:hover,
+    .e-pager .e-link:hover,
+    .e-pager .e-icon:hover {
+        background-color: #ea1b8d;
+    }
+
+    .e-grid .e-gridheader /*For line that separates the grid header and content*/ {
+        border-bottom-color: #ea1b8d;
+    }
+
+    .e-grid tr.e-hover /*For row hover*/ {
+        background-color: #e66aae;
+        color: #FFFFFF;
+    }
+
+    .e-grid .e-alt_row /*For Alternate row color*/ {
+        background-color: #E5E4E2; /*#99CFE3;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+        border-bottom: 1px solid #c8c8c8;
+        border-left: 1px solid #c8c8c8;
+    }
+</style>
+<style>
+    .panel-default > .panel-heading {
+        background-color: #451bb1 /*#3e1111*/;
+        color: white;
+        /*background-color:silver;*/
+        /*color: white;*/
+    }
+</style>
+
+<style type="text/css" class="cssStyles">
+    .control {
+        margin-left: 30px;
+    }
+
+    .ctrllabel {
+        padding-top: 15px;
+    }
+
+    .control {
+        margin-left: 20px;
+    }
+
+    .frame {
+        height: 250px;
+        width: 1000px;
+    }
+
+    .frame1 {
+        height: 240px;
+        width: 900px;
+    }
+
+    .txt {
+        display: block;
+        margin-bottom: 12px;
+    }
+</style>
+
+<style>
+    #lblComplaintTitle {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #c9252b;
+        vertical-align: top;
+        /*width: 700px;*/
+    }
+
+    .redLabels {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #ff0000;
+        vertical-align: top;
+        font-weight: bold;
+        /*width: 700px;*/
+    }
+
+    .myDiv {
+        font-size: 18px;
+        background-color: white;
+        color: orangered;
+        vertical-align: top;
+        text-align: center;
+        /*width: 700px;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+    }
+
+    .custom.e-js .e-header {
+        background: #c9252b;
+    }
+
+    .custom.e-js .e-content {
+        background: #ddd;
+    }
+
+    .custom .e-rbn-button.e-btn.e-select {
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    .tabstyle {
+        background: #F9F9F9;
+        border-radius: 10px;
+        border: 1px solid #99CFE3;
+        display: block;
+    }
+
+    .longcolumns {
+        width: 600px !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        border-right: 5px #666 outset !important;
+        border-left: 5px #666 outset !important;
+    }
+</style>

@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewBag.Title = "Mi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Mi", "Home", FormMethod.Post))
+{
+    <div class="col-md-offset-2 col-md-4">
+        <input type="submit" value="Add To Portfolio" class="btn btn-info" />
+    </div>
+}
+

@@ -1,0 +1,749 @@
+﻿
+@{
+    ViewBag.Title = "Facilities";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Facilities</h2>
+@(Html.EJ().Dialog("basicDialog").Title("Warning")@*.ShowFooter(true).FooterTemplateId("sample")*@.ShowOnInit(false))
+<div id="ControlRegion">
+    @(Html.EJ().Grid<object>("Grid")
+         .Datasource(ds => ds.URL("DataSourceFacility").UpdateURL("DialogInsert").InsertURL("DialogInsert").RemoveURL("DialogDelete").Adaptor(AdaptorType.UrlAdaptor))
+
+       // .Datasource(datasource => datasource.URL("GetComplaints")/*.UpdateURL("DialogUpdate").InsertURL("DialogInsert")*/.RemoveURL("DialogDelete").Adaptor(AdaptorType.UrlAdaptor))
+       .AllowSearching(true)
+    .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+
+    .ContextMenuSettings(contextMenu =>
+    {
+        contextMenu.EnableContextMenu();
+    }).AllowScrolling()
+    .ScrollSettings(col => { col.Width(1300); })
+    .AllowPaging()
+     .AllowFiltering().ShowColumnChooser().AllowResizing()
+    .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+    .ToolbarSettings(toolbar =>
+    {
+        toolbar.ShowToolbar().ToolbarItems(items =>
+        {
+            items.AddTool(ToolBarItems.Add);
+            items.AddTool(ToolBarItems.Edit);
+            items.AddTool(ToolBarItems.Update);
+            items.AddTool(ToolBarItems.Cancel);
+            items.AddTool(ToolBarItems.Search);
+            items.AddTool(ToolBarItems.ExcelExport);
+        });
+    })
+    .Columns(col =>
+    {
+        col.Field("FacilityCode").IsPrimaryKey(true).Visible(false).HeaderText("FacilityCode").TextAlign(TextAlign.Justify).Width(100).Add();
+        col.Field("DeliveryZoneCode").HeaderText("Delivery Zone").TextAlign(TextAlign.Justify).ForeignKeyField("ZoneCode").ForeignKeyValue("ZoneDescription").DataSource((IEnumerable<object>)ViewBag.DeliveryZoneCode).Width(150).Add();
+        col.Field("ImplimentingPartnerCode").HeaderText("IP").TextAlign(TextAlign.Justify).ForeignKeyField("ImplimentingPartnerCode").ForeignKeyValue("ImplementingPartnerDescription").DataSource((IEnumerable<object>)ViewBag.ComprehensiveImplimentingPartnerCode).Width(150).Add();
+        col.Field("DistrrictCode").HeaderText("Distrrict").TextAlign(TextAlign.Justify).ForeignKeyField("District_Code").ForeignKeyValue("District_Name").DataSource((IEnumerable<object>)ViewBag.DistrrictCode).Width(150).Add();
+        col.Field("Facility").HeaderText("Facility").TextAlign(TextAlign.Justify).Width(250).Add();
+        col.Field("SAP_Code").HeaderText("SAP_Code").TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("SupportedByMAUL").HeaderText("Supported By MAUL").TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("IsAccredited").HeaderText("Is Accredited").TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("level_of_care").HeaderText("level of care").TextAlign(TextAlign.Justify).ForeignKeyField("level_of_care_code").ForeignKeyValue("level_of_care").DataSource((IEnumerable<object>)ViewBag.level_of_care).Width(150).Add();
+        col.Field("client_type_code").HeaderText("client type").TextAlign(TextAlign.Justify).ForeignKeyField("client_type_code").ForeignKeyValue("client_type_desc").DataSource((IEnumerable<object>)ViewBag.client_type_code).Width(150).Add();
+        // col.Field("region_code").HeaderText("region_code").TextAlign(TextAlign.Justify).ForeignKeyField("region_code").ForeignKeyValue("region_code").DataSource((IEnumerable<object>)ViewBag.region_code).Width(100).Add();
+        col.Field("RFSO_UserName").HeaderText("SCTO Username").TextAlign(TextAlign.Justify).Width(200).Add();
+        col.Field("OwnershipId").HeaderText("Ownership").TextAlign(TextAlign.Justify).ForeignKeyField("OwnershipId").ForeignKeyValue("OwnershipDescription").DataSource((IEnumerable<object>)ViewBag.OwnershipId).Width(150).Add();
+        col.Field("CDCRegionId").HeaderText("CDCRegion").TextAlign(TextAlign.Justify).ForeignKeyField("CDCRegionId").ForeignKeyValue("CDCRegion").DataSource((IEnumerable<object>)ViewBag.CDCRegionId).Width(150).Add();
+        col.Field("FacilityTypeId").HeaderText("Facility Type").TextAlign(TextAlign.Justify).ForeignKeyField("FacilityTypeId").ForeignKeyValue("FacilityType").DataSource((IEnumerable<object>)ViewBag.FacilityTypeId).Width(150).Add();
+        col.Field("Longtitude").HeaderText("Longtitude").TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("Latititude").HeaderText("Latititude").TextAlign(TextAlign.Justify).Width(150).Add();
+        //col.Field("Village_Id").HeaderText("Village").TextAlign(TextAlign.Justify).ForeignKeyField("Village_Id").ForeignKeyValue("Village_Id").DataSource((IEnumerable<object>)ViewBag.Village_Id).Width(150).Add();
+        col.Field("ComprehensiveImplimentingPartnerCode").HeaderText("Comprehensive IP").TextAlign(TextAlign.Justify).ForeignKeyField("ImplimentingPartnerCode").ForeignKeyValue("ImplementingPartnerDescription").DataSource((IEnumerable<object>)ViewBag.ComprehensiveImplimentingPartnerCode).Width(150).Add();
+        col.Field("PatientLoadCode").HeaderText("Patient Load").TextAlign(TextAlign.Justify).ForeignKeyField("PatientLoadCode").ForeignKeyValue("PatientLoadDescription").DataSource((IEnumerable<object>)ViewBag.PatientLoads).Width(150).Add();
+        col.Field("IsActive").HeaderText("Is Active").TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("Nearest_Public_HF_Distance").HeaderText("Nearest Public HF Distance").Width(150).Add();
+        col.Field("DSDM").HeaderText("DSDM").Width(150).Add();
+        col.Field("Active_ART").HeaderText("Is Active ART").TextAlign(TextAlign.Justify).Width(80).Add();
+        col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Justify).AllowFiltering(true)/*.ForeignKeyField("SAP_Code").ForeignKeyValue("SCTO").DataSource((IEnumerable<object>)ViewBag._SCTO)*/.Width(150).Add();
+
+
+    })
+    .ClientSideEvents(eve => { /*eve.Load("onLoad");*/ eve.ActionComplete("edit").ToolbarClick("OnToolbarClick"); }))
+
+</div>
+
+
+<script type="text/template" id="template">
+    <b>Facility</b>
+    <div id="defaultTab" style="width:900px">
+        <table cellspacing="5"> 
+            <tr>
+                <td colspan="6"  style="color:red;"> The fields with an asterisk(<span style="color:red;">*</span>) are considered mandatory</td>
+            </tr>
+            <tr>
+
+                <td style="text-align: right;" hidden="hidden">FacilityCode</td>
+                <td style="text-align: left" hidden="hidden"> <input type="text" id="FacilityCode" name="FacilityCode" value="{{:FacilityCode}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Facility Name <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="Facility" name="Facility" value="{{:Facility}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">SAP Code <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="SAP_Code" name="SAP_Code" value="{{:SAP_Code}}" class="e-field e-ejinputtext valid " /> </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">Delivery Zone <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="DeliveryZoneCode" name="DeliveryZoneCode" value="{{:DeliveryZoneCode}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Implimenting Partner</td>
+                <td style="text-align: left"> <input type="text" id="ImplimentingPartnerCode" name="ImplimentingPartnerCode" value="{{:ImplimentingPartnerCode}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: right;">District <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="DistrrictCode" name="DistrrictCode" value="{{:DistrrictCode}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">CDC Region <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="CDCRegionId" name="CDCRegionId" value="{{:CDCRegionId}}" class="e-field e-ejinputtext valid " /> </td>
+                
+
+            </tr>
+            <tr>
+                <td style="text-align: right;">Supported By MAUL</td>
+                <td style="text-align: left">
+                    {{if SupportedByMAUL}}
+                    <input type="checkbox" id="SupportedByMAUL" name="SupportedByMAUL" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                    {{else}}
+                    <input type="checkbox" id="SupportedByMAUL" name="SupportedByMAUL" class="e-field e-checkbox" style="width:30px" />
+                    {{/if}}
+                </td>
+                 <td style="text-align: right;">Is Accredited</td>
+                 
+                <td style="text-align: left">
+                    {{if IsAccredited}}
+                    <input type="checkbox" id="IsAccredited" name="IsAccredited" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                    {{else}}
+                    <input type="checkbox" id="IsAccredited" name="IsAccredited" class="e-field e-checkbox" style="width:30px" />
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">Level of Care <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="level_of_care" name="level_of_care" value="{{:level_of_care}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Client Type <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="client_type_code" name="client_type_code" value="{{:client_type_code}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: right;">Ownership <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="OwnershipId" name="OwnershipId" value="{{:OwnershipId}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Facility Type <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="FacilityTypeId" name="FacilityTypeId" value="{{:FacilityTypeId}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: right;">Longtitude</td>
+                <td style="text-align: left"> <input type="text" id="Longtitude" name="Longtitude" value="{{:Longtitude}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Latititude</td>
+                <td style="text-align: left"> <input type="text" id="Latititude" name="Latititude" value="{{:Latititude}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: right;">Village</td>
+                <td style="text-align: left"> <input type="text" id="Village_Id" name="Village_Id" value="{{:Village_Id}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Comprehensive Implimenting Partner <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="ComprehensiveImplimentingPartnerCode" name="ComprehensiveImplimentingPartnerCode" value="{{:ComprehensiveImplimentingPartnerCode}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+
+            
+            <tr>
+                <td style="text-align: right;">Patient Load <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="PatientLoadCode" name="PatientLoadCode" value="{{:PatientLoadCode}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Is Active</td>
+                <td style="text-align: left">
+                    {{if IsActive}}
+                    <input type="checkbox" id="IsActive" name="IsActive" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                    {{else}}
+                    <input type="checkbox" id="IsActive" name="IsActive" class="e-field e-checkbox" style="width:30px" />
+                    {{/if}}
+                </td>
+            </tr>
+
+            
+            <tr>
+                <td style="text-align: right;">RFSO UserName</td>
+                <td style="text-align: left"> <input type="text" id="RFSO_UserName" name="RFSO_UserName" value="{{:RFSO_UserName}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Distance to Nearest Public HF </td>
+                <td style="text-align: left"> <input type="text" id="Nearest_Public_HF_Distance" name="Nearest_Public_HF_Distance" value="{{:Nearest_Public_HF_Distance}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+            
+            <tr>
+                <td style="text-align: right;">DSDM</td>
+                <td style="text-align: left"> <input type="text" id="DSDM" name="DSDM" value="{{:DSDM}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Is Active ART</td>
+                <td style="text-align: left"> 
+                    {{if Active_ART}}
+                    <input type="checkbox" id="Active_ART" name="Active_ART" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                    {{else}}
+                    <input type="checkbox" id="Active_ART" name="Active_ART" class="e-field e-checkbox" style="width:30px" />
+                    {{/if}}
+                </td>
+
+            </tr>
+
+        </table>
+        @*<div id="dialog">
+
+        </div>*@ 
+    </div>
+
+</script>
+
+
+<script>
+    function OnToolbarClick(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["FacilityData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function edit(args) {
+
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+            $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+            $("#EditDialog_Grid_Cancel").ejButton("destroy");
+            $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+            $("#cancel").css({ "width": "100px", "height": "50px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+
+            var ZCList = $('#DeliveryZoneCode').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.DeliveryZoneCode)),
+                width: "240px",
+                fields: { value: "ZoneCode", text: "ZoneDescription" },
+
+            }).data("ejDropDownList");
+
+            var IPList = $('#ImplimentingPartnerCode').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.ComprehensiveImplimentingPartnerCode)),
+                width: "240px",
+                fields: { value: "ImplimentingPartnerCode", text: "ImplementingPartnerDescription" },
+
+            }).data("ejDropDownList");
+
+            var IPList = $('#DistrrictCode').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.DistrrictCode)),
+                width: "240px",
+                fields: { value: "District_Code", text: "District_Name" },
+                change: "DistrictChange",
+
+            }).data("ejDropDownList");
+
+          
+            var careList = $('#level_of_care').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.level_of_care)),
+                width: "240px",
+                fields: { value: "level_of_care_code", text: "level_of_care" },
+
+            }).data("ejDropDownList");
+
+            var ctList = $('#client_type_code').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.client_type_code)),
+                width: "240px",
+                fields: { value: "client_type_code", text: "client_type_desc" },
+
+            }).data("ejDropDownList");
+
+            var oList = $('#OwnershipId').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.OwnershipId)),
+                width: "240px",
+                fields: { value: "OwnershipId", text: "OwnershipDescription" },
+
+            }).data("ejDropDownList")
+
+            var cdcrList = $('#CDCRegionId').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.CDCRegionId)),
+                width: "240px",
+                fields: { value: "CDCRegionId", text: "CDCRegion" },
+
+            }).data("ejDropDownList")
+
+            var ftList = $('#FacilityTypeId').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.FacilityTypeId)),
+                width: "240px",
+                fields: { value: "FacilityTypeId", text: "FacilityType" },
+
+            }).data("ejDropDownList")
+
+            var cipList = $('#ComprehensiveImplimentingPartnerCode').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.ComprehensiveImplimentingPartnerCode)),
+                width: "240px",
+                fields: { value: "ImplimentingPartnerCode", text: "ImplementingPartnerDescription" },
+
+            }).data("ejDropDownList")
+
+            var plList = $('#PatientLoadCode').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.PatientLoads)),
+                width: "240px",
+                fields: { value: "PatientLoadCode", text: "PatientLoadDescription" },
+
+            }).data("ejDropDownList")
+
+            //document.getElementById("Active_ART").checked = false;
+            //var ActiveArt = gridObj.getSelectedRecords()[0].Active_ART;
+            //if (ActiveArt == true) {
+            //    document.getElementById("Active_ART").checked = true;
+            //}
+
+            @*var sctoList = $('#SCTO').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.SCTO)),
+                width: "240px",
+                fields: { value: "SCTO", text: "SCTO" },
+
+            }).data("ejDropDownList")*@
+  
+
+            if (args.requestType == "beginedit") {
+                var cpname = $('#Facility').val();
+                $('#' + this._id + '_dialogEdit').ejDialog("option", "title", "Edit " + cpname +"'s details"); //change dialog title
+            }
+        }
+
+    }
+
+    ///Function to return the dd-mm-YYYY format
+      $.validator.setDefaults({
+        //to validate all fields(hidden also)
+        ignore: [],
+
+        errorClass: 'e-validation-error',
+        //it specifies the error message display position
+        errorPlacement: function (error, element) {
+            $(error).insertAfter(element.closest(".e-widget"));
+        },
+    });
+
+
+</script>
+
+<script>
+      function savess() {
+          var _Facility = $('#Facility').val();
+          var _SAP_Code = $('#SAP_Code').val();
+          var _DeliveryZoneCode = $('#DeliveryZoneCode').data("ejDropDownList").option("value");
+          var _ImplimentingPartnerCode = $('#ImplimentingPartnerCode').data("ejDropDownList").option("value");
+          var _DistrrictCode = $('#DistrrictCode').data("ejDropDownList").option("value");
+          var _level_of_care = $('#level_of_care').data("ejDropDownList").option("value");
+          var _client_type_code = $('#client_type_code').data("ejDropDownList").option("value");
+          var _OwnershipId = $('#OwnershipId').data("ejDropDownList").option("value");
+          var _CDCRegionId = $('#CDCRegionId').data("ejDropDownList").option("value");
+          var _FacilityTypeId = $('#FacilityTypeId').data("ejDropDownList").option("value");
+          var _ComprehensiveImplimentingPartner = $('#ComprehensiveImplimentingPartnerCode').data("ejDropDownList").option("value");
+          var _PatientLoadCode = $('#PatientLoadCode').data("ejDropDownList").option("value");
+          if (_Facility == null || _Facility == "") {
+              var str = "Please fill in the Facility name";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_SAP_Code == null || _SAP_Code == "") {
+              var str = "Please fill in the Sap Code";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_DeliveryZoneCode == null || _DeliveryZoneCode == "") {
+              var str = "Please fill in the Sector";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_ImplimentingPartnerCode == null || _ImplimentingPartnerCode == "") {
+              var str = "Please fill in the Implementing Partner";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_DistrrictCode == null || _DistrrictCode == "") {
+              var str = "Please fill in the District";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_level_of_care == null || _level_of_care == "") {
+              var str = "Please fill in the level of care";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_client_type_code == null || _client_type_code == "") {
+              var str = "Please fill in the client type";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_OwnershipId == null || _OwnershipId == "") {
+              var str = "Please fill in the Ownership";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_CDCRegionId == null || _CDCRegionId == "") {
+              var str = "Please fill in the CDC Region";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_FacilityTypeId == null || _FacilityTypeId == "") {
+              var str = "Please fill in the facility type";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_ComprehensiveImplimentingPartner == null || _ComprehensiveImplimentingPartner == "") {
+              var str = "Please fill in the Comprehensive IP";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_PatientLoadCode == null || _PatientLoadCode == "") {
+              var str = "Please fill in the Patient Load";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else {
+              var obj = $("#Grid").ejGrid("instance");
+              obj.endEdit();
+              obj.refreshContent();
+          }
+
+        
+    }
+    function cancelss() {
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+    }
+</script>
+
+<style>
+    .e-grid .e-groupdroparea, /*GroupDropArea */
+    .e-grid .e-groupdroparea:hover, /*GroupDropArea Hover*/
+    .e-grid .e-cloneproperties, /*Column header clone during dragging header*/
+    .e-grid .e-groupheadercell:hover, /*HeaderCell in GroupDropArea*/
+    .e-grid td.e-active, /*During Row Selected*/
+    /*For pager items and their hover*/
+    .e-pager .e-currentitem,
+    .e-pager .e-currentitem:hover,
+    .e-pager .e-link:hover,
+    .e-pager .e-icon:hover {
+        background-color: #ea1b8d;
+    }
+
+    .e-grid .e-gridheader /*For line that separates the grid header and content*/ {
+        border-bottom-color: #ea1b8d;
+    }
+
+    .e-grid tr.e-hover /*For row hover*/ {
+        background-color: #e66aae;
+        color: #FFFFFF;
+    }
+
+    .e-grid .e-alt_row /*For Alternate row color*/ {
+        background-color: #E5E4E2; /*#99CFE3;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+        border-bottom: 1px solid #c8c8c8;
+        border-left: 1px solid #c8c8c8;
+    }
+</style>
+<style>
+    .panel-default > .panel-heading {
+        background-color: #451bb1 /*#3e1111*/;
+        color: white;
+        /*background-color:silver;*/
+        /*color: white;*/
+    }
+</style>
+
+<style type="text/css" class="cssStyles">
+    .control {
+        margin-left: 30px;
+    }
+
+    .ctrllabel {
+        padding-top: 15px;
+    }
+
+    .control {
+        margin-left: 20px;
+    }
+
+    .frame {
+        height: 250px;
+        width: 1000px;
+    }
+
+    .frame1 {
+        height: 240px;
+        width: 900px;
+    }
+
+    .txt {
+        display: block;
+        margin-bottom: 12px;
+    }
+</style>
+
+<style>
+    #lblComplaintTitle {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #c9252b;
+        vertical-align: top;
+        /*width: 700px;*/
+    }
+
+    .redLabels {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #ff0000;
+        vertical-align: top;
+        font-weight: bold;
+        /*width: 700px;*/
+    }
+
+    .myDiv {
+        font-size: 18px;
+        background-color: white;
+        color: orangered;
+        vertical-align: top;
+        text-align: center;
+        /*width: 700px;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+    }
+
+    .custom.e-js .e-header {
+        background: #c9252b;
+    }
+
+    .custom.e-js .e-content {
+        background: #ddd;
+    }
+
+    .custom .e-rbn-button.e-btn.e-select {
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    .tabstyle {
+        background: #F9F9F9;
+        border-radius: 10px;
+        border: 1px solid #99CFE3;
+        display: block;
+    }
+
+    .longcolumns {
+        width: 600px !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        border-right: 5px #666 outset !important;
+        border-left: 5px #666 outset !important;
+    }
+</style>
+<script>
+    function DistrictChange(e) {
+        var district = e.value;
+        $.ajax({
+            url: "GetCDCRegion",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'GET',
+            data: {
+                "district": district,
+            },
+            success: function (data) {
+                if (data > 0) {
+                    var ddl2 = $('#CDCRegionId').ejDropDownList("instance");
+                    var fc = data;
+                    ddl2.selectItemByValue(fc);
+                }
+            },
+        });
+        $.ajax({
+            url: "GetIP",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'GET',
+            data: {
+                "district": district,
+            },
+            success: function (data) {
+
+                if (data > 0) {
+                    var ddl2 = $('#ComprehensiveImplimentingPartnerCode').ejDropDownList("instance");
+                    var fc = data;
+                    ddl2.selectItemByValue(fc);
+                }
+            },
+        });
+
+    }
+</script>

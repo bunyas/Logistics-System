@@ -1,0 +1,852 @@
+﻿
+@{
+    ViewBag.Title = "Complaints";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+@model mascis.Models.FileListModel
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+
+
+
+<h2>Complaints</h2>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet" />
+
+
+<script>
+    //window.DistrictsList = [];
+    //$.ajax({
+    //    type: 'GET',
+    //    //url: '/Referral/Districts',
+    //   url: 'Districts',
+    //    success: function (result) {
+    //        window.DistrictsList = result;
+    //    },
+    //});
+</script>
+
+<script>
+
+    @*@if (Request.HttpMethod == "POST")
+    {
+       @Html.Raw("setToolbarItems();")
+    }*@
+
+    function setToolbarItems()
+    {
+
+      //  if (window.myRoleIsinAdmin)
+        {
+            //Gets the ToolBar.
+            var myRoleIsinAdmin="@User.IsInRole("Administrator")";
+            var myRoleIsinViewer="@User.IsInRole("Viewer")";
+            window.myGUID="@HttpContext.Current.User.Identity.Name";
+            window.myName="@HttpContext.Current.User.Identity.Name";
+
+            if(myRoleIsinViewer.toUpperCase()=='TRUE')
+            {
+                var grid =$("#FlatGrid").ejGrid({
+                    toolbarSettings: { showToolbar: true, toolbarItems: ["search"] }  ,
+                    editSettings: { allowEditing: false, allowAdding: false, allowDeleting: false },
+                });
+
+                return;
+            }
+            if(myRoleIsinAdmin.toUpperCase()=='TRUE')
+            {
+                var grid =$("#FlatGrid").ejGrid({
+                    editSettings: { allowEditing: false, allowAdding: false, allowDeleting: true },
+                    toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.Add, ej.Grid.ToolBarItems.Edit, ej.Grid.ToolBarItems.Delete, ej.Grid.ToolBarItems.Update, ej.Grid.ToolBarItems.Cancel, 'search'] },
+
+                });
+
+
+                var $toolbar = $("#FlatGrid_toolbarItems");
+                var li = $("#FlatGrid_add");
+                $toolbar.ejToolbar("disableItem", li);
+                li = $("#FlatGrid_delete");
+                $toolbar.ejToolbar("disableItem", li);
+                li = $("#FlatGrid_edit");
+                $toolbar.ejToolbar("disableItem", li);
+
+            }
+            else{
+                var grid =$("#FlatGrid").ejGrid({
+                    //  editSettings: { allowDeleting: true },
+                    toolbarSettings: { showToolbar: true, toolbarItems: ["add","edit","search"] }  ,
+                    editSettings: { allowEditing: true, allowAdding: true, allowDeleting: false },
+
+                });
+                var $toolbar = $("#FlatGrid_toolbarItems");
+                var li = $("#FlatGrid_add");
+                li = $("#FlatGrid_delete");
+                $toolbar.ejToolbar("disableItem", li);
+                li = $("#FlatGrid_excelExport");
+                $toolbar.ejToolbar("disableItem", li);
+
+                li = $("#FlatGrid_wordExport");
+                $toolbar.ejToolbar("disableItem", li);
+
+                li = $("#FlatGrid_pdfExport");
+                $toolbar.ejToolbar("disableItem", li);
+
+            }
+
+        }
+    }
+
+</script>
+
+<div id="ControlRegion">
+    @(Html.EJ().Grid<object>("FlatGrid").AllowRowDragAndDrop()
+        .Datasource(datasource => datasource.URL("GetComplaints").UpdateURL("DialogUpdate").InsertURL("DialogInsert").RemoveURL("DialogDelete").Adaptor(AdaptorType.UrlAdaptor))
+        .EnableAltRow()
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+        .AllowPaging()
+        .AllowFiltering()
+        .AllowTextWrap()
+        .AllowGrouping()
+        .AllowScrolling()
+        .IsResponsive(true)
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })
+        .ToolbarSettings(toolbar =>
+        {
+            toolbar.ShowToolbar().ToolbarItems(items =>
+            {
+                items.AddTool(ToolBarItems.Add);
+                items.AddTool(ToolBarItems.Edit);
+                items.AddTool(ToolBarItems.Delete);
+                items.AddTool(ToolBarItems.Update);
+                items.AddTool(ToolBarItems.Cancel);
+                items.AddTool(ToolBarItems.Search);
+                //items.AddTool(ToolBarItems.ExcelExport);
+                //items.AddTool(ToolBarItems.WordExport);
+                //items.AddTool(ToolBarItems.PdfExport);
+            });
+        })
+        .Columns(col =>
+        {
+            col.Field("e_reg_complaint_code").HeaderText("e_reg_complaint_code").IsPrimaryKey(true).Visible(false).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("e_reg_date_recieved").HeaderText("Date Recieved").Format("{0:dd/MMM/yyyy}").Width(100).Add();
+            col.Field("e_reg_complaint_category").HeaderText("Complaint Category").ForeignKeyField("complaint_category_code").ForeignKeyValue("complaint_category_desc").DataSource((IEnumerable<object>)ViewBag.e_reg_complaint_category).Width(200).Add();
+            col.Field("e_reg_complaint_details").HeaderText("Complaint Details").Width(250).Add();
+            col.Field("e_reg_affected_sites").HeaderText("Sites").Width(80).Add();
+            col.Field("e_reg_product_category").HeaderText("Product Category").ForeignKeyField("category_code").ForeignKeyValue("category_desc").DataSource((IEnumerable<object>)ViewBag.Product_Category).Width(150).Add();
+            col.Field("e_reg_communication_mode").HeaderText("Communication Mode").ForeignKeyField("comm_mode_code").ForeignKeyValue("comm_mode_desc").DataSource((IEnumerable<object>)ViewBag.e_reg_communication_mode).Width(150).Add();
+            col.Field("e_reg_date_resolved").HeaderText("Date Resolved").Format("{0:dd/MMM/yyyy}").Width(100).Add();
+            col.Field("e_reg_expected_date_resolution").HeaderText("Expected Date of Resolution").Format("{0:dd/MMM/yyyy}").Width(100).Add();
+            col.Field("e_reg_contact_person_id").HeaderText("Contact Person").Width(200).Add();
+            col.Field("e_reg_complaint_accuteness").HeaderText("e_reg_complaint_accuteness").Width(200).Add();
+            //col.Field("DeletedRecord").HeaderText("DeletedRecord").Width(200).Add();
+            col.Field("is_quality_issue").HeaderText("Quality Issue?").Width(200).Add();
+
+            col.Field("AffectedSites").HeaderText("AffectedSites").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("Sup_Doc_Evidence_Rec").HeaderText("Sup_Doc_Evidence_Rec").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("Prod_Samples_Provided").HeaderText("Prod_Samples_Provided").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("Communicated_By_Lev1").HeaderText("Communicated_By_Lev1").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("Email_letter_attached").HeaderText("Email_letter_attached").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("Communicated_By_Lev2").HeaderText("Communicated_By_Lev2").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("Feedback").HeaderText("Feedback").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("Feedback_Communicated").HeaderText("Feedback_Communicated").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("Feedback_Date").HeaderText("Feedback_Date").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("No_Feedback_Reason").HeaderText("No_Feedback_Reason").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+
+        })
+                .ClientSideEvents(eve => {/* eve.Load("onLoad");*/ eve.ActionComplete("edit"); })) 
+
+</div>
+<script type="text/template" id="template" @*style="width: 100%"*@>
+    
+
+    <div class="myDiv"><b> Complaint Report Form</b> </div>
+    <div>
+        @*<table class="table table-bordered table-striped">*@
+         
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default" id="complaintHeader">
+                <div class="panel-heading">
+                    <h2 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1"> 
+                        </a>
+                    </h2>
+                </div>
+                <div id="collapse1" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <table @*id="table2" border="1" cellpadding="3" cellspacing="0" border-collapse="none"*@>
+
+                            <tr>
+                                <td style="text-align:  justify;" @*hidden="hidden"*@>Complaint Number</td>
+                                <td style="text-align: left"> <input type="text" id="e_reg_complaint_code" name="e_reg_complaint_code" value="{{:e_reg_complaint_code}}" class="e-field e-ejinputtext valid" @*hidden="hidden"*@ /> </td>
+
+                                <td style="text-align: justify;">Date Complaint received at MAUL</td>
+                                <td style="text-align: left"> <input type="text" id="e_reg_date_recieved" name="e_reg_date_recieved" value="{{:e_reg_date_recieved}}" class="e-field e-ejinputtext valid" /> </td>
+
+                            </tr>
+                            <tr>
+                                 
+                                <td style="text-align: right;">Complaint category</td>
+                                <td style="text-align: left"> <input type="text" id="e_reg_complaint_category" name="e_reg_complaint_category" value="{{:e_reg_complaint_category}}" class="e-field e-ejinputtext valid" /> </td>
+
+                                 @*<td style="text-align: right;">Complaint No</td>
+                                <td style="text-align: left"> <input type="text" id="e_reg_complaint_No" name="e_reg_complaint_No" value="{{:e_reg_complaint_No}}" class="e-field e-ejinputtext valid " /> </td>*@
+                                @*<td style="text-align: right;">e_reg_contact_person_id</td>*@
+                                @* <td style="text-align: left"> <input type="text" id="e_reg_contact_person_id" name="e_reg_contact_person_id" value="{{:e_reg_contact_person_id}}" class="e-field e-ejinputtext valid " /> </td>*@
+
+                            </tr>
+
+                            
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default" id="complainantDetails">
+                <div class="panel-heading">
+                    <h4 class="panel-title ">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                            1. COMPLAINANT DETAILS
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse2" @*class="panel-collapse collapse  collapse in"*@>
+                    <div @*class="panel-body"*@>
+
+                        @*<table class="table table-hover">
+                            <tr><td>cell 1</td><td>cell 2</td><td>cell 3</td><td>cell 4</td><td>cell 5</td><td>cell 6</td></tr>
+                            <tr><td>Label:</td><td colspan=5><input name="e_reg_complaint_Title" class="form-control" value="{{:e_reg_complaint_Title}}"></td></tr>
+                        </table>*@
+                             
+                           
+
+
+                                <table>
+                                    <tr>
+                                        <td class="redLabels">Complaint Title: </td>
+                                        <td colspan=5>
+                                <textarea name="e_reg_complaint_Title" class="form-control" @*class="e-textarea"*@ value="{{:e_reg_complaint_Title}}"></textarea>
+
+                            </td>
+
+                                        @*<td>
+                                <textarea id="e_reg_complaint_Title" class="e-textarea" value="{{:e_reg_complaint_Title}}"></textarea>
+                                <textarea class="e-ejinputtext"  rows="2" cols="1164" style="width: 100%;" id="e_reg_complaint_Title">{{:e_reg_complaint_Title}}</textarea>
+
+                            </td>*@
+                                        @*<td style="text-align: left"> <input type="text" id="e_reg_complaint_Title" name="e_reg_complaint_Title" value="{{:e_reg_complaint_Title}}" class="e-field e-ejinputtext valid " /> </td>*@
+
+
+                                    </tr>
+                                    @*<tr>
+                            <td colspan="2"  width="100%"><hr /></td>
+                        </tr>*@
+                                    <tr>
+                                        <td style="text-align: justify" class="redLabels">Complainant’s Details</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="text-align: right;">Name</td>
+                                        <td style="text-align: left"> <input type="text" id="ComplainantName" name="ComplainantName" value="{{:ComplainantName}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+                                        <td style="text-align: right;">Title</td>
+                                        <td style="text-align: left"> <input type="text" id="ComplainantTitle" name="ComplainantTitle" value="{{:ComplainantTitle}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+                                        <td style="text-align: right;">Date & Time of Complaint</td>
+                                        <td style="text-align: left"> <input type="text" id="e_reg_date_complaint" name="e_reg_date_complaint" value="{{:e_reg_date_complaint}}" class="e-field e-ejinputtext valid " /> </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: right;">Email Address</td>
+                                        <td style="text-align: left"> <input type="text" id="ComplainantEmail" name="ComplainantEmail" value="{{:ComplainantEmail}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+                                        <td style="text-align: right;">Mobile</td>
+                                        <td style="text-align: left"> <input type="text" id="ComplainantMobile" name="ComplainantMobile" value="{{:ComplainantMobile}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+                                        <td style="text-align: right;">Telephone</td>
+                                        <td style="text-align: left"> <input type="text" id="ComplainantPhone" name="ComplainantPhone" value="{{:ComplainantPhone}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: right;">Facility Name</td>
+                                        <td style="text-align: left"> <input type="text" id="ComplainantFacilityCode" name="ComplainantFacilityCode" value="{{:ComplainantFacilityCode}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+                                        <td style="text-align: right;">District</td>
+                                        <td style="text-align: left"> <input type="text" id="ComplainantDistrict" name="ComplainantDistrict" value="{{:ComplainantDistrict}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+                                        <td style="text-align: right;">IP</td>
+                                        <td style="text-align: left"> <input type="text" id="IP" name="IP" value="{{:IP}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: justify;">
+                                            <!-- Place where you will insert your partial -->
+                                            <div id="partialPlaceHolder" style="display:none; width:100%"> </div>
+                                        </td>
+                                    </tr>
+
+
+                                </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel panel-default"  id="complaintDetails">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+
+                            2.0	COMPLAINT DETAILS
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse3" class="panel-collapse collapse collapse in">
+                    <div class="panel-body">
+                        <table>
+                             
+                            <tr>
+                                <td class="redLabels">Complaint Description: </td>
+
+                                <td>
+                                    <textarea class="e-ejinputtext" rows="5" cols="1164" style="width: 100%;" id="e_reg_complaint_details">{{:e_reg_complaint_details}}</textarea>
+                                </td>
+
+                            </tr>
+
+                            <tr>
+                                <td class="redLabels" colspan="2" id="lblsupportDocs">Supporting Documentation and Evidence Received: </td>
+
+                            </tr>
+                             
+
+
+                            <tr>
+                                <td style="text-align: justify;">
+                                    <!-- Place where you will insert your partial -->
+                                    <div id="partialPlaceHolder" style="display:none; width:100%"> </div>
+                                </td>
+                            </tr>
+
+
+                        </table>
+
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                    Detail :
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.FileListDetail.Detail)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Select File :
+                                </td>
+                                <td>
+                                    <input class="btn btn-default" type="file" name="file" />
+                                </td>
+                                <td >
+                                    <input class="btn btn-success" type="submit" value="Upload File" name="Command" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: right;">Documents Provided</td>
+                                <td style="text-align: left"> <input type="text" id="Sup_Doc_Evidence_Rec" name="Sup_Doc_Evidence_Rec" value="{{:Sup_Doc_Evidence_Rec}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+                                <td style="text-align: right;">Product Samples Provided</td>
+                                <td style="text-align: left"> <input type="text" id="Prod_Samples_Provided" name="Prod_Samples_Provided" value="{{:Prod_Samples_Provided}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div style="color: Red;">
+                                        @ViewBag.Message
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="panel panel-default" id="supportingDocuments" >
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+
+                            Supporting Documents
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse3a" class="panel-collapse collapse collapse in">
+                    <div class="panel-body">
+                        <div id="supportdocs"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="panel panel-default"id="level1Communication">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+
+                            3.0 LEVEL ONE COMMUNICATION (EXTERNAL)
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse4" class="panel-collapse collapse collapse in">
+                    <div class="panel-body">
+                        <table> 
+                            <tr>
+                                <td style="text-align: right;">Communicated By</td>
+                                <td style="text-align: left"> <input type="text" id="Communicated_By_Lev1" name="Communicated_By_Lev1" value="{{:Communicated_By_Lev1}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+                                <td style="text-align: right;">Title</td>
+                                <td style="text-align: left"> <input type="text" id="Communicated_By_Lev1Title" name="Communicated_By_Lev1Title" value="{{:Communicated_By_Lev1Title}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+                                <td style="text-align: right;">Date</td>
+                                <td style="text-align: left"> <input type="text" id="Communicated_By_Lev1Date" name="Communicated_By_Lev1Date" value="{{:Communicated_By_Lev1Date}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+
+
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default"id="complaintClassification">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">
+
+                            4.0 COMPLIANT CLASSIFICATION
+
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse5" class="panel-collapse collapse collapse in">
+                    <div class="panel-body">
+                        <table>
+
+                            @* <tr><td style="text-align: justify;">acc</td> <td style="text-align: left"> <input type="text" id="acc" name="acc" value="{{:acc}}" class="e-field e-ejinputtext valid" /> </td></tr>*@
+
+                            <tr>
+                                <td class="redLabels">Complaint Severity</td>
+                                <td style="text-align: left"> <input type="text" id="e_reg_complaint_accuteness" name="e_reg_complaint_accuteness" value="{{:e_reg_complaint_accuteness}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+
+                                
+
+                            </tr> 
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default"id="complaintInvestigation">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">
+
+                            4.0	COMPLAINT INVESTIGATION
+
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse6" class="panel-collapse collapse collapse in">
+                    <div class="panel-body">
+                        <table>
+
+                            @* <tr><td style="text-align: justify;">acc</td> <td style="text-align: left"> <input type="text" id="acc" name="acc" value="{{:acc}}" class="e-field e-ejinputtext valid" /> </td></tr>*@
+
+                            <tr style="width:100%">
+                                <td width="100%" @*style="text-align: justify;"*@>
+                                    <!-- Place where you will insert your partial -->
+                                    <div id="PreInvestGrd" @*style="display:none;*@ width:100%"> </div>
+                                </td>
+
+
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+          
+            <div class="panel panel-default" id="level2Communication">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">
+
+                            5.0	LEVEL 2 COMMUNICATION (SUPPLIER, MAUL & FACILITIES)
+
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse7" class="panel-collapse collapse collapse in">
+                    <div class="panel-body">
+                        <table>
+
+                            @* <tr><td style="text-align: justify;">acc</td> <td style="text-align: left"> <input type="text" id="acc" name="acc" value="{{:acc}}" class="e-field e-ejinputtext valid" /> </td></tr>*@
+
+                            <tr style="width:100%">
+                                <td  class="redLabels" style="text-align: right;">Communicated by: Name</td>
+                                <td style="text-align: left"> <input type="text" id="Communicated_By_Lev2" name="Communicated_By_Lev2" value="{{:Communicated_By_Lev2}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+                                <td style="text-align: right;">Title</td>
+                                <td style="text-align: left"> <input type="text" id="Communicated_By_Lev2Title" name="Communicated_By_Lev2Title" value="{{:Communicated_By_Lev2Title}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+                                <td style="text-align: right;">Date</td>
+                                <td style="text-align: left"> <input type="text" id="Communicated_By_Lev2Date" name="Communicated_By_Lev2Date" value="{{:Communicated_By_Lev2Date}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+
+                            </tr>
+                            <tr>
+                                <td style="text-align: right;">Email to facility and/or copy of letter attached </td>
+                                <td style="text-align: left"> <input type="text" id="Communicated_By_Lev2Email" name="Communicated_By_Lev2Email" value="{{:Communicated_By_Lev2Email}}" class="e-field e-ejinputtext valid e-disable" /> </td>
+
+                            </tr>
+                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default" id="detailedInvestigation">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">
+
+                            6.0	DETAILED INVESTIGATION
+
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse8" class="panel-collapse collapse collapse in">
+                    <div class="panel-body">
+                        <table>
+
+                            @* <tr><td style="text-align: justify;">acc</td> <td style="text-align: left"> <input type="text" id="acc" name="acc" value="{{:acc}}" class="e-field e-ejinputtext valid" /> </td></tr>*@
+
+                            <tr style="width:100%">
+                                <td width="100%" @*style="text-align: justify;"*@>
+                                    <!-- Place where you will insert your partial -->
+                                    <div id="DetailInvestGrd" @*style="display:none;*@ width:100%"> </div>
+                                </td>
+
+
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div> 
+         
+    </div>
+
+
+
+
+</script>
+
+<script>
+    function edit(args) { 
+        var YesNo=@Html.Raw(Json.Encode(ViewBag.YesNo));
+        $("#e_reg_date_recieved").ejDatePicker();
+        $("#e_reg_date_complaint").ejDatePicker();
+        $("#e_reg_date_resolved").ejDatePicker();
+        $("#Communicated_By_Lev1Date").ejDatePicker();
+
+        $("#e_reg_expected_date_resolution").ejDatePicker();
+        $("#Feedback_Date").ejDatePicker();
+        $("#Communicated_By_Lev2Date").ejDatePicker();
+
+
+
+        $("#e_reg_contact_person_id").ejAutocomplete(); 
+        $("#e_reg_complaint_details").ejAutocomplete().width(400);
+
+        
+        //$("#e_reg_complaint_Title").ejAutocomplete().width(840);
+
+        $('#e_reg_complaint_category').ejDropDownList({
+            dataSource: @Html.Raw(Json.Encode(ViewBag.e_reg_complaint_category)),
+            width: "200px",
+            fields: { value: "complaint_category_code", text: "complaint_category_desc" },
+            //cascadeTo: 'CountyList',
+            //cascade: "cascadeEvent",
+        }).data("ejDropDownList");
+
+
+
+        $('#e_reg_complaint_accuteness').ejDropDownList({
+            dataSource: @Html.Raw(Json.Encode(ViewBag.Accuteness)),
+            width: "200px",
+            fields: { value: "accuteness_code", text: "accuteness_desc" },
+            //cascadeTo: 'CountyList',
+            //cascade: "cascadeEvent",
+        }).data("ejDropDownList");
+
+        $('#IP').ejDropDownList({
+            dataSource: @Html.Raw(Json.Encode(ViewBag.YesNo)),
+            width: "200px",
+            fields: { value: "yes_no_id", text: "yes_no_desc" },
+            //cascadeTo: 'CountyList',
+            //cascade: "cascadeEvent",
+        }).data("ejDropDownList");
+
+        
+        $('#Communicated_By_Lev2Email').ejDropDownList({
+            dataSource: @Html.Raw(Json.Encode(ViewBag.YesNo)),
+            width: "200px",
+            fields: { value: "yes_no_id", text: "yes_no_desc" },
+            //cascadeTo: 'CountyList',
+            //cascade: "cascadeEvent",
+        }).data("ejDropDownList");
+
+        $('#Sup_Doc_Evidence_Rec').ejDropDownList({
+            dataSource: @Html.Raw(Json.Encode(ViewBag.YesNo)),
+            width: "200px",
+            fields: { value: "yes_no_id", text: "yes_no_desc" },
+            //cascadeTo: 'CountyList',
+            //cascade: "cascadeEvent",
+        }).data("ejDropDownList");
+        $('#Prod_Samples_Provided').ejDropDownList({
+            dataSource: @Html.Raw(Json.Encode(ViewBag.YesNo)),
+            width: "200px",
+            fields: { value: "yes_no_id", text: "yes_no_desc" },
+            //cascadeTo: 'CountyList',
+            //cascade: "cascadeEvent",
+        }).data("ejDropDownList");
+
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            $('#detailedInvestigation').hide();
+            //$('#detailedInvestigation').show();
+
+            $("#PreInvestGrd").ejGrid({
+                //dataSource: data,
+                dataSource: ej.DataManager({ url: "BatchData", batchUrl: "BatchUpdate", adaptor: "UrlAdaptor" }),
+                //dataSource: ej.DataManager({ url: "/OVC_HVPT/BatchData", batchUrl: "/OVC_HVPT/BatchUpdate", adaptor: "UrlAdaptor" }),
+                allowGrouping: true,
+                isResponsive: true,
+                enableAltRow: true,
+                allowTextWrap: true,
+                textWrapSettings: { wrapMode: "both" },
+                cellEdit: "cellEdit",
+                allowResizeToFit: true,
+                showStackedHeader: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                queryCellInfo: "queryCellInfo",
+                toolbarSettings: { showToolbar: false, toolbarItems: ['search'] },
+                editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+                allowResizeToFit: true,
+                columns: [
+                    { field: "e_reg_complaint_code", visible: false, allowEditing: false, headerText: "HHcode", width: 50/*, isPrimaryKey: true*/ },
+                    { field: "investigation_code", visible: true, allowEditing: false, headerText: "", /*editType: "datepicker", format: "{0:MM/dd/yyyy}",*/ width: 50/*, isPrimaryKey: true*/ },
+                    { field: "investigation_desc", visible: true, allowEditing: false, headerText: "COMPLAINT INVESTIGATION", width: 400 },
+                    { field: "yes_no", visible: true, headerText: "Yes/No", width: 100, foreignKeyField: "yes_no_id", foreignKeyValue: "yes_no_desc", dataSource: YesNo },
+                  { field: "Required_Evidence", visible: true, headerText: "Required Evidence", width: 400/*, isPrimaryKey: true */ },
+
+                ], gridLines: ej.Grid.GridLines.Vertical,
+                gridLines: 'both'
+            });
+
+
+
+            $("#DetailInvestGrd").ejGrid({
+                //dataSource: data,
+                dataSource: ej.DataManager({ url: "BatchDataDetailInvestGrd", batchUrl: "BatchUpdate", adaptor: "UrlAdaptor" }),
+                //dataSource: ej.DataManager({ url: "/OVC_HVPT/BatchData", batchUrl: "/OVC_HVPT/BatchUpdate", adaptor: "UrlAdaptor" }),
+                allowGrouping: true,
+                isResponsive: true,
+                enableAltRow: true,
+                allowTextWrap: true,
+                textWrapSettings: { wrapMode: "both" },
+                cellEdit: "cellEdit",
+                allowResizeToFit: true,
+                showStackedHeader: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                queryCellInfo: "queryCellInfo",
+                toolbarSettings: { showToolbar: false, toolbarItems: ['search'] },
+                editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+                allowResizeToFit: true,
+                columns: [
+                    { field: "e_reg_complaint_code", visible: false, allowEditing: false, headerText: "HHcode", width: 50/*, isPrimaryKey: true*/ },
+                    { field: "investigation_code", visible: true, allowEditing: false, headerText: "", /*editType: "datepicker", format: "{0:MM/dd/yyyy}",*/ width: 50/*, isPrimaryKey: true*/ },
+                    { field: "investigation_desc", visible: true, allowEditing: false, headerText: "COMPLAINT INVESTIGATION", width: 400 },
+                    { field: "yes_no", visible: true, headerText: "Yes/No", width: 100, foreignKeyField: "yes_no_id", foreignKeyValue: "yes_no_desc", dataSource: YesNo},
+                    { field: "Required_Evidence", visible: true, headerText: "Required Evidence", width: 400/*, isPrimaryKey: true */ },
+
+                ], gridLines: ej.Grid.GridLines.Vertical,
+                gridLines: 'both'
+            });
+            //////Change Header
+            ////$('#' + this._id + '_dialogEdit').ejDialog("option", "title", templateHeader); //change dialog title
+
+            //////Change Header
+            //$('#' + this._id + '_dialogEdit').ejDialog("option", "title", "Property Title Edit"); //change dialog title
+             
+        }
+    }
+
+    function queryCellInfo(args) {
+         
+        if (args.column.field == "investigation_code" && (args.data.investigation_code.trim() == '4.1' || args.data.investigation_code.trim() == '4.2' ||
+            args.data.investigation_code.trim() == '6.1' || args.data.investigation_code.trim() == '6.2'))
+            $($(args.cell).parent()).css("backgroundColor", "white").css("color", "red").css("font-weight", "bold");/*custom css applied to the row */
+
+
+    }
+
+    function cellEdit(args) {
+        var comcode = args.model.selectedRecords[0].investigation_code; 
+        if ((comcode.trim() == '4.1' || comcode.trim() == '4.2' ||
+            comcode.trim() == '6.1' || comcode.trim() == '6.2'))
+        {
+            args.cancel = true;
+        }
+    }
+
+     
+    function cascadeEventSubCounty(args) {
+        args.requiresDefaultFilter = false; // restrict the built-in mapping for cascading dropdown
+        args.cascadeQuery = ej.Query().where("subcounty_id", "equal", args.cascadeValue); // query to filter value based id
+    }
+
+    function cascadeEventParish(args) {
+        args.requiresDefaultFilter = false; // restrict the built-in mapping for cascading dropdown
+        args.cascadeQuery = ej.Query().where("parish_id", "equal", args.cascadeValue); // query to filter value based id
+    }
+
+    
+</script>
+
+
+
+<style>
+    .panel-default > .panel-heading {
+        background-color:#3e1111;
+        color:white;
+        /*background-color:silver;*/
+        /*color: white;*/
+    }
+</style>
+
+<style type="text/css" class="cssStyles">
+    .control {
+        margin-left: 30px;
+    }
+
+    .ctrllabel {
+        padding-top: 15px;
+    }
+
+    .control {
+        margin-left: 20px;
+    }
+
+    .frame {
+        height: 250px;
+        width: 1000px;
+    }
+
+    .frame1 {
+        height: 240px;
+        width: 900px;
+    }
+
+    .txt {
+        display: block;
+        margin-bottom: 12px;
+    }
+</style>
+
+<style>
+    #lblComplaintTitle {
+        /*font-size: 24px;*/
+        background-color: white;
+        color:darkred;
+        vertical-align:top;
+        /*width: 700px;*/
+    }
+
+    .redLabels {
+        /*font-size: 24px;*/
+        background-color: white;
+        color:#ff0000;
+        vertical-align: top;
+        font-weight:bold;
+        /*width: 700px;*/
+    }
+    .myDiv {
+        font-size: 18px;
+        background-color: white;
+        color: orangered;
+        vertical-align: top;
+        text-align:center;
+        /*width: 700px;*/
+    }
+
+    /*#table2 {
+        border: 1px solid grey;
+        border-collapse: none;
+        border-spacing: 0px 0px;
+    }*/
+
+    /*table {
+        border-collapse: collapse;
+    }
+
+    table, th, td {
+        border: 1px solid #ddd;
+    } 
+    table, td, th {
+        border: 1px solid #ddd;
+        text-align: left;
+    }*/
+
+     
+    /*input[name="e_reg_contact_person_id"] {
+        width: 700px;
+    }*/
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+    }
+
+    .custom.e-js .e-header {
+        background: #5f0c98;
+    }
+
+    .custom.e-js .e-content {
+        background: #ddd;
+    }
+
+    .custom .e-rbn-button.e-btn.e-select {
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    .tabstyle {
+        background: #F9F9F9;
+        border-radius: 10px;
+        border: 1px solid #99CFE3;
+        display: block;
+    }
+
+    .longcolumns {
+        width: 600px !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        border-right: 5px #666 outset !important;
+        border-left: 5px #666 outset !important;
+    }
+</style>

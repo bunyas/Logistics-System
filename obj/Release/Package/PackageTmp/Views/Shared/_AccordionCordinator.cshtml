@@ -1,0 +1,51 @@
+﻿<style type="text/css">
+
+</style>
+<div class="controlframe">
+    @{Html.EJ().Accordion("basicAccordion").ShowRoundedCorner(true).Width("250px").Height("850px").Items(data =>
+        {
+        data.Add().Text("LMIS Co-Ordinator").ContentTemplate(
+            @<div>
+                                                                  <div class="emp-list">
+                                                                      <b class="headername"> LMIS Co-Ordinator SAP Export</b><br />
+                                                                      <table class="table">
+                                                                          <tr>
+                                                                              <td>
+                                                                                  @Html.ActionLink("ART", "SAPExportHSIP_Cordinator", "LMIS_ART")
+                                                                              </td>
+                                                                          </tr>
+                                                                          <tr>
+                                                                              <td>
+                                                                                  @Html.ActionLink("HIV Test Kits", "SAPExportHSIP_Cordinator", "LMIS_HIVTestKits")
+                                                                              </td>
+                                                                          </tr>
+                                                                          <tr>
+                                                                              <td>
+                                                                                  @Html.ActionLink("Laboratory", "SAPExportHSIP_Cordinator", "LMIS_Laboratory")
+                                                                              </td>
+                                                                          </tr>
+                                                                          <tr>
+                                                                              <td>
+                                                                                  @Html.ActionLink("SMC", "SAPExportHSIP_Cordinator", "LMIS_SMC")
+                                                                              </td>
+                                                                          </tr>
+                                                                          <tr>
+                                                                              <td>
+                                                                                  @Html.ActionLink("OI", "SAPExportHSIP_Cordinator", "LMIS_OISTI")
+                                                                              </td>
+                                                                          </tr>
+                                                                          <tr>
+                                                                              <td>
+                                                                                  @Html.ActionLink("Viral Load", "SAPExportHSIP_Cordinator", "LMIS_ViralLoad")
+                                                                              </td>
+                                                                          </tr>
+                                                                          <tr>
+                                                                              <td></td>
+                                                                          </tr>
+                                                                      </table>
+                                                                  </div> 
+       
+    </div>);
+
+        }).HeightAdjustMode(HeightAdjustMode.Content).Render();}
+</div>

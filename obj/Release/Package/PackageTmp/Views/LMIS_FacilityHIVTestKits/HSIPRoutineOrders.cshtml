@@ -1,0 +1,949 @@
+﻿
+@{
+    ViewBag.Title = "AddEdit";
+    Layout = "~/Views/Shared/_LayoutFacilityHSIP.cshtml";
+}
+@section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexFacilityHSIP", "Home")
+                </li>
+                <li class="active">
+                    <strong>HIV Testkits: HSIP Routine Order</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+@(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("DataSourceHSIPOrders").UpdateURL("DialogUpdateHSIP").InsertURL("DialogInsertHSIP").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+        .AllowFiltering()
+        .AllowTextWrap()
+        .AllowGrouping()
+
+        //.AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        //.AllowSearching().SearchSettings(search =>
+        //{
+        //    search.Fields(fields =>
+        //    {
+        //        //fields.Add("Outcome");
+        //        //fields.Add("Output");
+        //        //fields.Add("Indicator");
+        //        //fields.Add("Indicator_2");
+        //        //fields.Add("PerformanceTargetNotes");
+        //        //fields.Add("ExplanatoryNotes");
+        //    });
+        //    search.Operator(Operator.Contains);
+        //    search.IgnoreCase(true);
+        //})
+        
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    items.AddTool(ToolBarItems.Add);
+                    items.AddTool(ToolBarItems.Edit);
+                    items.AddTool(ToolBarItems.Update);
+                    items.AddTool(ToolBarItems.Cancel);
+                    //items.AddTool(ToolBarItems.Search);
+                });
+            })
+        .Columns(col =>
+        {
+            col.Field("OrderNumber").AllowEditing(false).HeaderText("Order Number").IsPrimaryKey(true).Add();
+            col.Field("FacilityCode").AllowEditing(false).HeaderText("Facility").ForeignKeyField("FacilityCode").ForeignKeyValue("Facility").DataSource((IEnumerable<Object>)ViewBag.FacilityDataSource).Add();
+            col.Field("StartDate").AllowEditing(false).HeaderText("Start of reporting period").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("EndDate").AllowEditing(false).HeaderText("End of reporting period").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("DatePrepared").AllowEditing(false).HeaderText("Date prepared").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("FinalSubmission").AllowEditing(false).EditType(EditingType.BooleanEdit).HeaderText("Final Submission").Add();
+            col.Field("RFSO_SentBackTofacility").AllowEditing(false).EditType(EditingType.BooleanEdit).HeaderText("Order Sent Back").Add();
+            col.Field("EditedBy").HeaderText("Modified by").TextAlign(TextAlign.Right).Add();
+            col.Field("EditedDate").HeaderText("Date modified").Format("{0:dd/MM/yyyy}").Add();
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete"); })
+)
+
+<script type="text/template" id="template">
+
+    <div class="row">
+        @*<div class="col-lg-3">
+            <p>District</p>
+            <p><input type="text" id="DistrrictCode" name="DistrrictCode" value="{{:DistrrictCode}}" class="e-field e-ejinputtext valid" /></p>
+            <p>Facility</p>
+            <p><input type="text" id="FacilityCode" name="FacilityCode" value="{{:FacilityCode}}" class="e-field e-ejinputtext valid" /></p>
+        </div>
+        <div class="col-lg-3">
+            <p>Sector</p>
+            <p><input type="text" id="DeliveryZoneCode" name="DeliveryZoneCode" value="{{:DeliveryZoneCode}}" class="e-field e-ejinputtext valid" /></p>
+            <p>Date Submitted</p>
+            <p><input type="text" id="DatePrepared" name="DatePrepared" value="{{:DatePrepared}}" class="e-field e-ejinputtext valid" /></p>
+        </div>*@
+        <div class="col-lg-3">
+            <p>Facility</p>
+            <p><input type="text" id="FacilityCode" name="FacilityCode" value="{{:FacilityCode}}" class="e-field e-ejinputtext valid" /></p>
+
+            <p>Order Number</p>
+            <p><input type="text" id="OrderNumber" readonly name="OrderNumber" value="{{:OrderNumber}}" class="e-field e-ejinputtext valid" /></p>
+
+        </div>
+        <div class="col-lg-3">
+            <p>Date Submitted</p>
+            <p><input type="text" id="DatePrepared" name="DatePrepared" value="{{:DatePrepared}}" class="e-field e-ejinputtext valid" /></p>
+
+            <p>End Of Reporting Period</p>
+            <p><input type="text" id="EndDate" name="EndDate" value="{{:EndDate}}"   class="e-field e-ejinputtext valid" /></p>
+        </div>
+        <div class="col-lg-3">
+            <p>Start Of Reporting Period</p>
+            <p><input type="text" id="StartDate" name="StartDate" value="{{:StartDate}}" class="e-field e-ejinputtext valid" /></p>
+            <div>
+                <table>
+                    <tr> 
+                        <td class="btn btn-danger btn-sm" align="left" style="font-size:medium">  Final Submission ? </td>
+                        <td style="transform:scale(2)">
+                            {{if FinalSubmission}}
+                            <input type="checkbox" id="FinalSubmission" checked="checked" name="FinalSubmission" class="e-field e-checkbox  " style="width:30px" />
+                            {{else}}
+                            <input type="checkbox" id="FinalSubmission" name="FinalSubmission" class="e-field e-checkbox " style="width:30px" />
+                            {{/if}}
+                        </td>
+                        <td>
+                            @*<input type="button" onclick="searchingRequest()" value="Load" />*@
+                            @*<input type="submit" class="btn btn-success"  value="Load">*@
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div id="defaultTab" style="width: 100%;">
+        <ul>
+            <li><a href="#tab1">ORDERS</a></li>
+            <li><a href="#tab2">SUMMARY</a></li>
+        </ul>
+
+        <div id="tab1">
+            <div class="myDiv">
+            </div>
+            <div>
+                <div id="order_grid"></div>
+            </div>
+        </div>
+        <div id="tab2">
+            <div class="myDiv">
+            </div>
+            <div>
+                <div id="summary_grid"></div>
+            </div>
+        </div>
+    </div>
+    <br />
+</script>
+
+<script>
+    function complete(args) {
+        if ((args.requestType == "beginedit" || args.requestType == "add") && args.model.editSettings.editMode == "dialogtemplate") {
+            $('#' + this._id + '_dialogEdit').ejDialog("option", "title", "HIV Test Kits HSIP Routine Order"); //change dialog title
+            $("#StartDate").attr("readonly", "readonly");
+            $("#EndDate").attr("readonly", "readonly");
+            $("#StartDate").ejDatePicker(
+                {
+                    width: '240px',
+                    dateFormat: "dd/MM/yyyy",
+                }
+              
+            );
+            $("#EndDate").ejDatePicker(
+                {
+                    width: '240px',
+                    dateFormat: "dd/MM/yyyy",
+                }
+
+
+            );
+            $("#DatePrepared").ejDatePicker(
+                {
+                    width: '240px',
+                    dateFormat: "dd/MM/yyyy" }
+            );
+
+            //$.ajax({
+            //    //url: 'HAT/Districts',
+            //    url: 'GetDistrictData',
+            //    //data: JSON.stringify(mid),
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    type: 'GET',
+            //    success: function (data) {
+            //        if (data.length > 0) {
+            //            var DropDownListDist = $('#DistrrictCode').ejDropDownList({
+            //                dataSource: data,
+            //                width: "240px",
+            //                fields: { value: "District_Code", text: "District_Name" },
+            //            }).data("ejDropDownList");
+
+            //        }
+
+            //    },
+
+            //});
+
+            //$.ajax({
+            //    //url: 'HAT/Districts',
+            //    url: 'GetSectorData',
+            //    //data: JSON.stringify(mid),
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    type: 'GET',
+            //    success: function (data) {
+            //        if (data.length > 0) {
+            //            var DropDownListDist = $('#DeliveryZoneCode').ejDropDownList({
+            //                dataSource: data,
+            //                width: "240px",
+            //                fields: { value: "ZoneCode", text: "ZoneDescription" },
+            //            }).data("ejDropDownList");
+
+            //        }
+
+            //    },
+
+            //});
+            $("#defaultTab").ejTab({ selectedItemIndex: 0 }).ejTab({ showRoundedCorner: true });;
+
+            if (args.requestType == "add") {
+                var nullstr = '';
+            }
+
+
+            if (args.requestType == "beginedit" || args.requestType == "add") {
+                var myCond = false;
+                $.ajax({
+                    //url: 'HAT/Districts',
+                    url: 'GetFacilityData',
+                    //data: JSON.stringify(mid),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    type: 'GET',
+                    success: function (data) {
+                        if (data.length > 0) {
+                            var DropDownListDist = $('#FacilityCode').ejDropDownList({
+                                dataSource: data,
+                                width: "240px",
+                                fields: { value: "FacilityCode", text: "Facility" },
+                                //change: 'change',
+                            }).data("ejDropDownList"); 
+                            var ddl2 = $('#FacilityCode').ejDropDownList("instance");
+                            var fc = data[0].FacilityCode;
+                            //console.log(JSON.stringify(fc)); 
+                            ddl2.selectItemByValue(fc);
+                             
+                            if (fc == null) {
+                                alert('');
+                            }
+                            else {
+                                //getFacilitySector( int facilitycode)
+                                $.ajax({
+                                    url: 'getFacilitySector?facilitycode=' + fc,
+
+                                    //data: JSON.stringify(mid),
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    type: 'GET',
+                                    success: function (fzone) {
+                                        if (fzone != null) {
+
+                                            var today = new Date();
+                                            var daytoday = today.getDate();
+                                            var todaymonth = today.getMonth();
+
+                                            var myyear = today.getFullYear();
+
+                                            ////Manually create a date to introduce '0' in months before Oct and days beo
+                                            //var my_date = (daytoday + '/' + todaymonth + '/' + myyear);
+
+
+                                            var mydate = new Date(myyear, todaymonth, daytoday);
+                                           // alert(mydate);
+                                            todaymonth++;
+                                            //alert('Zone: ' + fzone + ' daytoday: ' + daytoday + ' todaymonth: ' + todaymonth);
+                                            //if (daytoday >= 17 && daytoday < 25) {
+                                            //    alert('Dear Customer, please note that the reporting deadline for this Cycle has expired, kind liaise with regional Officer on how to process your order..!');
+                                            //    myCond = false;
+                                            //    cancelss();
+                                            //}
+                                            //else
+                                            {
+                                                if ((todaymonth % 2) == 1) {
+                                                    if (fzone >= 1 && fzone <= 3) {
+                                                       // alert('Correct');
+                                                        myCond = true;
+                                                        details(args);
+                                                    }
+                                                    else {
+                                                        //alert('Wrong Zone ');
+                                                        alert('Sector : ' + fzone + '  ' + 'Dear Customer, this is not your reporting period, should you want to place and Emergency order, please go to Custom Orders..!');
+                                                        myCond = false;
+                                                        cancelss();
+                                                    }
+
+
+                                                }
+                                                else {
+                                                    if (fzone >= 4 && fzone <= 5) {
+                                                        //alert('Correct');
+                                                        myCond = true;
+                                                        details(args);
+                                                    }
+                                                    else {
+                                                        //alert('Wrong Zone ');
+                                                        alert('Sector : ' + fzone + '  ' + 'Dear Customer, this is not your reporting period, should you want to place and Emergency order, please go to Custom Orders..!');
+                                                        myCond = false;
+                                                        cancelss();
+                                                    }
+
+                                                }
+                                            }
+
+                                        }
+                                    },
+                                });
+                            }
+                        }
+                    },
+                });
+                
+                //if (myCond == false)
+                //{
+                //    alert('up');
+                //    var obj = $("#Grid").ejGrid("instance")
+                //    obj.cancelEdit();
+                //}
+                //else                
+            }
+        }
+    }
+
+    function details(args)
+    {
+        $("#EditDialog_Grid_Save").ejButton("destroy");
+        $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+        $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "margin-left": "190px" });
+        $("#EditDialog_Grid_Cancel").ejButton("destroy");
+        $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+        $("#cancel").css({ "width": "100px", "height": "50px", "margin-left": "10px" })
+
+        var header_grid = $('#Grid').ejGrid('instance');
+
+        if (args.requestType == "beginedit") {
+            var order_no = header_grid.getSelectedRecords()[0].OrderNumber;
+            $("#order_grid").ejGrid({
+                dataSource: ej.DataManager({ url: "GetOrder", batchUrl: "Update", adaptor: "UrlAdaptor" }),
+                query: new ej.Query().addParams('param_on', order_no),
+                //dataSource: ej.DataManager({ url: "BatchDataEdit?facility_code=" + facility_code + "&start_date=" + start_date + "&end_date=" + end_date, batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                allowGrouping: false,
+
+                //groupSettings: { showDropArea: false, groupedColumns: ["ovc_identification_Desc"], headerText: "" },
+                //toolbarSettings: { showToolbar: true, toolbarItems: ['search'] },
+                editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                allowScrolling: true,
+                scrollSettings: { width: "100%", height: "auto" },
+                allowPaging: false,
+                enableAltRow: true,
+                allowTextWrap: true,
+                textWrapSettings: { wrapMode: "both" },
+                cellEdit: "cellEdit",
+                allowResizeToFit: true,
+                showStackedHeader: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowScrolling: true,
+                cellSave: "cellsave",
+                queryCellInfo: "queryCellInfo",
+
+                //cellEdit: "cellEdit",
+                columns: [
+                    { field: "OrderNumber", headerText: "OrderNumber", visible: false, allowEditing: false, isPrimaryKey: true },
+                    { field: "FacilityCode", headerText: "FacilityCode", visible: false, allowEditing: false },
+                    { field: "StartDate", headerText: "StartDate", visible: false, allowEditing: false },
+                    { field: "EndDate", headerText: "EndDate", visible: false, allowEditing: false },
+                    { field: "product_code", headerText: "Product Code", allowEditing: false, width: 70, isPrimaryKey: true },
+                    { field: "product_description", headerText: "Product Description", allowEditing: false, width: 400 },
+                    { field: "Basic_Unit", headerText: "Basic Unit", allowEditing: false, width: 80 },
+                    { field: "No_Test_Start_2Months", headerText: "Opening Balance", allowEditing: true, width: 80, textAlign: ej.TextAlign.Center, cssClass: "customCSS", editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }},
+                    { field: "Test_Recieved_2Months", headerText: "Tests Received In 2 Months", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 } },
+                    { field: "Test_Used_2Months", headerText: "Tests Used In 2 Months", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }},
+                    { field: "Loss_Adjustment", headerText: "Losses / Adjustments", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric },
+                    { field: "DaysOutOfStockDuring2Months", headerText: "Days out of stock during 2 month Cycle", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }  },
+                    { field: "AdjustedAMC", headerText: "Adjusted AMC", allowEditing: false, width: 80, cssClass: "customCSS" },
+                    { field: "Test_Remaining", headerText: "Closing Balance", allowEditing: false, width: 80, cssClass: "customCSS" },
+                    { field: "Maximum_Stock", headerText: "Months of Stock on hand", allowEditing: false, width: 80, cssClass: "customCSS"},
+                    { field: "Quantity_Required", headerText: "Quantity Required", allowEditing: false, width: 80 },
+                    { field: "Notes", headerText: "Notes", allowEditing: true, width: 200 },
+                    { field: "RFSONotes", headerText: "RFSO Notes", allowEditing: false, width: 200 }
+                ]
+            });
+
+            $("#summary_grid").ejGrid({
+                dataSource: ej.DataManager({ url: "GetOrderSummary", batchUrl: "UpdateSummary", adaptor: "UrlAdaptor" }),
+                query: new ej.Query().addParams('param_on', order_no),
+                //.executeQuery(new ej.Query().addParams('param_fc', facility_code).addParams('param_sd', start_date).addParams('param_ed', end_date)),
+                //dataSource: ej.DataManager({ url: "BatchDataEdit?facility_code=" + facility_code + "&start_date=" + start_date + "&end_date=" + end_date, batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                allowGrouping: false,
+                //groupSettings: { showDropArea: false, groupedColumns: ["ovc_identification_Desc"], headerText: "" },
+                //toolbarSettings: { showToolbar: true, toolbarItems: ['search'] },
+                editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                allowScrolling: true,
+                scrollSettings: { width: "100%", height: "auto" },
+                allowPaging: false,
+                enableAltRow: true,
+                allowTextWrap: true,
+                textWrapSettings: { wrapMode: "both" },
+                //cellEdit: "cellEdit",
+                allowResizeToFit: true,
+                showStackedHeader: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowScrolling: true,
+                cellSave: "cellsave2",
+                queryCellInfo: "queryCellInfoPatients",
+                columns: [
+                    { field: "OrderNumber", headerText: "OrderNumber", visible: false, allowEditing: false, isPrimaryKey: true },
+                    { field: "FacilityCode", headerText: "FacilityCode", visible: false, allowEditing: false },
+                    { field: "StartDate", headerText: "StartDate", visible: false, allowEditing: false },
+                    { field: "EndDate", headerText: "EndDate", visible: false, allowEditing: false },
+                    { field: "product_code", visible: true, headerText: "Product Code", allowEditing: false, width: 70, isPrimaryKey: true },
+                    { field: "product_description", headerText: "Product Description", allowEditing: false, width: 200 },
+                    { field: "HCT", headerText: "HCT", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }},
+                    { field: "PMTCT", headerText: "PMTCT", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }},
+                    { field: "Clinical_Diagnosis", headerText: "Clinical Diagnosis", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }},
+                    { field: "SMC", headerText: "SMC", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }},
+                    { field: "Quality_Control", headerText: "Quality Control New", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 } },
+                    { field: "Total", headerText: "Total", width: 80 }
+                ]
+            });
+        }
+
+        if (args.requestType == "add") {
+            var order_no = "new_record";
+
+            var today = new Date();
+            var daytoday = today.getDate();
+            var todaymonth = today.getMonth();
+
+            var myyear = today.getFullYear();
+
+            ////Manually create a date to introduce '0' in months before Oct and days beo
+            //var my_date = (daytoday + '/' + todaymonth + '/' + myyear);
+            // alert()
+
+            var stDate = (daytoday + '/' + todaymonth + '/' + myyear);
+            var enDate = (daytoday + '/' + todaymonth + '/' + myyear);
+
+            var startDate = new Date(myyear, todaymonth, daytoday);
+            var endDate = new Date(myyear, todaymonth, daytoday);
+            if (daytoday >= 25) {
+                startDate = new Date(myyear, todaymonth-2, '01');
+                 var mmstart = todaymonth;
+
+                 var mmStr = '';
+                 if (todaymonth < 10) {
+                     mmStr = '0' + mmstart;
+                 }
+                 else {
+                     mmStr = mmstart;
+                 }
+
+                 //sDate = ('25' + '/' + mmStr + '/' + myyear);
+               //  sDate = new Date (myyear, todaymonth, '25');
+                
+                 stDate = ('25/' + mmStr + '/' + myyear);
+                 //alert(stDate);
+                
+                 var twoDigitMonth = ((today.getMonth().length + 1) === 1) ? (today.getMonth() + 1) : '0' + (today.getMonth() + 1);
+                 var Start_Date = today.getDate() + "/" + twoDigitMonth + "/" + today.getFullYear();
+                 var End_Date = today.getDate() + "/" + twoDigitMonth + "/" + today.getFullYear();
+
+                var lastday = 31;
+                if (todaymonth + 1 == 0 || todaymonth + 1 == 2 || todaymonth + 1 == 4 || todaymonth + 1 == 6 ||
+                    todaymonth + 1 == 7 || todaymonth + 1 == 9 || todaymonth + 1 == 11) { 
+                }
+                else {
+                    if (todaymonth + 1 == 1) {
+                        lastday = 28; // Need to cater for leap year
+                    }
+                    else {
+                        lastday = 30;
+                    }
+                }
+                //if (todaymonth == 11)
+                //{
+                //    endDate = new Date(++myyear, 0, '05');
+
+                //   // eDate = ('05' + '/' + '01' + '/' + ++myyear);
+
+                //    eDate = new Date(++myyear, '0', '5');
+
+
+                //    enDate = ('05/01/' + ++myyear);
+
+                //    twoDigitMonth = ((eDate.getMonth().length + 1) === 1) ? (eDate.getMonth() + 1) : '0' + (eDate.getMonth() + 1);
+                     
+                //    End_Date = eDate.getDate() + "/" + twoDigitMonth + "/" + eDate.getFullYear();
+
+                //}
+                //else
+                {
+                    //endDate = new Date(myyear, todaymonth , lastday);
+                    var lastday = 31;
+                    if (todaymonth == 0 || todaymonth == 2 || todaymonth == 4 || todaymonth == 6 ||
+                        todaymonth == 7
+                        || todaymonth == 9 || todaymonth == 11) {
+                        endDate = new Date(myyear, todaymonth-1, lastday);
+                    }
+                    else {
+                        if (todaymonth == 1) {
+                            lastday = 28; // Need to cater for leap year
+                            endDate = new Date(myyear, todaymonth-1, lastday);
+                        }
+                        else {
+                            lastday = 30;
+                            endDate = new Date(myyear, todaymonth-1, lastday);
+                        }
+                    }
+                    
+
+                    var mmend = todaymonth + 1;
+
+                    var mmStr = '';
+                    if (todaymonth < 10) {
+                        mmStr = '0' + mmend;
+                    }
+                    else {
+                        mmStr = mmend;
+                    }
+
+
+                    //eDate = ('05' + '/' + mmStr + '/' + myyear);
+                   // eDate = new Date(myyear, mmend, '5'); 
+
+                    enDate = ('05/' + mmStr + '/' + myyear);
+
+                    //twoDigitMonth = ((eDate.getMonth().length + 1) === 1) ? (eDate.getMonth() + 1) : '0' + (eDate.getMonth() + 1);
+
+                    //End_Date = eDate.getDate() + "/" + twoDigitMonth + "/" + eDate.getFullYear();
+                }
+                
+            }
+
+            else
+            /*if (daytoday >= 25)*/
+            {
+                    startDate = new Date(myyear, todaymonth-2, '01');
+                    var mmstart = todaymonth;
+
+                    var mmStr = '';
+                    if (todaymonth < 10) {
+                        mmStr = '0' + mmstart;
+                    }
+                    else {
+                        mmStr = mmstart;
+                    }
+                    stDate = ('25/' + mmStr + '/' + myyear);
+                 
+                    var lastday = 30;
+                    if (todaymonth  == 0 || todaymonth  == 2 || todaymonth  == 4 || todaymonth  == 6 ||
+                        todaymonth  == 7
+                        || todaymonth == 9 || todaymonth == 11) {
+                        endDate = new Date(myyear, todaymonth-1, lastday);
+                    }
+                    else {
+                        if (todaymonth == 8 || todaymonth == 3 || todaymonth == 5 || todaymonth == 10) {
+                            lastday = 31; 
+                            endDate = new Date(myyear, todaymonth-1, lastday);
+                        }
+                        else {
+                            lastday = 28;// Need to cater for leap year
+                            endDate = new Date(myyear, todaymonth-1, lastday);
+                        }
+                    }
+                    
+
+                    var mmend = todaymonth + 1;
+                
+                    var mmStr = '';
+                    if (todaymonth < 10) {
+                        mmStr = '0' + mmend;
+                    }
+                    else {
+                        mmStr = mmend;
+                    }
+                    enDate = ('05/' + mmStr + '/' + myyear);
+
+                    if (todaymonth == 0) {
+                        startDate = new Date(--myyear, '11', '01');
+                      
+                        stDate = ('25/12/' + --myyear);
+
+                    } 
+            }
+            //alert('startdate:' + startDate + '\nenddate' + endDate);
+            //alert('startdate:' + stDate + '\nenddate' + enDate);
+            var testdate = new Date(++myyear, 0, '05');
+            var x = $("#EndDate").ejDatePicker('instance');
+             x.option('value', endDate);//StartDate
+        
+            var y = $("#StartDate").ejDatePicker('instance');
+            y.option('value', startDate);//StartDate
+            var FC = "new_record";
+
+
+            var facCode = $('#FacilityCode').data("ejDropDownList"); 
+            var fcCode = facCode.option("value");
+  
+            $("#order_grid").ejGrid({
+                dataSource: ej.DataManager({ url: "GetOrder_HTK?FC=" + fcCode + "&StartDate=" + stDate + "&EndDate=" + enDate, batchUrl: "Update", adaptor: "UrlAdaptor" }),
+                //query: new ej.Query().addParams('param_on', order_no),
+                //dataSource: ej.DataManager({ url: "BatchDataEdit?facility_code=" + facility_code + "&start_date=" + start_date + "&end_date=" + end_date, batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                allowGrouping: false,
+
+                editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                allowScrolling: true,
+                scrollSettings: { width: "100%", height: "auto" },
+                allowPaging: false,
+                enableAltRow: true,
+                allowTextWrap: true,
+                textWrapSettings: { wrapMode: "both" },
+                cellEdit: "cellEdit",
+                allowResizeToFit: true,
+                showStackedHeader: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowScrolling: true,
+                cellSave: "cellsave",
+                queryCellInfo: "queryCellInfo",
+
+                //cellEdit: "cellEdit",
+                columns: [
+                    { field: "OrderNumber", headerText: "OrderNumber", visible: false, allowEditing: false, isPrimaryKey: true },
+                    { field: "FacilityCode", headerText: "FacilityCode", visible: false, allowEditing: false },
+                    { field: "StartDate", headerText: "StartDate", visible: false, allowEditing: false },
+                    { field: "EndDate", headerText: "EndDate", visible: false, allowEditing: false },
+                    { field: "product_code", headerText: "Product Code", allowEditing: false, width: 70, isPrimaryKey: true },
+                    { field: "product_description", headerText: "Product Description", allowEditing: false, width: 400 },
+                    { field: "Basic_Unit", headerText: "Basic Unit", allowEditing: false, width: 80 },
+                    { field: "No_Test_Start_2Months", headerText: "Opening Balance", allowEditing: true, width: 80, textAlign: ej.TextAlign.Center, cssClass: "customCSS", editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }},
+                    { field: "Test_Recieved_2Months", headerText: "Tests Received In 2 Months", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 } },
+                    { field: "Test_Used_2Months", headerText: "Tests Used In 2 Months", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }},
+                    { field: "Loss_Adjustment", headerText: "Losses / Adjustments", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric },
+                    { field: "DaysOutOfStockDuring2Months", headerText: "Days out of stock during 2 month Cycle", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 } },
+                    { field: "AdjustedAMC", headerText: "Adjusted AMC", allowEditing: false, width: 80, cssClass: "customCSS" },
+                    { field: "Test_Remaining", headerText: "Closing Balance", allowEditing: false, width: 80, cssClass: "customCSS" },
+                    { field: "Maximum_Stock", headerText: "Months of Stock on hand", allowEditing: false, width: 80, cssClass: "customCSS"},
+                    { field: "Quantity_Required", headerText: "Quantity Required", allowEditing: false, width: 80 },
+                    { field: "Notes", headerText: "Notes", allowEditing: true, width: 200},
+                    { field: "RFSONotes", headerText: "RFSO Notes", allowEditing: false, width: 200 }
+                ]
+            });
+
+            $("#summary_grid").ejGrid({
+                dataSource: ej.DataManager({ url: "GetOrderSummary", batchUrl: "UpdateSummary", adaptor: "UrlAdaptor" }),
+                query: new ej.Query().addParams('param_on', order_no),
+                //.executeQuery(new ej.Query().addParams('param_fc', facility_code).addParams('param_sd', start_date).addParams('param_ed', end_date)),
+                //dataSource: ej.DataManager({ url: "BatchDataEdit?facility_code=" + facility_code + "&start_date=" + start_date + "&end_date=" + end_date, batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                allowGrouping: false,
+                //groupSettings: { showDropArea: false, groupedColumns: ["ovc_identification_Desc"], headerText: "" },
+                //toolbarSettings: { showToolbar: true, toolbarItems: ['search'] },
+                editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                allowScrolling: true,
+                scrollSettings: { width: "100%", height: "auto" },
+                allowPaging: false,
+                enableAltRow: true,
+                allowTextWrap: true,
+                textWrapSettings: { wrapMode: "both" },
+                //cellEdit: "cellEdit",
+                allowResizeToFit: true,
+                showStackedHeader: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowScrolling: true,
+                cellSave: "cellsave2",
+                queryCellInfo: "queryCellInfoPatients",
+                columns: [
+                    { field: "OrderNumber", headerText: "OrderNumber", visible: false, allowEditing: false, isPrimaryKey: true },
+                    { field: "FacilityCode", headerText: "FacilityCode", visible: false, allowEditing: false },
+                    { field: "StartDate", headerText: "StartDate", visible: false, allowEditing: false },
+                    { field: "EndDate", headerText: "EndDate", visible: false, allowEditing: false },
+                    { field: "product_code", visible: true, headerText: "Product Code", allowEditing: false, width: 70, isPrimaryKey: true },
+                    { field: "product_description", headerText: "Product Description", allowEditing: false, width: 200 },
+                    { field: "HCT", headerText: "HCT", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }},
+                    { field: "PMTCT", headerText: "PMTCT", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 } },
+                    { field: "Clinical_Diagnosis", headerText: "Clinical Diagnosis", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }},
+                    { field: "SMC", headerText: "SMC", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }},
+                    { field: "Quality_Control", headerText: "Quality Control New", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }},
+                    { field: "Total", headerText: "Total", width: 80 }
+                ]
+            });
+
+
+        }
+
+       
+    }
+
+
+    function queryCellInfo(args) {
+         //p_c = args.model.selectedRecords[0].product_code;
+        //var pc = $("#product_code").val();
+        if (args.column.field == "product_code" && args.data.product_code == null) {
+            $($(args.cell).parent()).css("backgroundColor", "steelblue").css("color", "white");/*custom css applied to the row */
+          //args.cell.cancel = true;
+        }
+        //if (pc == null) {
+        //    //  alert('n');
+        //    // args.cell.cancel = true;
+        //    args.cancel = true;
+        //}
+    }
+    function queryCellInfoPatients(args) {
+        //var pc = args.model.selectedRecords[0].regimen_code;
+        if (args.column.field == "regimen_code" && args.data.regimen_code == null) {
+            $($(args.cell).parent()).css("backgroundColor", "steelblue").css("color", "white");/*custom css applied to the row */
+            //args.cancel = true;
+        }
+       
+    }
+    function cellEdit(args) {
+        var pc = args.model.selectedRecords[0].product_code;
+        var cb = args.model.selectedRecords[0].Test_Remaining;
+        if (pc == null||cb==null) {
+            args.cancel = true;
+        }
+
+    }
+</script>
+
+
+<script type="text/javascript">
+    function cellsave(args) {
+
+        var gridObj = $("#order_grid").data("ejGrid");
+        var rowIndex = gridObj.selectedRowsIndexes;
+        var amc_cellIndex = 12;
+        var MonthsOfStock_cellIndex = 14;
+        var qty_required_cellIndex = 15;
+
+        if (args.columnName == "DaysOutOfStockDuring2Months") {
+            //amc
+            var daysOutStock = args.value;
+            var consumption = args.rowData.Test_Used_2Months;
+            //var max_stock = (consumption * 2);
+            var amc = (consumption * 30) / (60 - daysOutStock);
+            gridObj.model.columns[12]['allowEditing'] = true;
+            gridObj.setCellText(rowIndex, amc_cellIndex, amc.toFixed(1));
+            gridObj.model.columns[12]['allowEditing'] = false;
+
+            //quantity required
+            //var consumption = args.value;
+            var tests_remaining = args.rowData.Test_Remaining;
+            var month_stock = tests_remaining / amc;
+            gridObj.model.columns[14]['allowEditing'] = true;
+            gridObj.setCellText(rowIndex, MonthsOfStock_cellIndex, month_stock.toFixed(1));
+            gridObj.model.columns[14]['allowEditing'] = false;
+
+            //quantity required
+            var qty_required = (4*amc) - tests_remaining;
+            gridObj.model.columns[15]['allowEditing'] = true;
+            gridObj.setCellText(rowIndex, qty_required_cellIndex, qty_required.toFixed(1));
+            gridObj.model.columns[15]['allowEditing'] = false;
+
+        }
+ 
+    }
+
+    function cellsave2(args) {
+
+        var gridObj = $("#summary_grid").data("ejGrid");
+        var rowIndex = gridObj.selectedRowsIndexes;
+        var total_cellIndex = 11;
+
+
+        if (args.columnName == "HCT") {
+            var htc = 0;
+            if (isNaN(args.value)==false)
+                htc = args.value;
+            var pmtct = 0;
+            if (isNaN(args.rowData.PMTCT) == false)
+                pmtct = args.rowData.PMTCT;
+            var cd = 0;
+            if (isNaN(args.rowData.Clinical_Diagnosis) == false)
+                cd = args.rowData.Clinical_Diagnosis;
+            var smc = 0;
+            if (isNaN(args.rowData.SMC) == false)
+                cd = args.rowData.SMC;
+            var qc = 0;
+            if (isNaN(args.rowData.Quality_Control) == false)
+                qc = args.rowData.Quality_Control;
+            var total = parseInt(htc) + parseInt(pmtct) + parseInt(cd) + parseInt(smc) + parseInt(qc);
+
+            gridObj.model.columns[11]['allowEditing'] = true;
+            gridObj.setCellText(rowIndex, total_cellIndex, total);
+            gridObj.model.columns[11]['allowEditing'] = false;
+        }
+        if (args.columnName == "PMTCT") {
+            var pmtct = 0;
+            if (isNaN(args.value) == false)
+                pmtct = args.value;
+            var htc = 0;
+            if (isNaN(args.rowData.HTC) == false)
+                htc = args.rowData.HTC;
+            var cd = 0;
+            if (isNaN(args.rowData.Clinical_Diagnosis) == false)
+                cd = args.rowData.Clinical_Diagnosis;
+            var smc = 0;
+            if (isNaN(args.rowData.SMC) == false)
+                cd = args.rowData.SMC;
+            var qc = 0;
+            if (isNaN(args.rowData.Quality_Control) == false)
+                qc = args.rowData.Quality_Control;
+            var total = parseInt(htc) + parseInt(pmtct) + parseInt(cd) + parseInt(smc) + parseInt(qc);
+
+            gridObj.model.columns[11]['allowEditing'] = true;
+            gridObj.setCellText(rowIndex, total_cellIndex, total);
+            gridObj.model.columns[11]['allowEditing'] = false;
+        }
+        if (args.columnName == "Clinical_Diagnosis") {
+            var cd = 0;
+            if (isNaN(args.value) == false)
+                 cd = args.value;
+            var htc = 0;
+            if (isNaN(args.rowData.HTC) == false)
+                htc = args.rowData.HTC;
+            var pmtct = 0;
+            if (isNaN(args.rowData.PMTCT) == false)
+                pmtct = args.rowData.PMTCT;
+            var smc = 0;
+            if (isNaN(args.rowData.SMC) == false)
+                cd = args.rowData.SMC;
+            var qc = 0;
+            if (isNaN(args.rowData.Quality_Control) == false)
+                qc = args.rowData.Quality_Control;
+            var total = parseInt(htc) + parseInt(pmtct) + parseInt(cd) + parseInt(smc) + parseInt(qc);
+
+            gridObj.model.columns[11]['allowEditing'] = true;
+            gridObj.setCellText(rowIndex, total_cellIndex, total);
+            gridObj.model.columns[11]['allowEditing'] = false;
+        }
+        if (args.columnName == "SMC") {
+            var smc = 0;
+            if (isNaN(args.value) == false)
+                smc = args.value;
+            var htc = 0;
+            if (isNaN(args.rowData.HTC) == false)
+                htc = args.rowData.HTC;
+            var pmtct = 0;
+            if (isNaN(args.rowData.PMTCT) == false)
+                pmtct = args.rowData.PMTCT;
+            var cd = 0;
+            if (isNaN(args.rowData.Clinical_Diagnosis) == false)
+                cd = args.rowData.Clinical_Diagnosis;
+            var qc = 0;
+            if (isNaN(args.rowData.Quality_Control) == false)
+                qc = args.rowData.Quality_Control;
+            var total = parseInt(htc) + parseInt(pmtct) + parseInt(cd) + parseInt(smc) + parseInt(qc);
+
+            gridObj.model.columns[11]['allowEditing'] = true;
+            gridObj.setCellText(rowIndex, total_cellIndex, total);
+            gridObj.model.columns[11]['allowEditing'] = false;
+        }
+        if (args.columnName == "Quality_Control") {
+            var qc = 0;
+            if (isNaN(args.value) == false)
+                qc = args.value;
+            var htc = 0;
+            if (isNaN(args.rowData.HTC) == false)
+                htc = args.rowData.HTC;
+            var pmtct = 0;
+            if (isNaN(args.rowData.PMTCT) == false)
+                pmtct = args.rowData.PMTCT;
+            var cd = 0;
+            if (isNaN(args.rowData.Clinical_Diagnosis) == false)
+                cd = args.rowData.Clinical_Diagnosis;
+            var smc = 0;
+            if (isNaN(args.rowData.SMC) == false)
+                smc = args.rowData.SMC;
+            var total = parseInt(htc) + parseInt(pmtct) + parseInt(cd) + parseInt(smc) + parseInt(qc);
+
+            gridObj.model.columns[11]['allowEditing'] = true;
+            gridObj.setCellText(rowIndex, total_cellIndex, total);
+            gridObj.model.columns[11]['allowEditing'] = false;
+        }
+    }
+
+
+    function savess() {
+        var datepickObj = $("#DatePrepared").data('ejDatePicker');
+        var dp = datepickObj.option('value');
+
+        var st = $("#StartDate").data('ejDatePicker');
+        var sd = st.option('value');//StartDate
+
+        var et = $("#EndDate").data('ejDatePicker');
+        var ed = et.option('value');//StartDate
+
+        if (dp == null || sd == null || ed == null) {
+            alert('Please fill in the missing Information, Date Prepared is Missing !..');
+        }
+        else {
+
+            if (document.getElementById('FinalSubmission').checked) {
+                $('#FinalSubmission').val(true);
+            } else {
+                $('#FinalSubmission').val(false);
+            }
+            var obj = $("#Grid").ejGrid("instance");
+            var grd_order = $("#order_grid").ejGrid("instance");
+            var grd_summary = $("#summary_grid").ejGrid("instance");
+            obj.endEdit();
+            grd_order.batchSave();
+            grd_summary.batchSave();
+        }
+    }
+    function cancelss() {
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+    }
+
+</script>
+
+ <style>
+     .customCSS.e-rowcell {
+         background-color: #EFF5FB;
+         font-family: 'Bell MT';
+         font-style: italic;
+         font-size: 20px;
+     }
+ </style>
+
+   
+
+ 
+
+
+
+

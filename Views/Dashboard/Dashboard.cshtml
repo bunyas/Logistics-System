@@ -1,0 +1,11 @@
+﻿
+@*@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+<h2>Dashboard</h2>*@
+
+<div id="tab-1" style="float:left;height:100%;width:100%;">
+    @Html.EJDashboard().DashboardViewer("dashboard").InteractionSettings(i => i.AllowHistoryMaitenance(false).HandleHistoryEvent(false)).ServiceUrl(@ViewBag.ServiceUrl).DashboardPath(@ViewBag.DashboardPath).AllowComment(true)
+</div>

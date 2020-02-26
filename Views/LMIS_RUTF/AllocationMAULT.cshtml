@@ -1,0 +1,110 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutMAULT.cshtml";
+}
+
+@section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexMAULT", "Home")
+                </li>
+                <li>
+                    @Html.ActionLink("Allocation Index", "", "")
+                </li>
+                <li class="active">
+                    <strong>RUTF: Allocation</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+@using (Html.BeginForm())
+{
+    @(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("GetAllocation?param_sd=" + ViewBag.sd + "&param_ed=" + ViewBag.ed + "&param_pc=" + ViewBag.pc).BatchURL("UpdateAllocation").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+        // .AllowFiltering().ShowColumnChooser()
+        .AllowTextWrap()
+        .AllowGrouping()
+        //.AllowScrolling()
+        //   .ScrollSettings(col => { col.Width(550).Height(300).EnableVirtualization(true); })
+        //.Query("ej.Query().addParams('param_sd'," + "'" + @Request.Params["start_date"] + "'" + ").addParams('param_ed'," + "'" + @Request.Params["end_date"] + "'" + ")")
+        //.Query("ej.Query().addParams('param_sd','2015-04-01 00:00:00.000').addParams('param_ed','2015-05-31 00:00:00.000').addParams('param_pc','110001')")
+        //.Query("ej.Query().addParams('param_sd'," + "'" + @Request.Params["start_date"] + "'" + ").addParams('param_ed'," + "'" + @Request.Params["end_date"] + "'" + ")")
+
+        //.AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .AllowScrolling(true)
+        .AllowSorting(true)
+        //.FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        //.AllowSearching().SearchSettings(search =>
+        //{
+        //    search.Fields(fields =>
+        //    {
+        //        //fields.Add("Outcome");
+        //        //fields.Add("Output");
+        //        //fields.Add("Indicator");
+        //        //fields.Add("Indicator_2");
+        //        //fields.Add("PerformanceTargetNotes");
+        //        //fields.Add("ExplanatoryNotes");
+        //    });
+        //    //search.Operator(Operator.Contains);
+        //    //search.IgnoreCase(true);
+        //})
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.Batch); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    //items.AddTool(ToolBarItems.Add);
+                    items.AddTool(ToolBarItems.Edit);
+                    items.AddTool(ToolBarItems.Update);
+                    items.AddTool(ToolBarItems.Cancel);
+                    items.AddTool(ToolBarItems.Search);
+                });
+            })
+        .Columns(col =>
+        {
+            col.Field("OrderNumber").AllowEditing(false).HeaderText("Order No.").IsPrimaryKey(true).Width(200).Add();
+            col.Field("StartDate").AllowEditing(false).Visible(false).HeaderText("Start of reporting period").Width(80).Format("{0:dd/MM/yyyy}").Add();
+            col.Field("EndDate").AllowEditing(false).Visible(false).HeaderText("End of reporting period").Width(80).Format("{0:dd/MM/yyyy}").Add();
+            col.Field("ProductCode").AllowEditing(false).HeaderText("Product Code").IsPrimaryKey(true).Add();
+            col.Field("FacilityCode").AllowEditing(false).HeaderText("Facility").ForeignKeyField("FacilityCode").ForeignKeyValue("Facility").DataSource((IEnumerable<object>)ViewBag.FacilityDataSource).IsPrimaryKey(true).Width(250).Add();
+            //col.Field("PackSize").AllowEditing(false).HeaderText("Pack Size").Width(80).Add();
+            col.Field("OpeningBalance").AllowEditing(false).HeaderText("Opening Balance").Width(80).Add();
+            col.Field("QtyRecieved").AllowEditing(false).HeaderText("Quantity Received").Width(80).Add();
+            col.Field("Dispensed2MonthsReview").AllowEditing(false).HeaderText("Consumption").Width(80).Add();
+            col.Field("LossesAndAdjustments").AllowEditing(false).HeaderText("Losses/Adjustments(-/ +)").Width(80).Add();
+            col.Field("ClosingBalance").AllowEditing(false).HeaderText("Total Closing Balance").Width(80).Add();
+            col.Field("QuantityRequired").AllowEditing(false).HeaderText("Quantity Ordered").Width(80).Add();
+            col.Field("Quantity_Allocated").AllowEditing(true).HeaderText("Quantity Allocated").Width(80).EditType(EditingType.NumericEdit).NumericEditOptions(new Syncfusion.JavaScript.Models.EditorProperties() { MinValue = 0 }).CssClass("customCSS").Add();
+            col.Field("Comments").AllowEditing(false).HeaderText("Notes").Width(200).Add();
+            col.Field("RFSONotes").AllowEditing(true).HeaderText("SCTO Notes").Width(200).Add();
+
+        })
+
+    )
+}
+<style>
+    .customCSS.e-rowcell {
+        background-color: #EFF5FB;
+        /*font-family: 'Bell MT';
+        font-style: italic;
+        font-size: 20px;*/
+        font: large bolder;
+        font-weight: bolder;
+        font-family: 'Times New Roman', Times, serif;
+    }
+</style>

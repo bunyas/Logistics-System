@@ -1,0 +1,337 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("DataSource").BatchURL("ART/Update").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+        .AllowFiltering()
+        .AllowTextWrap()
+        .AllowGrouping()
+        
+        //.AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+                //fields.Add("Outcome");
+                //fields.Add("Output");
+                //fields.Add("Indicator");
+                //fields.Add("Indicator_2");
+                //fields.Add("PerformanceTargetNotes");
+                //fields.Add("ExplanatoryNotes");
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    items.AddTool(ToolBarItems.Add);
+                    items.AddTool(ToolBarItems.Edit);
+                    items.AddTool(ToolBarItems.Update);
+                    items.AddTool(ToolBarItems.Cancel);
+                    items.AddTool(ToolBarItems.Search);
+                });
+            })
+        .Columns(col =>
+        {
+            col.Field("FacilityCode").AllowEditing(false).HeaderText("Facility").IsPrimaryKey(true).ForeignKeyField("FacilityCode").ForeignKeyValue("Facility").DataSource((IEnumerable<Object>)ViewBag.FacilityDataSource).Add();
+            col.Field("StartDate").AllowEditing(false).HeaderText("Start of reporting period").IsPrimaryKey(true).Format("{0:dd/MM/yyyy}").Add();
+            col.Field("EndDate").AllowEditing(false).HeaderText("End of reporting period").IsPrimaryKey(true).Format("{0:dd/MM/yyyy}").Add();
+            col.Field("DatePrepared").AllowEditing(false).HeaderText("Date prepared").Format("{0:dd/MM/yyyy}").Add();
+
+            col.Field("EditedBy").HeaderText("Modified by").IsPrimaryKey(true).TextAlign(TextAlign.Right).Add();
+            col.Field("EditedDate").HeaderText("Date modified").Format("{0:dd/MM/yyyy}").Add();
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete"); })
+)
+
+<script type="text/template" id="template">
+    <div id="defaultTab" style="width: 100%;">
+        <ul>
+            <li><a href="#tab1">ORDERS</a></li>
+            <li><a href="#tab2">ADULT PATIENTS</a></li>
+            <li><a href="#tab3">PAEDIATRIC PATIENTS</a></li>
+            <li><a href="#tab4">OTHER PATIENTS</a></li>
+            <li><a href="#tab5">EXTRA PATIENT REGIMENS</a></li>
+        </ul>
+
+        <div id="tab1">
+            <div class="myDiv">
+            </div>
+            <div>
+                <div id="order_grid"></div>
+            </div>
+        </div>
+        <div id="tab2">
+            <div class="myDiv">
+            </div>
+            <div>
+                <div id="patient_grid"></div>
+            </div>
+        </div>
+        <div id="tab3">
+            <div class="myDiv">
+            </div>
+            <div>
+                <div id="patient_paediatric_grid"></div>
+            </div>
+        </div>
+        <div id="tab4">
+            <div class="myDiv">
+            </div>
+            <div>
+                <div id="patient_other_grid"></div>
+            </div>
+        </div>
+        <div id="tab5">
+            <div class="myDiv">
+            </div>
+            <div>
+                <div id="extra_regimen_grid"></div>
+            </div>
+        </div>
+    </div>
+    <br />
+</script>
+<script>
+    function complete(args) {
+        if ((args.requestType == "beginedit" || args.requestType == "add") && args.model.editSettings.editMode == "dialogtemplate") {
+
+            $("#defaultTab").ejTab({ selectedItemIndex: 0 }).ejTab({ showRoundedCorner: true });;
+          
+            if (args.requestType == "add") {
+
+             
+                var nullstr = '';
+            }
+
+
+            if (args.requestType == "beginedit") {
+                var header_grid = $('#Grid').ejGrid('instance');
+                var facility_code = header_grid.getSelectedRecords()[0].FacilityCode;
+                var start_date = header_grid.getSelectedRecords()[0].StartDate;
+                var end_date = header_grid.getSelectedRecords()[0].EndDate;
+                $("#order_grid").ejGrid({
+                    dataSource: ej.DataManager({ url: "GetDataOrders", batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                    query: new ej.Query().addParams('param_fc', facility_code).addParams('param_sd', start_date).addParams('param_ed', end_date) ,
+                        //.executeQuery(new ej.Query().addParams('param_fc', facility_code).addParams('param_sd', start_date).addParams('param_ed', end_date)),
+                    //dataSource: ej.DataManager({ url: "BatchDataEdit?facility_code=" + facility_code + "&start_date=" + start_date + "&end_date=" + end_date, batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                    allowGrouping: false,
+                    
+                    //groupSettings: { showDropArea: false, groupedColumns: ["ovc_identification_Desc"], headerText: "" },
+                    //toolbarSettings: { showToolbar: true, toolbarItems: ['search'] },
+                    editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                    allowScrolling: true,
+                    scrollSettings: { width: "100%", height: "auto" },
+                    allowPaging: false,
+                    enableAltRow: true,
+                    allowTextWrap: true,
+                    textWrapSettings: { wrapMode: "both" },
+                    cellEdit: "cellEdit",
+                    allowResizeToFit: true,
+                    showStackedHeader: true,
+                    isResponsive: true,
+                    enableResponsiveRow: true,
+                    allowScrolling: true,
+                    queryCellInfo: "queryCellInfo",
+                    //cellEdit: "cellEdit",
+                    columns: [
+                        { field: "FacilityCode", headerText: "FacilityCode", visible: false, allowEditing: true, isPrimaryKey: true },
+                        { field: "StartDate", headerText: "StartDate", visible: false, allowEditing: true, isPrimaryKey: true },
+                        { field: "EndDate", headerText: "EndDate", visible: false, allowEditing: true, isPrimaryKey: true },
+                        { field: "product_code", headerText: "Product Code", allowEditing: true, width: 70, isPrimaryKey: true },
+                        { field: "product_description", headerText: "Product Description", allowEditing: true, width: 400 },
+                        { field: "Basic_Unit", headerText: "Basic Unit", allowEditing: false, width: 80 },
+                        { field: "OpeningBalance", headerText: "Opening Balance", allowEditing: false, width: 80 },
+                        { field: "QuantityRecieved", headerText: "Quantity Received", allowEditing: false, width: 80},
+                        { field: "ART_eMTCT_Consumption", headerText: "ART & e-MTCT Consumption", width: 80 },
+                        { field: "Losses_Adjustments", headerText: "Losses / Adjustments", width: 80 },
+                        { field: "DaysOutOfStockDuring2Months", headerText: "Days Out of Stock During 2 Month Cycle", allowEditing: true, width: 80 },
+                        { field: "AdjustedAMC", headerText: "Adjusted AMC", allowEditing: true, width: 80 },
+                        { field: "ClosingBalance", headerText: "Closing Balance", allowEditing: true, width: 80 },
+                        { field: "Months_Stock_atHand", headerText: "Months Of Stock At Hand", allowEditing: false, width: 80 },
+                        { field: "Quantity_Required_Current_Patients", headerText: "Quantity Required For Current Patients", allowEditing: false, width: 80 },
+                        { field: "Quantity_Allocated", headerText: "Quantity Allocated", allowEditing: false, width: 80 },
+                        { field: "Notes", headerText: "Notes", tooltip: "#response_desc", width: 200 },
+                        { field: "RFSONotes", headerText: "RFSO Notes", tooltip: "#response_desc", width: 200 }
+                    ]
+                });
+
+                $("#patient_grid").ejGrid({
+                    dataSource: ej.DataManager({ url: "GetDataPatients", batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                    query: new ej.Query().addParams('param_fc', facility_code).addParams('param_sd', start_date).addParams('param_ed', end_date),
+                    //.executeQuery(new ej.Query().addParams('param_fc', facility_code).addParams('param_sd', start_date).addParams('param_ed', end_date)),
+                    //dataSource: ej.DataManager({ url: "BatchDataEdit?facility_code=" + facility_code + "&start_date=" + start_date + "&end_date=" + end_date, batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                    allowGrouping: false,
+                    //groupSettings: { showDropArea: false, groupedColumns: ["ovc_identification_Desc"], headerText: "" },
+                    //toolbarSettings: { showToolbar: true, toolbarItems: ['search'] },
+                    editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                    allowScrolling: true,
+                    scrollSettings: { width: "100%", height: "auto" },
+                    allowPaging: false,
+                    enableAltRow: true,
+                    allowTextWrap: true,
+                    textWrapSettings: { wrapMode: "both" },
+                    cellEdit: "cellEdit",
+                    allowResizeToFit: true,
+                    showStackedHeader: true,
+                    isResponsive: true,
+                    enableResponsiveRow: true,
+                    allowScrolling: true,
+                    queryCellInfo: "queryCellInfoPatients",
+                    columns: [
+                        { field: "FacilityCode", headerText: "FacilityCode", visible: false, allowEditing: true, isPrimaryKey: true },
+                        { field: "StartDate", headerText: "StartDate", visible: false, allowEditing: true, isPrimaryKey: true },
+                        { field: "EndDate", headerText: "EndDate", visible: false, allowEditing: true, isPrimaryKey: true },
+                        { field: "regimen_code", visible: false, headerText: "Regimen Code", allowEditing: true, width: 70, isPrimaryKey: true },
+                        { field: "regimen", headerText: "Regimen", allowEditing: true, width: 400 },
+                        { field: "No_Existing", headerText: "No. Existing", allowEditing: false, width: 80 },
+                        { field: "No_New", headerText: "No. New", allowEditing: false, width: 80 },
+                        { field: "Pregnant_Existing", headerText: "Pregnant Existing", allowEditing: false, width: 80 },
+                        { field: "Pregnant_New", headerText: "Pregnant New", width: 80 }
+                    ]
+                });
+
+                $("#patient_paediatric_grid").ejGrid({
+                    dataSource: ej.DataManager({ url: "GetDataPatientPaediatric", batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                    query: new ej.Query().addParams('param_fc', facility_code).addParams('param_sd', start_date).addParams('param_ed', end_date),
+                    //.executeQuery(new ej.Query().addParams('param_fc', facility_code).addParams('param_sd', start_date).addParams('param_ed', end_date)),
+                    //dataSource: ej.DataManager({ url: "BatchDataEdit?facility_code=" + facility_code + "&start_date=" + start_date + "&end_date=" + end_date, batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                    allowGrouping: false,
+                    //groupSettings: { showDropArea: false, groupedColumns: ["ovc_identification_Desc"], headerText: "" },
+                    //toolbarSettings: { showToolbar: true, toolbarItems: ['search'] },
+                    editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                    allowScrolling: true,
+                    scrollSettings: { width: "100%", height: "auto" },
+                    allowPaging: false,
+                    enableAltRow: true,
+                    allowTextWrap: true,
+                    textWrapSettings: { wrapMode: "both" },
+                    cellEdit: "cellEdit",
+                    allowResizeToFit: true,
+                    showStackedHeader: true,
+                    isResponsive: true,
+                    enableResponsiveRow: true,
+                    allowScrolling: true,
+                    queryCellInfo: "queryCellInfoPatients",
+                    columns: [
+                        { field: "FacilityCode", headerText: "FacilityCode", visible: false, allowEditing: true, isPrimaryKey: true },
+                        { field: "StartDate", headerText: "StartDate", visible: false, allowEditing: true, isPrimaryKey: true },
+                        { field: "EndDate", headerText: "EndDate", visible: false, allowEditing: true, isPrimaryKey: true },
+                        { field: "regimen_code", visible: false, headerText: "Regimen Code", allowEditing: true, width: 70, isPrimaryKey: true },
+                        { field: "regimen", headerText: "Regimen", allowEditing: true, width: 400 },
+                        { field: "Existing_0_3Yrs", headerText: "Existing 0<3Yrs", allowEditing: false, width: 80 },
+                        { field: "New_0_3Yrs", headerText: "New 0<3Yrs", allowEditing: false, width: 80 },
+                        { field: "Existing_3_10Yrs", headerText: "Existing 3<10Yrs", allowEditing: false, width: 80 },
+                        { field: "New_3_10Yrs", headerText: "New 3<10Yrs", allowEditing: false, width: 80 },
+                        { field: "Existing_10_15Yrs_Less35Kg", headerText: "Existing 10<15Yrs Less 35Kg", width: 80 },
+                        { field: "New_10_15Yrs_Less35Kg", headerText: "New 10<15Yrs Less 35Kg", allowEditing: false, width: 80 },
+                        { field: "Existing_10_15Yrs_Greater35Kg", headerText: "Existing 10<15Yrs Greater 35Kg", allowEditing: false, width: 80 },
+                        { field: "New_10_15Yrs_Greater35Kg", headerText: "New 10<15Yrs Greater 35Kg", allowEditing: false, width: 80 }
+                    ]
+                });
+
+                $("#patient_other_grid").ejGrid({
+                    dataSource: ej.DataManager({ url: "GetDataPatientOther", batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                    query: new ej.Query().addParams('param_fc', facility_code).addParams('param_sd', start_date).addParams('param_ed', end_date),
+                    //.executeQuery(new ej.Query().addParams('param_fc', facility_code).addParams('param_sd', start_date).addParams('param_ed', end_date)),
+                    //dataSource: ej.DataManager({ url: "BatchDataEdit?facility_code=" + facility_code + "&start_date=" + start_date + "&end_date=" + end_date, batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                    allowGrouping: false,
+                    //groupSettings: { showDropArea: false, groupedColumns: ["ovc_identification_Desc"], headerText: "" },
+                    //toolbarSettings: { showToolbar: true, toolbarItems: ['search'] },
+                    editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                    allowScrolling: true,
+                    scrollSettings: { width: "100%", height: "auto" },
+                    allowPaging: false,
+                    enableAltRow: true,
+                    allowTextWrap: true,
+                    textWrapSettings: { wrapMode: "both" },
+                    cellEdit: "cellEdit",
+                    allowResizeToFit: true,
+                    showStackedHeader: true,
+                    isResponsive: true,
+                    enableResponsiveRow: true,
+                    allowScrolling: true,
+                    queryCellInfo: "queryCellInfoPatients",
+                    columns: [
+                        { field: "FacilityCode", headerText: "FacilityCode", visible: false, allowEditing: true, isPrimaryKey: true },
+                        { field: "StartDate", headerText: "StartDate", visible: false, allowEditing: true, isPrimaryKey: true },
+                        { field: "EndDate", headerText: "EndDate", visible: false, allowEditing: true, isPrimaryKey: true },
+                        { field: "regimen_code", visible: false, headerText: "Regimen Code", allowEditing: true, width: 70, isPrimaryKey: true },
+                        { field: "regimen", headerText: "Regimen", allowEditing: true, width: 400 },
+                        { field: "Adult", headerText: "Adults", allowEditing: false, width: 80 },
+                        { field: "Child", headerText: "Children", allowEditing: false, width: 80 }
+                    ]
+                });
+
+                $("#extra_regimen_grid").ejGrid({
+                    dataSource: ej.DataManager({ url: "GetDataPatientExtraRegimen", batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                    query: new ej.Query().addParams('param_fc', facility_code).addParams('param_sd', start_date).addParams('param_ed', end_date),
+                    //.executeQuery(new ej.Query().addParams('param_fc', facility_code).addParams('param_sd', start_date).addParams('param_ed', end_date)),
+                    //dataSource: ej.DataManager({ url: "BatchDataEdit?facility_code=" + facility_code + "&start_date=" + start_date + "&end_date=" + end_date, batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                    allowGrouping: false,
+                    //groupSettings: { showDropArea: false, groupedColumns: ["ovc_identification_Desc"], headerText: "" },
+                    //toolbarSettings: { showToolbar: true, toolbarItems: ['search'] },
+                    editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                    allowScrolling: true,
+                    scrollSettings: { width: "100%", height: "auto" },
+                    allowPaging: false,
+                    enableAltRow: true,
+                    allowTextWrap: true,
+                    textWrapSettings: { wrapMode: "both" },
+                    cellEdit: "cellEdit",
+                    allowResizeToFit: true,
+                    showStackedHeader: true,
+                    isResponsive: true,
+                    enableResponsiveRow: true,
+                    allowScrolling: true,
+                    columns: [
+                        { field: "FacilityCode", headerText: "FacilityCode", visible: false, allowEditing: true},
+                        { field: "StartDate", headerText: "StartDate", visible: false, allowEditing: true},
+                        { field: "EndDate", headerText: "EndDate", visible: false, allowEditing: true },
+                        { field: "RegimenCode", visible: false, headerText: "Regimen Code", allowEditing: true, width: 70, isPrimaryKey: true },
+                        { field: "RegimenDesc", headerText: "Regimen", allowEditing: true, width: 200 },
+                        { field: "Patients_Existing", headerText: "Existing Patients", allowEditing: false, width: 80 },
+                        { field: "Patients_New", headerText: "New Patients", allowEditing: false, width: 80 }
+                    ]
+                });
+
+                var nullstr = '';
+            }
+        }
+    }
+
+    function queryCellInfo(args) {
+        if (args.column.field == "product_code" && args.data.product_code ==null)
+            $($(args.cell).parent()).css("backgroundColor", "steelblue").css("color", "white");/*custom css applied to the row */
+    }
+    function queryCellInfoPatients(args) {
+        if (args.column.field == "regimen_code" && args.data.regimen_code == null)
+            $($(args.cell).parent()).css("backgroundColor", "steelblue").css("color", "white");/*custom css applied to the row */
+    }
+    //function cellEdit(args) {
+    //    if (args.columnName == "product_code" && args.value == "110022") {
+    //        args.cancel = true;
+    //        //We have prevent editing for the cell which contains FirstName as “Nancy”
+    //        var index = $(args.cell).index() + 1;
+    //        this.editCell($(args.row).index(), this.getColumnByIndex(index).field);  // making next cell to be edited
+    //    }
+    //}
+</script>
+

@@ -1,0 +1,1610 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Body>
+    <ReportItems>
+      <Tablix Name="Tablix2">
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn>
+              <Width>3.11667in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.18958in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.18958in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.18958in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.18958in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.18958in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.18958in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.18958in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.18958in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>2.55417in</Width>
+            </TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>0.27083in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox4">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Product description</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontSize>11pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Color>White</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox4</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>SteelBlue</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox8">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Basic unit</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontSize>11pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Color>White</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox8</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>SteelBlue</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox12">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Opening balance</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontSize>11pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Color>White</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox12</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>SteelBlue</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox16">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Quantity recieved</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontSize>11pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Color>White</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox16</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>SteelBlue</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox20">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Consumption</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontSize>11pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Color>White</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox20</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>SteelBlue</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox22">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Losses  / adjustment</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontSize>11pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Color>White</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox22</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>SteelBlue</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox24">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Closing balance</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontSize>11pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Color>White</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox24</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>SteelBlue</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox26">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Quantity to order</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontSize>11pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Color>White</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox26</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>SteelBlue</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox30">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Total cost</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontSize>11pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Color>White</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox30</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>SteelBlue</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox32">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>comments</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontSize>11pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Color>White</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox32</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>SteelBlue</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.25in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="product_description">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!product_description.Value</Value>
+                              <Style>
+                                <FontFamily>calibri</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>product_description</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>=iif(Fields!product_order.Value=1,"lightSteelBlue",iif(Fields!product_order.Value=2,"lightSteelBlue",iif(Fields!product_order.Value=12,"lightSteelBlue",iif(Fields!product_order.Value=20,"lightSteelBlue",iif(Fields!product_order.Value=30,"lightSteelBlue",iif(Fields!product_order.Value=34,"lightSteelBlue",iif(Fields!product_order.Value=39,"lightSteelBlue",iif(Fields!product_order.Value=40,"lightSteelBlue",iif(Fields!product_order.Value=44,"lightSteelBlue",iif(Fields!product_order.Value=48,"lightSteelBlue",iif(Fields!product_order.Value=53,"lightSteelBlue",iif(Fields!product_order.Value=58,"lightSteelBlue",iif(Fields!product_order.Value=60,"lightSteelBlue",iif(Fields!product_order.Value=64,"lightSteelBlue",iif(Fields!product_order.Value=67,"lightSteelBlue",iif(Fields!product_order.Value=68,"lightSteelBlue",iif(Fields!product_order.Value=70,"lightSteelBlue",iif(Fields!product_order.Value=76,"lightSteelBlue",iif(Fields!product_order.Value=79,"lightSteelBlue",iif(Fields!product_order.Value=82,"lightSteelBlue",iif(Fields!product_order.Value=86,"lightSteelBlue",iif(Fields!product_order.Value=88,"lightSteelBlue",iif(Fields!product_order.Value=90,"lightSteelBlue",iif(Fields!product_order.Value=92,"lightSteelBlue",iif(Fields!product_order.Value=94,"lightSteelBlue",iif(Fields!product_order.Value=100,"lightSteelBlue",iif(Fields!product_order.Value=115,"lightSteelBlue",iif(Fields!product_order.Value=125,"lightSteelBlue",iif(Fields!product_order.Value=127,"lightSteelBlue",iif(Fields!product_order.Value=135,"lightSteelBlue",iif(Fields!product_order.Value=149,"lightSteelBlue",iif(Fields!product_order.Value=150,"lightSteelBlue",iif(Fields!product_order.Value=156,"lightSteelBlue",iif(Fields!product_order.Value=161,"lightSteelBlue",iif(Fields!product_order.Value=168,"lightSteelBlue",iif(Fields!product_order.Value=179,"lightSteelBlue",iif(Fields!product_order.Value=187,"lightSteelBlue",iif(Fields!product_order.Value=196,"lightSteelBlue",iif(Fields!product_order.Value=207,"lightSteelBlue",iif(Fields!product_order.Value=215,"lightSteelBlue",iif(Fields!product_order.Value=216,"lightSteelBlue",iif(Fields!product_order.Value=243,"lightSteelBlue",iif(Fields!product_order.Value=268,"lightSteelBlue",iif(Fields!product_order.Value=296,"lightSteelBlue",iif(Fields!product_order.Value=331,"lightSteelBlue",iif(Fields!product_order.Value=345,"lightSteelBlue",iif(Fields!product_order.Value=356,"lightSteelBlue",iif(Fields!product_order.Value=360,"lightSteelBlue",iif(Fields!product_order.Value=371,"lightSteelBlue",iif(Fields!product_order.Value=384,"lightSteelBlue",iif(Fields!product_order.Value=419,"lightSteelBlue",iif(Fields!product_order.Value=432,"lightSteelBlue",iif(Fields!product_order.Value=439,"lightSteelBlue",iif(Fields!product_order.Value=445,"lightSteelBlue",iif(Fields!product_order.Value=456,"lightSteelBlue",iif(Fields!product_order.Value=463,"lightSteelBlue",iif(Fields!product_order.Value=495,"lightSteelBlue",iif(Fields!product_order.Value=504,"lightSteelBlue",iif(Fields!product_order.Value=510,"lightSteelBlue",iif(Fields!product_order.Value=516,"lightSteelBlue",iif(Fields!product_order.Value=527,"lightSteelBlue",iif(Fields!product_order.Value=534,"lightSteelBlue",iif(Fields!product_order.Value=555,"lightSteelBlue",iif(Fields!product_order.Value=556,"lightSteelBlue",iif(Fields!product_order.Value=576,"lightSteelBlue",iif(Fields!product_order.Value=597,"lightSteelBlue","White"))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Basic_Unit1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Basic_Unit.Value</Value>
+                              <Style>
+                                <FontFamily>calibri</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Basic_Unit1</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>=iif(Fields!product_order.Value=1,"lightSteelBlue",iif(Fields!product_order.Value=2,"lightSteelBlue",iif(Fields!product_order.Value=12,"lightSteelBlue",iif(Fields!product_order.Value=20,"lightSteelBlue",iif(Fields!product_order.Value=30,"lightSteelBlue",iif(Fields!product_order.Value=34,"lightSteelBlue",iif(Fields!product_order.Value=39,"lightSteelBlue",iif(Fields!product_order.Value=40,"lightSteelBlue",iif(Fields!product_order.Value=44,"lightSteelBlue",iif(Fields!product_order.Value=48,"lightSteelBlue",iif(Fields!product_order.Value=53,"lightSteelBlue",iif(Fields!product_order.Value=58,"lightSteelBlue",iif(Fields!product_order.Value=60,"lightSteelBlue",iif(Fields!product_order.Value=64,"lightSteelBlue",iif(Fields!product_order.Value=67,"lightSteelBlue",iif(Fields!product_order.Value=68,"lightSteelBlue",iif(Fields!product_order.Value=70,"lightSteelBlue",iif(Fields!product_order.Value=76,"lightSteelBlue",iif(Fields!product_order.Value=79,"lightSteelBlue",iif(Fields!product_order.Value=82,"lightSteelBlue",iif(Fields!product_order.Value=86,"lightSteelBlue",iif(Fields!product_order.Value=88,"lightSteelBlue",iif(Fields!product_order.Value=90,"lightSteelBlue",iif(Fields!product_order.Value=92,"lightSteelBlue",iif(Fields!product_order.Value=94,"lightSteelBlue",iif(Fields!product_order.Value=100,"lightSteelBlue",iif(Fields!product_order.Value=115,"lightSteelBlue",iif(Fields!product_order.Value=125,"lightSteelBlue",iif(Fields!product_order.Value=127,"lightSteelBlue",iif(Fields!product_order.Value=135,"lightSteelBlue",iif(Fields!product_order.Value=149,"lightSteelBlue",iif(Fields!product_order.Value=150,"lightSteelBlue",iif(Fields!product_order.Value=156,"lightSteelBlue",iif(Fields!product_order.Value=161,"lightSteelBlue",iif(Fields!product_order.Value=168,"lightSteelBlue",iif(Fields!product_order.Value=179,"lightSteelBlue",iif(Fields!product_order.Value=187,"lightSteelBlue",iif(Fields!product_order.Value=196,"lightSteelBlue",iif(Fields!product_order.Value=207,"lightSteelBlue",iif(Fields!product_order.Value=215,"lightSteelBlue",iif(Fields!product_order.Value=216,"lightSteelBlue",iif(Fields!product_order.Value=243,"lightSteelBlue",iif(Fields!product_order.Value=268,"lightSteelBlue",iif(Fields!product_order.Value=296,"lightSteelBlue",iif(Fields!product_order.Value=331,"lightSteelBlue",iif(Fields!product_order.Value=345,"lightSteelBlue",iif(Fields!product_order.Value=356,"lightSteelBlue",iif(Fields!product_order.Value=360,"lightSteelBlue",iif(Fields!product_order.Value=371,"lightSteelBlue",iif(Fields!product_order.Value=384,"lightSteelBlue",iif(Fields!product_order.Value=419,"lightSteelBlue",iif(Fields!product_order.Value=432,"lightSteelBlue",iif(Fields!product_order.Value=439,"lightSteelBlue",iif(Fields!product_order.Value=445,"lightSteelBlue",iif(Fields!product_order.Value=456,"lightSteelBlue",iif(Fields!product_order.Value=463,"lightSteelBlue",iif(Fields!product_order.Value=495,"lightSteelBlue",iif(Fields!product_order.Value=504,"lightSteelBlue",iif(Fields!product_order.Value=510,"lightSteelBlue",iif(Fields!product_order.Value=516,"lightSteelBlue",iif(Fields!product_order.Value=527,"lightSteelBlue",iif(Fields!product_order.Value=534,"lightSteelBlue",iif(Fields!product_order.Value=555,"lightSteelBlue",iif(Fields!product_order.Value=556,"lightSteelBlue",iif(Fields!product_order.Value=576,"lightSteelBlue",iif(Fields!product_order.Value=597,"lightSteelBlue","White"))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="opening_balance1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!opening_balance.Value</Value>
+                              <Style>
+                                <FontFamily>calibri</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>opening_balance1</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>=iif(Fields!product_order.Value=1,"lightSteelBlue",iif(Fields!product_order.Value=2,"lightSteelBlue",iif(Fields!product_order.Value=12,"lightSteelBlue",iif(Fields!product_order.Value=20,"lightSteelBlue",iif(Fields!product_order.Value=30,"lightSteelBlue",iif(Fields!product_order.Value=34,"lightSteelBlue",iif(Fields!product_order.Value=39,"lightSteelBlue",iif(Fields!product_order.Value=40,"lightSteelBlue",iif(Fields!product_order.Value=44,"lightSteelBlue",iif(Fields!product_order.Value=48,"lightSteelBlue",iif(Fields!product_order.Value=53,"lightSteelBlue",iif(Fields!product_order.Value=58,"lightSteelBlue",iif(Fields!product_order.Value=60,"lightSteelBlue",iif(Fields!product_order.Value=64,"lightSteelBlue",iif(Fields!product_order.Value=67,"lightSteelBlue",iif(Fields!product_order.Value=68,"lightSteelBlue",iif(Fields!product_order.Value=70,"lightSteelBlue",iif(Fields!product_order.Value=76,"lightSteelBlue",iif(Fields!product_order.Value=79,"lightSteelBlue",iif(Fields!product_order.Value=82,"lightSteelBlue",iif(Fields!product_order.Value=86,"lightSteelBlue",iif(Fields!product_order.Value=88,"lightSteelBlue",iif(Fields!product_order.Value=90,"lightSteelBlue",iif(Fields!product_order.Value=92,"lightSteelBlue",iif(Fields!product_order.Value=94,"lightSteelBlue",iif(Fields!product_order.Value=100,"lightSteelBlue",iif(Fields!product_order.Value=115,"lightSteelBlue",iif(Fields!product_order.Value=125,"lightSteelBlue",iif(Fields!product_order.Value=127,"lightSteelBlue",iif(Fields!product_order.Value=135,"lightSteelBlue",iif(Fields!product_order.Value=149,"lightSteelBlue",iif(Fields!product_order.Value=150,"lightSteelBlue",iif(Fields!product_order.Value=156,"lightSteelBlue",iif(Fields!product_order.Value=161,"lightSteelBlue",iif(Fields!product_order.Value=168,"lightSteelBlue",iif(Fields!product_order.Value=179,"lightSteelBlue",iif(Fields!product_order.Value=187,"lightSteelBlue",iif(Fields!product_order.Value=196,"lightSteelBlue",iif(Fields!product_order.Value=207,"lightSteelBlue",iif(Fields!product_order.Value=215,"lightSteelBlue",iif(Fields!product_order.Value=216,"lightSteelBlue",iif(Fields!product_order.Value=243,"lightSteelBlue",iif(Fields!product_order.Value=268,"lightSteelBlue",iif(Fields!product_order.Value=296,"lightSteelBlue",iif(Fields!product_order.Value=331,"lightSteelBlue",iif(Fields!product_order.Value=345,"lightSteelBlue",iif(Fields!product_order.Value=356,"lightSteelBlue",iif(Fields!product_order.Value=360,"lightSteelBlue",iif(Fields!product_order.Value=371,"lightSteelBlue",iif(Fields!product_order.Value=384,"lightSteelBlue",iif(Fields!product_order.Value=419,"lightSteelBlue",iif(Fields!product_order.Value=432,"lightSteelBlue",iif(Fields!product_order.Value=439,"lightSteelBlue",iif(Fields!product_order.Value=445,"lightSteelBlue",iif(Fields!product_order.Value=456,"lightSteelBlue",iif(Fields!product_order.Value=463,"lightSteelBlue",iif(Fields!product_order.Value=495,"lightSteelBlue",iif(Fields!product_order.Value=504,"lightSteelBlue",iif(Fields!product_order.Value=510,"lightSteelBlue",iif(Fields!product_order.Value=516,"lightSteelBlue",iif(Fields!product_order.Value=527,"lightSteelBlue",iif(Fields!product_order.Value=534,"lightSteelBlue",iif(Fields!product_order.Value=555,"lightSteelBlue",iif(Fields!product_order.Value=556,"lightSteelBlue",iif(Fields!product_order.Value=576,"lightSteelBlue",iif(Fields!product_order.Value=597,"lightSteelBlue","White"))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="quantity_recieved1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!quantity_recieved.Value</Value>
+                              <Style>
+                                <FontFamily>calibri</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>quantity_recieved1</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>=iif(Fields!product_order.Value=1,"lightSteelBlue",iif(Fields!product_order.Value=2,"lightSteelBlue",iif(Fields!product_order.Value=12,"lightSteelBlue",iif(Fields!product_order.Value=20,"lightSteelBlue",iif(Fields!product_order.Value=30,"lightSteelBlue",iif(Fields!product_order.Value=34,"lightSteelBlue",iif(Fields!product_order.Value=39,"lightSteelBlue",iif(Fields!product_order.Value=40,"lightSteelBlue",iif(Fields!product_order.Value=44,"lightSteelBlue",iif(Fields!product_order.Value=48,"lightSteelBlue",iif(Fields!product_order.Value=53,"lightSteelBlue",iif(Fields!product_order.Value=58,"lightSteelBlue",iif(Fields!product_order.Value=60,"lightSteelBlue",iif(Fields!product_order.Value=64,"lightSteelBlue",iif(Fields!product_order.Value=67,"lightSteelBlue",iif(Fields!product_order.Value=68,"lightSteelBlue",iif(Fields!product_order.Value=70,"lightSteelBlue",iif(Fields!product_order.Value=76,"lightSteelBlue",iif(Fields!product_order.Value=79,"lightSteelBlue",iif(Fields!product_order.Value=82,"lightSteelBlue",iif(Fields!product_order.Value=86,"lightSteelBlue",iif(Fields!product_order.Value=88,"lightSteelBlue",iif(Fields!product_order.Value=90,"lightSteelBlue",iif(Fields!product_order.Value=92,"lightSteelBlue",iif(Fields!product_order.Value=94,"lightSteelBlue",iif(Fields!product_order.Value=100,"lightSteelBlue",iif(Fields!product_order.Value=115,"lightSteelBlue",iif(Fields!product_order.Value=125,"lightSteelBlue",iif(Fields!product_order.Value=127,"lightSteelBlue",iif(Fields!product_order.Value=135,"lightSteelBlue",iif(Fields!product_order.Value=149,"lightSteelBlue",iif(Fields!product_order.Value=150,"lightSteelBlue",iif(Fields!product_order.Value=156,"lightSteelBlue",iif(Fields!product_order.Value=161,"lightSteelBlue",iif(Fields!product_order.Value=168,"lightSteelBlue",iif(Fields!product_order.Value=179,"lightSteelBlue",iif(Fields!product_order.Value=187,"lightSteelBlue",iif(Fields!product_order.Value=196,"lightSteelBlue",iif(Fields!product_order.Value=207,"lightSteelBlue",iif(Fields!product_order.Value=215,"lightSteelBlue",iif(Fields!product_order.Value=216,"lightSteelBlue",iif(Fields!product_order.Value=243,"lightSteelBlue",iif(Fields!product_order.Value=268,"lightSteelBlue",iif(Fields!product_order.Value=296,"lightSteelBlue",iif(Fields!product_order.Value=331,"lightSteelBlue",iif(Fields!product_order.Value=345,"lightSteelBlue",iif(Fields!product_order.Value=356,"lightSteelBlue",iif(Fields!product_order.Value=360,"lightSteelBlue",iif(Fields!product_order.Value=371,"lightSteelBlue",iif(Fields!product_order.Value=384,"lightSteelBlue",iif(Fields!product_order.Value=419,"lightSteelBlue",iif(Fields!product_order.Value=432,"lightSteelBlue",iif(Fields!product_order.Value=439,"lightSteelBlue",iif(Fields!product_order.Value=445,"lightSteelBlue",iif(Fields!product_order.Value=456,"lightSteelBlue",iif(Fields!product_order.Value=463,"lightSteelBlue",iif(Fields!product_order.Value=495,"lightSteelBlue",iif(Fields!product_order.Value=504,"lightSteelBlue",iif(Fields!product_order.Value=510,"lightSteelBlue",iif(Fields!product_order.Value=516,"lightSteelBlue",iif(Fields!product_order.Value=527,"lightSteelBlue",iif(Fields!product_order.Value=534,"lightSteelBlue",iif(Fields!product_order.Value=555,"lightSteelBlue",iif(Fields!product_order.Value=556,"lightSteelBlue",iif(Fields!product_order.Value=576,"lightSteelBlue",iif(Fields!product_order.Value=597,"lightSteelBlue","White"))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="consumption1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!consumption.Value</Value>
+                              <Style>
+                                <FontFamily>calibri</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>consumption1</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>=iif(Fields!product_order.Value=1,"lightSteelBlue",iif(Fields!product_order.Value=2,"lightSteelBlue",iif(Fields!product_order.Value=12,"lightSteelBlue",iif(Fields!product_order.Value=20,"lightSteelBlue",iif(Fields!product_order.Value=30,"lightSteelBlue",iif(Fields!product_order.Value=34,"lightSteelBlue",iif(Fields!product_order.Value=39,"lightSteelBlue",iif(Fields!product_order.Value=40,"lightSteelBlue",iif(Fields!product_order.Value=44,"lightSteelBlue",iif(Fields!product_order.Value=48,"lightSteelBlue",iif(Fields!product_order.Value=53,"lightSteelBlue",iif(Fields!product_order.Value=58,"lightSteelBlue",iif(Fields!product_order.Value=60,"lightSteelBlue",iif(Fields!product_order.Value=64,"lightSteelBlue",iif(Fields!product_order.Value=67,"lightSteelBlue",iif(Fields!product_order.Value=68,"lightSteelBlue",iif(Fields!product_order.Value=70,"lightSteelBlue",iif(Fields!product_order.Value=76,"lightSteelBlue",iif(Fields!product_order.Value=79,"lightSteelBlue",iif(Fields!product_order.Value=82,"lightSteelBlue",iif(Fields!product_order.Value=86,"lightSteelBlue",iif(Fields!product_order.Value=88,"lightSteelBlue",iif(Fields!product_order.Value=90,"lightSteelBlue",iif(Fields!product_order.Value=92,"lightSteelBlue",iif(Fields!product_order.Value=94,"lightSteelBlue",iif(Fields!product_order.Value=100,"lightSteelBlue",iif(Fields!product_order.Value=115,"lightSteelBlue",iif(Fields!product_order.Value=125,"lightSteelBlue",iif(Fields!product_order.Value=127,"lightSteelBlue",iif(Fields!product_order.Value=135,"lightSteelBlue",iif(Fields!product_order.Value=149,"lightSteelBlue",iif(Fields!product_order.Value=150,"lightSteelBlue",iif(Fields!product_order.Value=156,"lightSteelBlue",iif(Fields!product_order.Value=161,"lightSteelBlue",iif(Fields!product_order.Value=168,"lightSteelBlue",iif(Fields!product_order.Value=179,"lightSteelBlue",iif(Fields!product_order.Value=187,"lightSteelBlue",iif(Fields!product_order.Value=196,"lightSteelBlue",iif(Fields!product_order.Value=207,"lightSteelBlue",iif(Fields!product_order.Value=215,"lightSteelBlue",iif(Fields!product_order.Value=216,"lightSteelBlue",iif(Fields!product_order.Value=243,"lightSteelBlue",iif(Fields!product_order.Value=268,"lightSteelBlue",iif(Fields!product_order.Value=296,"lightSteelBlue",iif(Fields!product_order.Value=331,"lightSteelBlue",iif(Fields!product_order.Value=345,"lightSteelBlue",iif(Fields!product_order.Value=356,"lightSteelBlue",iif(Fields!product_order.Value=360,"lightSteelBlue",iif(Fields!product_order.Value=371,"lightSteelBlue",iif(Fields!product_order.Value=384,"lightSteelBlue",iif(Fields!product_order.Value=419,"lightSteelBlue",iif(Fields!product_order.Value=432,"lightSteelBlue",iif(Fields!product_order.Value=439,"lightSteelBlue",iif(Fields!product_order.Value=445,"lightSteelBlue",iif(Fields!product_order.Value=456,"lightSteelBlue",iif(Fields!product_order.Value=463,"lightSteelBlue",iif(Fields!product_order.Value=495,"lightSteelBlue",iif(Fields!product_order.Value=504,"lightSteelBlue",iif(Fields!product_order.Value=510,"lightSteelBlue",iif(Fields!product_order.Value=516,"lightSteelBlue",iif(Fields!product_order.Value=527,"lightSteelBlue",iif(Fields!product_order.Value=534,"lightSteelBlue",iif(Fields!product_order.Value=555,"lightSteelBlue",iif(Fields!product_order.Value=556,"lightSteelBlue",iif(Fields!product_order.Value=576,"lightSteelBlue",iif(Fields!product_order.Value=597,"lightSteelBlue","White"))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="losses_adjustment1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!losses_adjustment.Value</Value>
+                              <Style>
+                                <FontFamily>calibri</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>losses_adjustment1</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>=iif(Fields!product_order.Value=1,"lightSteelBlue",iif(Fields!product_order.Value=2,"lightSteelBlue",iif(Fields!product_order.Value=12,"lightSteelBlue",iif(Fields!product_order.Value=20,"lightSteelBlue",iif(Fields!product_order.Value=30,"lightSteelBlue",iif(Fields!product_order.Value=34,"lightSteelBlue",iif(Fields!product_order.Value=39,"lightSteelBlue",iif(Fields!product_order.Value=40,"lightSteelBlue",iif(Fields!product_order.Value=44,"lightSteelBlue",iif(Fields!product_order.Value=48,"lightSteelBlue",iif(Fields!product_order.Value=53,"lightSteelBlue",iif(Fields!product_order.Value=58,"lightSteelBlue",iif(Fields!product_order.Value=60,"lightSteelBlue",iif(Fields!product_order.Value=64,"lightSteelBlue",iif(Fields!product_order.Value=67,"lightSteelBlue",iif(Fields!product_order.Value=68,"lightSteelBlue",iif(Fields!product_order.Value=70,"lightSteelBlue",iif(Fields!product_order.Value=76,"lightSteelBlue",iif(Fields!product_order.Value=79,"lightSteelBlue",iif(Fields!product_order.Value=82,"lightSteelBlue",iif(Fields!product_order.Value=86,"lightSteelBlue",iif(Fields!product_order.Value=88,"lightSteelBlue",iif(Fields!product_order.Value=90,"lightSteelBlue",iif(Fields!product_order.Value=92,"lightSteelBlue",iif(Fields!product_order.Value=94,"lightSteelBlue",iif(Fields!product_order.Value=100,"lightSteelBlue",iif(Fields!product_order.Value=115,"lightSteelBlue",iif(Fields!product_order.Value=125,"lightSteelBlue",iif(Fields!product_order.Value=127,"lightSteelBlue",iif(Fields!product_order.Value=135,"lightSteelBlue",iif(Fields!product_order.Value=149,"lightSteelBlue",iif(Fields!product_order.Value=150,"lightSteelBlue",iif(Fields!product_order.Value=156,"lightSteelBlue",iif(Fields!product_order.Value=161,"lightSteelBlue",iif(Fields!product_order.Value=168,"lightSteelBlue",iif(Fields!product_order.Value=179,"lightSteelBlue",iif(Fields!product_order.Value=187,"lightSteelBlue",iif(Fields!product_order.Value=196,"lightSteelBlue",iif(Fields!product_order.Value=207,"lightSteelBlue",iif(Fields!product_order.Value=215,"lightSteelBlue",iif(Fields!product_order.Value=216,"lightSteelBlue",iif(Fields!product_order.Value=243,"lightSteelBlue",iif(Fields!product_order.Value=268,"lightSteelBlue",iif(Fields!product_order.Value=296,"lightSteelBlue",iif(Fields!product_order.Value=331,"lightSteelBlue",iif(Fields!product_order.Value=345,"lightSteelBlue",iif(Fields!product_order.Value=356,"lightSteelBlue",iif(Fields!product_order.Value=360,"lightSteelBlue",iif(Fields!product_order.Value=371,"lightSteelBlue",iif(Fields!product_order.Value=384,"lightSteelBlue",iif(Fields!product_order.Value=419,"lightSteelBlue",iif(Fields!product_order.Value=432,"lightSteelBlue",iif(Fields!product_order.Value=439,"lightSteelBlue",iif(Fields!product_order.Value=445,"lightSteelBlue",iif(Fields!product_order.Value=456,"lightSteelBlue",iif(Fields!product_order.Value=463,"lightSteelBlue",iif(Fields!product_order.Value=495,"lightSteelBlue",iif(Fields!product_order.Value=504,"lightSteelBlue",iif(Fields!product_order.Value=510,"lightSteelBlue",iif(Fields!product_order.Value=516,"lightSteelBlue",iif(Fields!product_order.Value=527,"lightSteelBlue",iif(Fields!product_order.Value=534,"lightSteelBlue",iif(Fields!product_order.Value=555,"lightSteelBlue",iif(Fields!product_order.Value=556,"lightSteelBlue",iif(Fields!product_order.Value=576,"lightSteelBlue",iif(Fields!product_order.Value=597,"lightSteelBlue","White"))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="closing_balance1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!closing_balance.Value</Value>
+                              <Style>
+                                <FontFamily>calibri</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>closing_balance1</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>=iif(Fields!product_order.Value=1,"lightSteelBlue",iif(Fields!product_order.Value=2,"lightSteelBlue",iif(Fields!product_order.Value=12,"lightSteelBlue",iif(Fields!product_order.Value=20,"lightSteelBlue",iif(Fields!product_order.Value=30,"lightSteelBlue",iif(Fields!product_order.Value=34,"lightSteelBlue",iif(Fields!product_order.Value=39,"lightSteelBlue",iif(Fields!product_order.Value=40,"lightSteelBlue",iif(Fields!product_order.Value=44,"lightSteelBlue",iif(Fields!product_order.Value=48,"lightSteelBlue",iif(Fields!product_order.Value=53,"lightSteelBlue",iif(Fields!product_order.Value=58,"lightSteelBlue",iif(Fields!product_order.Value=60,"lightSteelBlue",iif(Fields!product_order.Value=64,"lightSteelBlue",iif(Fields!product_order.Value=67,"lightSteelBlue",iif(Fields!product_order.Value=68,"lightSteelBlue",iif(Fields!product_order.Value=70,"lightSteelBlue",iif(Fields!product_order.Value=76,"lightSteelBlue",iif(Fields!product_order.Value=79,"lightSteelBlue",iif(Fields!product_order.Value=82,"lightSteelBlue",iif(Fields!product_order.Value=86,"lightSteelBlue",iif(Fields!product_order.Value=88,"lightSteelBlue",iif(Fields!product_order.Value=90,"lightSteelBlue",iif(Fields!product_order.Value=92,"lightSteelBlue",iif(Fields!product_order.Value=94,"lightSteelBlue",iif(Fields!product_order.Value=100,"lightSteelBlue",iif(Fields!product_order.Value=115,"lightSteelBlue",iif(Fields!product_order.Value=125,"lightSteelBlue",iif(Fields!product_order.Value=127,"lightSteelBlue",iif(Fields!product_order.Value=135,"lightSteelBlue",iif(Fields!product_order.Value=149,"lightSteelBlue",iif(Fields!product_order.Value=150,"lightSteelBlue",iif(Fields!product_order.Value=156,"lightSteelBlue",iif(Fields!product_order.Value=161,"lightSteelBlue",iif(Fields!product_order.Value=168,"lightSteelBlue",iif(Fields!product_order.Value=179,"lightSteelBlue",iif(Fields!product_order.Value=187,"lightSteelBlue",iif(Fields!product_order.Value=196,"lightSteelBlue",iif(Fields!product_order.Value=207,"lightSteelBlue",iif(Fields!product_order.Value=215,"lightSteelBlue",iif(Fields!product_order.Value=216,"lightSteelBlue",iif(Fields!product_order.Value=243,"lightSteelBlue",iif(Fields!product_order.Value=268,"lightSteelBlue",iif(Fields!product_order.Value=296,"lightSteelBlue",iif(Fields!product_order.Value=331,"lightSteelBlue",iif(Fields!product_order.Value=345,"lightSteelBlue",iif(Fields!product_order.Value=356,"lightSteelBlue",iif(Fields!product_order.Value=360,"lightSteelBlue",iif(Fields!product_order.Value=371,"lightSteelBlue",iif(Fields!product_order.Value=384,"lightSteelBlue",iif(Fields!product_order.Value=419,"lightSteelBlue",iif(Fields!product_order.Value=432,"lightSteelBlue",iif(Fields!product_order.Value=439,"lightSteelBlue",iif(Fields!product_order.Value=445,"lightSteelBlue",iif(Fields!product_order.Value=456,"lightSteelBlue",iif(Fields!product_order.Value=463,"lightSteelBlue",iif(Fields!product_order.Value=495,"lightSteelBlue",iif(Fields!product_order.Value=504,"lightSteelBlue",iif(Fields!product_order.Value=510,"lightSteelBlue",iif(Fields!product_order.Value=516,"lightSteelBlue",iif(Fields!product_order.Value=527,"lightSteelBlue",iif(Fields!product_order.Value=534,"lightSteelBlue",iif(Fields!product_order.Value=555,"lightSteelBlue",iif(Fields!product_order.Value=556,"lightSteelBlue",iif(Fields!product_order.Value=576,"lightSteelBlue",iif(Fields!product_order.Value=597,"lightSteelBlue","White"))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="quantity_to_order1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!quantity_to_order.Value</Value>
+                              <Style>
+                                <FontFamily>calibri</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>quantity_to_order1</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>=iif(Fields!product_order.Value=1,"lightSteelBlue",iif(Fields!product_order.Value=2,"lightSteelBlue",iif(Fields!product_order.Value=12,"lightSteelBlue",iif(Fields!product_order.Value=20,"lightSteelBlue",iif(Fields!product_order.Value=30,"lightSteelBlue",iif(Fields!product_order.Value=34,"lightSteelBlue",iif(Fields!product_order.Value=39,"lightSteelBlue",iif(Fields!product_order.Value=40,"lightSteelBlue",iif(Fields!product_order.Value=44,"lightSteelBlue",iif(Fields!product_order.Value=48,"lightSteelBlue",iif(Fields!product_order.Value=53,"lightSteelBlue",iif(Fields!product_order.Value=58,"lightSteelBlue",iif(Fields!product_order.Value=60,"lightSteelBlue",iif(Fields!product_order.Value=64,"lightSteelBlue",iif(Fields!product_order.Value=67,"lightSteelBlue",iif(Fields!product_order.Value=68,"lightSteelBlue",iif(Fields!product_order.Value=70,"lightSteelBlue",iif(Fields!product_order.Value=76,"lightSteelBlue",iif(Fields!product_order.Value=79,"lightSteelBlue",iif(Fields!product_order.Value=82,"lightSteelBlue",iif(Fields!product_order.Value=86,"lightSteelBlue",iif(Fields!product_order.Value=88,"lightSteelBlue",iif(Fields!product_order.Value=90,"lightSteelBlue",iif(Fields!product_order.Value=92,"lightSteelBlue",iif(Fields!product_order.Value=94,"lightSteelBlue",iif(Fields!product_order.Value=100,"lightSteelBlue",iif(Fields!product_order.Value=115,"lightSteelBlue",iif(Fields!product_order.Value=125,"lightSteelBlue",iif(Fields!product_order.Value=127,"lightSteelBlue",iif(Fields!product_order.Value=135,"lightSteelBlue",iif(Fields!product_order.Value=149,"lightSteelBlue",iif(Fields!product_order.Value=150,"lightSteelBlue",iif(Fields!product_order.Value=156,"lightSteelBlue",iif(Fields!product_order.Value=161,"lightSteelBlue",iif(Fields!product_order.Value=168,"lightSteelBlue",iif(Fields!product_order.Value=179,"lightSteelBlue",iif(Fields!product_order.Value=187,"lightSteelBlue",iif(Fields!product_order.Value=196,"lightSteelBlue",iif(Fields!product_order.Value=207,"lightSteelBlue",iif(Fields!product_order.Value=215,"lightSteelBlue",iif(Fields!product_order.Value=216,"lightSteelBlue",iif(Fields!product_order.Value=243,"lightSteelBlue",iif(Fields!product_order.Value=268,"lightSteelBlue",iif(Fields!product_order.Value=296,"lightSteelBlue",iif(Fields!product_order.Value=331,"lightSteelBlue",iif(Fields!product_order.Value=345,"lightSteelBlue",iif(Fields!product_order.Value=356,"lightSteelBlue",iif(Fields!product_order.Value=360,"lightSteelBlue",iif(Fields!product_order.Value=371,"lightSteelBlue",iif(Fields!product_order.Value=384,"lightSteelBlue",iif(Fields!product_order.Value=419,"lightSteelBlue",iif(Fields!product_order.Value=432,"lightSteelBlue",iif(Fields!product_order.Value=439,"lightSteelBlue",iif(Fields!product_order.Value=445,"lightSteelBlue",iif(Fields!product_order.Value=456,"lightSteelBlue",iif(Fields!product_order.Value=463,"lightSteelBlue",iif(Fields!product_order.Value=495,"lightSteelBlue",iif(Fields!product_order.Value=504,"lightSteelBlue",iif(Fields!product_order.Value=510,"lightSteelBlue",iif(Fields!product_order.Value=516,"lightSteelBlue",iif(Fields!product_order.Value=527,"lightSteelBlue",iif(Fields!product_order.Value=534,"lightSteelBlue",iif(Fields!product_order.Value=555,"lightSteelBlue",iif(Fields!product_order.Value=556,"lightSteelBlue",iif(Fields!product_order.Value=576,"lightSteelBlue",iif(Fields!product_order.Value=597,"lightSteelBlue","White"))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="total_cost1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!total_cost.Value</Value>
+                              <Style>
+                                <FontFamily>calibri</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>total_cost1</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>=iif(Fields!product_order.Value=1,"lightSteelBlue",iif(Fields!product_order.Value=2,"lightSteelBlue",iif(Fields!product_order.Value=12,"lightSteelBlue",iif(Fields!product_order.Value=20,"lightSteelBlue",iif(Fields!product_order.Value=30,"lightSteelBlue",iif(Fields!product_order.Value=34,"lightSteelBlue",iif(Fields!product_order.Value=39,"lightSteelBlue",iif(Fields!product_order.Value=40,"lightSteelBlue",iif(Fields!product_order.Value=44,"lightSteelBlue",iif(Fields!product_order.Value=48,"lightSteelBlue",iif(Fields!product_order.Value=53,"lightSteelBlue",iif(Fields!product_order.Value=58,"lightSteelBlue",iif(Fields!product_order.Value=60,"lightSteelBlue",iif(Fields!product_order.Value=64,"lightSteelBlue",iif(Fields!product_order.Value=67,"lightSteelBlue",iif(Fields!product_order.Value=68,"lightSteelBlue",iif(Fields!product_order.Value=70,"lightSteelBlue",iif(Fields!product_order.Value=76,"lightSteelBlue",iif(Fields!product_order.Value=79,"lightSteelBlue",iif(Fields!product_order.Value=82,"lightSteelBlue",iif(Fields!product_order.Value=86,"lightSteelBlue",iif(Fields!product_order.Value=88,"lightSteelBlue",iif(Fields!product_order.Value=90,"lightSteelBlue",iif(Fields!product_order.Value=92,"lightSteelBlue",iif(Fields!product_order.Value=94,"lightSteelBlue",iif(Fields!product_order.Value=100,"lightSteelBlue",iif(Fields!product_order.Value=115,"lightSteelBlue",iif(Fields!product_order.Value=125,"lightSteelBlue",iif(Fields!product_order.Value=127,"lightSteelBlue",iif(Fields!product_order.Value=135,"lightSteelBlue",iif(Fields!product_order.Value=149,"lightSteelBlue",iif(Fields!product_order.Value=150,"lightSteelBlue",iif(Fields!product_order.Value=156,"lightSteelBlue",iif(Fields!product_order.Value=161,"lightSteelBlue",iif(Fields!product_order.Value=168,"lightSteelBlue",iif(Fields!product_order.Value=179,"lightSteelBlue",iif(Fields!product_order.Value=187,"lightSteelBlue",iif(Fields!product_order.Value=196,"lightSteelBlue",iif(Fields!product_order.Value=207,"lightSteelBlue",iif(Fields!product_order.Value=215,"lightSteelBlue",iif(Fields!product_order.Value=216,"lightSteelBlue",iif(Fields!product_order.Value=243,"lightSteelBlue",iif(Fields!product_order.Value=268,"lightSteelBlue",iif(Fields!product_order.Value=296,"lightSteelBlue",iif(Fields!product_order.Value=331,"lightSteelBlue",iif(Fields!product_order.Value=345,"lightSteelBlue",iif(Fields!product_order.Value=356,"lightSteelBlue",iif(Fields!product_order.Value=360,"lightSteelBlue",iif(Fields!product_order.Value=371,"lightSteelBlue",iif(Fields!product_order.Value=384,"lightSteelBlue",iif(Fields!product_order.Value=419,"lightSteelBlue",iif(Fields!product_order.Value=432,"lightSteelBlue",iif(Fields!product_order.Value=439,"lightSteelBlue",iif(Fields!product_order.Value=445,"lightSteelBlue",iif(Fields!product_order.Value=456,"lightSteelBlue",iif(Fields!product_order.Value=463,"lightSteelBlue",iif(Fields!product_order.Value=495,"lightSteelBlue",iif(Fields!product_order.Value=504,"lightSteelBlue",iif(Fields!product_order.Value=510,"lightSteelBlue",iif(Fields!product_order.Value=516,"lightSteelBlue",iif(Fields!product_order.Value=527,"lightSteelBlue",iif(Fields!product_order.Value=534,"lightSteelBlue",iif(Fields!product_order.Value=555,"lightSteelBlue",iif(Fields!product_order.Value=556,"lightSteelBlue",iif(Fields!product_order.Value=576,"lightSteelBlue",iif(Fields!product_order.Value=597,"lightSteelBlue","White"))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="comments1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!comments.Value</Value>
+                              <Style>
+                                <FontFamily>calibri</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>comments1</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>=iif(Fields!product_order.Value=1,"lightSteelBlue",iif(Fields!product_order.Value=2,"lightSteelBlue",iif(Fields!product_order.Value=12,"lightSteelBlue",iif(Fields!product_order.Value=20,"lightSteelBlue",iif(Fields!product_order.Value=30,"lightSteelBlue",iif(Fields!product_order.Value=34,"lightSteelBlue",iif(Fields!product_order.Value=39,"lightSteelBlue",iif(Fields!product_order.Value=40,"lightSteelBlue",iif(Fields!product_order.Value=44,"lightSteelBlue",iif(Fields!product_order.Value=48,"lightSteelBlue",iif(Fields!product_order.Value=53,"lightSteelBlue",iif(Fields!product_order.Value=58,"lightSteelBlue",iif(Fields!product_order.Value=60,"lightSteelBlue",iif(Fields!product_order.Value=64,"lightSteelBlue",iif(Fields!product_order.Value=67,"lightSteelBlue",iif(Fields!product_order.Value=68,"lightSteelBlue",iif(Fields!product_order.Value=70,"lightSteelBlue",iif(Fields!product_order.Value=76,"lightSteelBlue",iif(Fields!product_order.Value=79,"lightSteelBlue",iif(Fields!product_order.Value=82,"lightSteelBlue",iif(Fields!product_order.Value=86,"lightSteelBlue",iif(Fields!product_order.Value=88,"lightSteelBlue",iif(Fields!product_order.Value=90,"lightSteelBlue",iif(Fields!product_order.Value=92,"lightSteelBlue",iif(Fields!product_order.Value=94,"lightSteelBlue",iif(Fields!product_order.Value=100,"lightSteelBlue",iif(Fields!product_order.Value=115,"lightSteelBlue",iif(Fields!product_order.Value=125,"lightSteelBlue",iif(Fields!product_order.Value=127,"lightSteelBlue",iif(Fields!product_order.Value=135,"lightSteelBlue",iif(Fields!product_order.Value=149,"lightSteelBlue",iif(Fields!product_order.Value=150,"lightSteelBlue",iif(Fields!product_order.Value=156,"lightSteelBlue",iif(Fields!product_order.Value=161,"lightSteelBlue",iif(Fields!product_order.Value=168,"lightSteelBlue",iif(Fields!product_order.Value=179,"lightSteelBlue",iif(Fields!product_order.Value=187,"lightSteelBlue",iif(Fields!product_order.Value=196,"lightSteelBlue",iif(Fields!product_order.Value=207,"lightSteelBlue",iif(Fields!product_order.Value=215,"lightSteelBlue",iif(Fields!product_order.Value=216,"lightSteelBlue",iif(Fields!product_order.Value=243,"lightSteelBlue",iif(Fields!product_order.Value=268,"lightSteelBlue",iif(Fields!product_order.Value=296,"lightSteelBlue",iif(Fields!product_order.Value=331,"lightSteelBlue",iif(Fields!product_order.Value=345,"lightSteelBlue",iif(Fields!product_order.Value=356,"lightSteelBlue",iif(Fields!product_order.Value=360,"lightSteelBlue",iif(Fields!product_order.Value=371,"lightSteelBlue",iif(Fields!product_order.Value=384,"lightSteelBlue",iif(Fields!product_order.Value=419,"lightSteelBlue",iif(Fields!product_order.Value=432,"lightSteelBlue",iif(Fields!product_order.Value=439,"lightSteelBlue",iif(Fields!product_order.Value=445,"lightSteelBlue",iif(Fields!product_order.Value=456,"lightSteelBlue",iif(Fields!product_order.Value=463,"lightSteelBlue",iif(Fields!product_order.Value=495,"lightSteelBlue",iif(Fields!product_order.Value=504,"lightSteelBlue",iif(Fields!product_order.Value=510,"lightSteelBlue",iif(Fields!product_order.Value=516,"lightSteelBlue",iif(Fields!product_order.Value=527,"lightSteelBlue",iif(Fields!product_order.Value=534,"lightSteelBlue",iif(Fields!product_order.Value=555,"lightSteelBlue",iif(Fields!product_order.Value=556,"lightSteelBlue",iif(Fields!product_order.Value=576,"lightSteelBlue",iif(Fields!product_order.Value=597,"lightSteelBlue","White"))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <KeepWithGroup>After</KeepWithGroup>
+            </TablixMember>
+            <TablixMember>
+              <Group Name="Details1" />
+            </TablixMember>
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <DataSetName>ds_consumption</DataSetName>
+        <Top>1.57292in</Top>
+        <Height>0.52083in</Height>
+        <Width>15.18748in</Width>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Tablix>
+      <Tablix Name="Tablix3">
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn>
+              <Width>1.45833in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.5in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.3125in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.80207in</Width>
+            </TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>0.25in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox6">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Essential Laboratory &amp; Specialised Lab Supplies Order Form</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox6</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                    <ColSpan>5</ColSpan>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell />
+                <TablixCell />
+                <TablixCell />
+                <TablixCell />
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.25in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox37">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox37</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                    <ColSpan>5</ColSpan>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell />
+                <TablixCell />
+                <TablixCell />
+                <TablixCell />
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.25in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox7">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>FACILITY NAME</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox7</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Facility">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Facility.Value</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Facility</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox11">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox11</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox25">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>START DATE</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox24</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="StartDate">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!StartDate.Value</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>StartDate</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.25in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox13">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>DISTRICT</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox13</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="District_Name">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!District_Name.Value</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>District_Name</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox15">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox15</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox27">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>END DATE</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox26</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="EndDate">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!EndDate.Value</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>EndDate</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.25in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox17">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>DELIVERY ZONE</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox16</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="DeliveryZoneCode">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!DeliveryZoneCode.Value</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>DeliveryZoneCode</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox21">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox20</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox28">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>DATE PREPARED</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox28</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="DatePrepared">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!DatePrepared.Value</Value>
+                              <Style>
+                                <FontFamily>Cambria</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>DatePrepared</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <KeepWithGroup>After</KeepWithGroup>
+            </TablixMember>
+            <TablixMember>
+              <KeepWithGroup>After</KeepWithGroup>
+            </TablixMember>
+            <TablixMember>
+              <Group Name="Details4" />
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixMember>
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <DataSetName>ds_header</DataSetName>
+        <Top>0.16667in</Top>
+        <Height>1.25in</Height>
+        <Width>7.0729in</Width>
+        <ZIndex>1</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Tablix>
+      <Image Name="Image1">
+        <Source>Embedded</Source>
+        <Value>logo</Value>
+        <Sizing>FitProportional</Sizing>
+        <Top>0.16667in</Top>
+        <Left>13.3229in</Left>
+        <Height>0.65625in</Height>
+        <Width>1.86458in</Width>
+        <ZIndex>2</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Image>
+    </ReportItems>
+    <Height>2.26042in</Height>
+    <Style />
+  </Body>
+  <Width>15.1875in</Width>
+  <Page>
+    <LeftMargin>1in</LeftMargin>
+    <RightMargin>1in</RightMargin>
+    <TopMargin>1in</TopMargin>
+    <BottomMargin>1in</BottomMargin>
+    <Style />
+  </Page>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="WebTemplate_Laboratory">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>304f51d9-50b1-4838-8020-0410f453e170</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="ds_consumption">
+      <Query>
+        <DataSourceName>WebTemplate_Laboratory</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="product_order">
+          <DataField>product_order</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="product_code">
+          <DataField>product_code</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="product_description">
+          <DataField>product_description</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Basic_Unit">
+          <DataField>Basic_Unit</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FacilityCode">
+          <DataField>FacilityCode</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="StartDate">
+          <DataField>StartDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="EndDate">
+          <DataField>EndDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="opening_balance">
+          <DataField>opening_balance</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="quantity_recieved">
+          <DataField>quantity_recieved</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="consumption">
+          <DataField>consumption</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="losses_adjustment">
+          <DataField>losses_adjustment</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="closing_balance">
+          <DataField>closing_balance</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="quantity_to_order">
+          <DataField>quantity_to_order</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="quantity_allocated">
+          <DataField>quantity_allocated</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="total_cost">
+          <DataField>total_cost</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="comments">
+          <DataField>comments</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>WebTemplate_Laboratory</rd:DataSetName>
+        <rd:SchemaPath>F:\IBS_Projects\MedicalAccess\MASCIS_WEB\App_Code\WebTemplate_Laboratory.xsd</rd:SchemaPath>
+        <rd:TableName>Consumption</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="ds_header">
+      <Query>
+        <DataSourceName>WebTemplate_Laboratory</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="FacilityCode">
+          <DataField>FacilityCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="StartDate">
+          <DataField>StartDate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EndDate">
+          <DataField>EndDate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Facility">
+          <DataField>Facility</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="District_Name">
+          <DataField>District_Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DeliveryZoneCode">
+          <DataField>DeliveryZoneCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DatePrepared">
+          <DataField>DatePrepared</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>WebTemplate_Laboratory</rd:DataSetName>
+        <rd:SchemaPath>F:\IBS_Projects\MedicalAccess\MASCIS_WEB\App_Code\WebTemplate_Laboratory.xsd</rd:SchemaPath>
+        <rd:TableName>Header</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
+  <EmbeddedImages>
+    <EmbeddedImage Name="logo">
+      <MIMEType>image/jpeg</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>5e667b9c-5449-4199-908e-88bc4f328218</rd:ReportID>
+</Report>

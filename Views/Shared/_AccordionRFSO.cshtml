@@ -1,0 +1,87 @@
+﻿<style type="text/css">
+
+</style>
+<div class="controlframe">
+    @{Html.EJ().Accordion("basicAccordion").ShowRoundedCorner(true).Width("250px").Height("850px").Items(data =>
+        {
+        data.Add().Text("SCTO").ContentTemplate(@<div>
+            <div class="emp-list">
+                <b class="headername">Custom HSIP Orders</b><br />
+                <table class="table">
+                    <tr>
+                        <td>
+                            @Html.ActionLink("ART", "HSIPCustomOrders_SCTO", "LMIS_ART")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("HIV Test Kits", "HSIPCustomOrders_SCTO", "LMIS_HIVTestKits")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("Laboratory", "HSIPCustomOrders_SCTO", "LMIS_Laboratory")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("SMC", "HSIPCustomOrders_SCTO", "LMIS_SMC")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("OI", "HSIPCustomOrders_SCTO", "LMIS_OISTI")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("Viral Load", "HSIPCustomOrders_SCTO", "LMIS_ViralLoad")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="emp-list">
+                <b class="headername">Routine HSIP Orders</b><br />
+                <table class="table">
+                    <tr>
+                        <td>
+                            @Html.ActionLink("ART", "HSIPRoutineOrders_SCTO", "LMIS_ART")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("HIV Test Kits", "HSIPRoutineOrders_SCTO", "LMIS_HIVTestKits")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("Laboratory", "HSIPRoutineOrders_SCTO", "LMIS_Laboratory")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("SMC", "HSIPRoutineOrders_SCTO", "LMIS_SMC")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("OI", "HSIPRoutineOrders_SCTO", "LMIS_OISTI")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("Viral Load", "HSIPRoutineOrders_SCTO", "LMIS_ViralLoad")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>);
+       
+        }).HeightAdjustMode(HeightAdjustMode.Content).Render();}
+</div>

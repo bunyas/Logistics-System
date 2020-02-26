@@ -1,0 +1,398 @@
+﻿
+@{
+    ViewBag.Title = "StoreManagement";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb" style="margin-top:30px;">
+    <li class="breadcrumb-item">
+        <a href="#">Dashboard</a>
+    </li>
+    <li class="breadcrumb-item active">Stores management</li>
+</ol>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+
+            <div class="col-md-1"><h6>From:</h6></div>
+            <div class="col-md-3">
+                <input type="text" id="dp_start_date" name="dp_start_date" class=" e-field e-ejinputtext valid" style="width:100%" />
+            </div>
+            <div class="col-md-1"><h6 style="float:right;">TO:</h6></div>
+            <div class="col-md-3">
+                <input type="text" id="dp_end_date" name="dp_end_date" class=" e-field e-ejinputtext valid" style="width:100%" />
+            </div>
+            <div class="col-md-2">
+                <input id="LoadDatabtn" class="btn btn-sm btn-primary" type="button" value="Load Records" onclick="myfunc()" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@{Html.EJ().Tab("defaultTabs").Items(data =>
+    {
+    data.Add().ID("Store_Cleanliness").Text("Cleanliness of the pharmacy and store").ContentTemplate(@<div style="min-height:600px;">
+
+        @(Html.EJ().Grid<object>("CleanlinessGrid")
+            .Datasource((IEnumerable<object>)ViewBag.cleanliness)
+            .ShowColumnChooser()
+     .AllowSorting() .AllowFiltering().ShowColumnChooser().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+         .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+         {
+             items.AddTool(ToolBarItems.ExcelExport);
+         }))
+        //.Mappers(map => map.ExportToExcelAction("ExportCleanlinessToExcel"))
+        .Columns(col =>
+        {
+            col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+            col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("Level_Desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+            col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width(100).Format("{0:dd/MM/yyyy}").Add();
+
+            col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+            col.Field("Q_1").HeaderText("The pharmacy is acceptably clean").Width("150").AllowFiltering(false).Add();
+
+            col.Field("Q_2").HeaderText("The main store is acceptably clean").Width("150").AllowFiltering(false).Add();
+
+            col.Field("Q_3").HeaderText("The laboratory is acceptably clean").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowFiltering(false).Add();
+
+            col.Field("Score").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).Width("70").AllowFiltering(false).Add();
+            col.Field("Percentage").HeaderText("Percentage Score").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+        }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick"))
+        )
+    </div>);
+    data.Add().ID("Store_System").Text("System for storage of medicines and health supplies").ContentTemplate(@<div>
+
+        @(Html.EJ().Grid<object>("StoresystemGrid")
+            .Datasource((IEnumerable<object>)ViewBag.Storesystem)
+            .ShowColumnChooser()
+     .AllowSorting() .AllowFiltering().ShowColumnChooser().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+        {
+            items.AddTool(ToolBarItems.ExcelExport);
+        }))
+        //.Mappers(map => map.ExportToExcelAction("ExportCleanlinessToExcel"))
+        .Columns(col =>
+
+        {
+
+            col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+            col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+            col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("Level_Desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+            col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:dd/MM/yyyy}").Add();
+            col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+            col.Field("Q_1").HeaderText("Are medicines stored only on shelves, in cupboards, or on pallets, not directly on the floor?").Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_2").HeaderText(" Are medicines stored on shelves or in cupboards stored in a systematic manner (alphabetic, therapeutic, formulations)?").Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_3").HeaderText("Are stock cards kept next to the medicines or in a file?").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_4").HeaderText("Are the shelves labelled?").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+
+            col.Field("Score").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+            col.Field("Percentage").HeaderText("Percentage Score").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+        }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick1"))
+        )
+    </div>);
+    data.Add().ID("Store_Condition").Text("Storage conditions").ContentTemplate(@<div>
+
+        @(Html.EJ().Grid<object>("StoreconditionGrid")
+            .Datasource((IEnumerable<object>)ViewBag.Storecondition)
+            .ShowColumnChooser()
+     .AllowSorting() .AllowFiltering().ShowColumnChooser().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+           .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+         {
+             items.AddTool(ToolBarItems.ExcelExport);
+         }))
+        .ShowStackedHeader()
+        .StackedHeaderRows(row =>
+        {
+            row.StackedHeaderColumns(column =>
+            {
+                column.HeaderText("General Storage").Tooltip("General Storage").Column(col =>
+                {
+                    col.Add("Q_1");
+                    col.Add("Q_2");
+                    col.Add("Q_3");
+                    col.Add("Q_4");
+                    col.Add("Q_5");
+                    col.Add("Q_6");
+                    col.Add("Q_7");
+                    col.Add("Q_8");
+                }).Add();
+                column.HeaderText("Cold storage for other medicines including Laboratory commodities").Tooltip("Cold storage for other medicines including Laboratory commodities").Column(col =>
+                {
+                    col.Add("Q_9");
+                    col.Add("Q_10");
+                    col.Add("Q_11");
+                    col.Add("Q_12");
+                    col.Add("Q_13");
+                }).Add();
+
+            }).Add();
+        })
+        .Columns(col =>
+
+        {
+
+            col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+            col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("Level_Desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+            col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:dd/MM/yyyy}").Add();
+
+            col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+            col.Field("Q_1").HeaderText(" Are there NO signs of pests/harmful insects/rodents seen in the area (Check traces, droppings from bats, rats etc.)").Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_2").HeaderText("Are the medicines protected from direct sunlight (painted glass, curtains, blinds or no windows?").Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_3").HeaderText("Is the temperature of the storage room monitored and recorded daily?").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_4").HeaderText("Can the temperature of the storeroom be regulated (with ventilation, air-condition or by opening windows)?").Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_5").HeaderText("Roof is maintained in good condition to avoid water penetration?").Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_6").HeaderText("Is storage space meeting requirements (Dispensing area > 4m2; store HC2/HC3 > 6m2; store HC4/Hosp. > 20m2)?").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_7").HeaderText(" Is the pharmacy/store lockable and access limited to authorised personnel?").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_8").HeaderText("Is functional fire safety equipment (fire extinguisher, bucket with sand, water, or blanket) available and accessible?").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_9").HeaderText("Is there a functioning system for cold storage for medicines (refrigerator)?").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_10").HeaderText("If yes, are only medicines stored in the refrigerator – no food or beverages?").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_11").HeaderText("Are medicines placed in the center of refrigerator (not in the door)?").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_12").HeaderText(" Is the medicines refrigerator temperature monitored and recorded daily?").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_13").HeaderText("Is there a power back up or spare gas cylinder for the medicines refrigerator?").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+
+            col.Field("Score").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+            col.Field("Percentage").HeaderText("Percentage Score").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+        }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick2"))
+        )
+    </div>);
+    data.Add().ID("Store_Practice").Text("Storage practices of medicines in the facility").ContentTemplate(@<div>
+
+        @(Html.EJ().Grid<object>("StorepracticeGrid")
+            .Datasource((IEnumerable<object>)ViewBag.Storepractice)
+            .ShowColumnChooser()
+     .AllowSorting() .AllowFiltering().ShowColumnChooser().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+          .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+          {
+              items.AddTool(ToolBarItems.ExcelExport);
+          }))
+        .ShowStackedHeader()
+        .StackedHeaderRows(row =>
+        {
+            row.StackedHeaderColumns(column =>
+            {
+                column.HeaderText("Store").Tooltip("Store").Column(col =>
+                {
+                    col.Add("Q_1");
+                    col.Add("Q_2");
+                    col.Add("Q_3");
+                }).Add();
+                column.HeaderText("Pharmacy").Tooltip("Pharmacy").Column(col =>
+                {
+                    col.Add("Q_4");
+                    col.Add("Q_5");
+                }).Add();
+
+            }).Add();
+        })
+        .Columns(col =>
+
+        {
+
+            col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+            col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("level_Desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+            col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:dd/MM/yyyy}").Add();
+
+            col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+            col.Field("Q_1").HeaderText("Is First Expiry First Out (FEFO) principle adhered to? (check Aat least 10 randomly selected medicines)ARVs").Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_2").HeaderText("Is there a place to store expired medicine separately (box clearly marked expired or in a shelf)?").Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_3").HeaderText("Are latest expired items entered in the record of expired medicines (check)?").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_4").HeaderText("Are opened bottles/ tins labelled with the opening date?").Width("250").AllowFiltering(false).Add();
+
+            col.Field("Q_5").HeaderText("Do all tins/bottles that have been opened have a lid on?").Width("250").AllowFiltering(false).Add();
+
+            col.Field("Score").HeaderText("Score").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+            col.Field("Percentage").HeaderText("Percentage Score").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+        }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick3"))
+        )
+    </div>);
+    }).EnableTabScroll().Render();}
+
+
+<script>
+    $(function () {
+        $("#dp_start_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+        $("#dp_end_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+    });
+    function OnToolbarClick(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["CleanlinessData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function OnToolbarClick1(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["SystemData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function OnToolbarClick2(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["ConditionData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function OnToolbarClick3(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["PracticeData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function myfunc() {
+        var dateobject = $("#dp_start_date").data("ejDatePicker");
+        var StartDate = dateobject.getValue();
+        var dateobject1 = $("#dp_end_date").data("ejDatePicker");
+        var EndDate = dateobject1.getValue();
+        $.ajax({
+            url: "LoadCleanlinessDataGrid",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startDate": StartDate,
+                "endDate": EndDate
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#CleanlinessGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+        $.ajax({
+            url: "LoadSystemDataGrid",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startDate": StartDate,
+                "endDate": EndDate
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#StoresystemGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+        $.ajax({
+            url: "LoadPracticeDataGrid",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startDate": StartDate,
+                "endDate": EndDate
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#StorepracticeGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+        $.ajax({
+            url: "LoadConditionDataGrid",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startDate": StartDate,
+                "endDate": EndDate
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#StoreconditionGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+    }
+</script>
+

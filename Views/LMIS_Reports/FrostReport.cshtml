@@ -1,0 +1,150 @@
+﻿
+@{
+    ViewBag.Title = "FrostReport";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+<div>
+    <table>
+        <tr>
+            <td>Start Date</td>
+            <td><input type="text" id="EndDate01" name="EndDate01" class="e-field e-ejinputtext valid" /></td>
+            <td>End Date</td>
+            <td><input type="text" id="EndDate02" name="EndDate02" class="e-field e-ejinputtext valid" /></td>
+            <td>Facility</td>
+            <td><input type="text" id="Facility" name="Facility" class="e-field e-ejinputtext valid" /></td>
+            <td>Product Category</td>
+            <td><input type="text" id="ProductCategory" name="ProductCategory" class="e-field e-ejinputtext valid" /></td>
+            <td>District</td>
+            <td><input type="text" id="District" name="District" class="e-field e-ejinputtext valid" /></td>
+        </tr>
+        <tr>
+            <td>Region</td>
+            <td><input type="text" id="Region" name="Region" class="e-field e-ejinputtext valid" /></td>
+            <td>IP</td>
+            <td><input type="text" id="IP" name="IP" class="e-field e-ejinputtext valid" /></td>
+            <td>Level of Care</td>
+            <td><input type="text" id="LevelOfCare" name="LevelOfCare" class="e-field e-ejinputtext valid" /></td>
+            <td>SCTO</td>
+            <td><input type="text" id="SCTO" name="SCTO" class="e-field e-ejinputtext valid" /></td>
+            <td>Sector</td>
+            <td><input type="text" id="Sector" name="Sector" class="e-field e-ejinputtext valid" /></td>
+        </tr>
+        <tr>
+            <td colspan="10"> <button onclick="LoadReport()" class="btn btn-primary btn-sm" style="float:right;">Load</button></td>
+        </tr>
+    </table>
+</div>
+<br />
+
+
+<div id="mqpartial" class="tabstyle">
+
+</div>
+<script>
+    $(function () {
+        $("#EndDate01").ejDatePicker(
+            {
+                width: '240px',
+                maxDate: new Date(),
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+        $("#EndDate02").ejDatePicker(
+            {
+                width: '240px',
+                maxDate: new Date(),
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+        $('#Facility').ejDropDownList({
+            dataSource:@Html.Raw(Json.Encode(ViewBag.Facility)),
+            width: "240px",
+            fields: { value: "FacilityCode", text: "Facility" }, showCheckbox: true,
+        }).data("ejDropDownList");
+        $('#ProductCategory').ejDropDownList({
+            dataSource: @Html.Raw(Json.Encode(ViewBag.Category)),
+            width: "240px",
+            fields: { value: "category_code", text: "category_desc" }, showCheckbox: true,
+        }).data("ejDropDownList");
+        $('#District').ejDropDownList({
+            dataSource: @Html.Raw(Json.Encode(ViewBag.District)),
+            width: "240px",
+            fields: { value: "DistrrictCode", text: "District_Name" }, showCheckbox: true,
+        }).data("ejDropDownList");
+        $('#Region').ejDropDownList({
+            dataSource: @Html.Raw(Json.Encode(ViewBag.Region)),
+            width: "240px",
+            fields: { value: "CDCRegionId", text: "CDCRegion" }, showCheckbox: true,
+        }).data("ejDropDownList");
+        $('#IP').ejDropDownList({
+            dataSource: @Html.Raw(Json.Encode(ViewBag.IP)),
+            width: "240px",
+            fields: { value: "ImplimentingPartnerCode", text: "ImplementingPartnerDescription" }, showCheckbox: true,
+        }).data("ejDropDownList");
+        $('#LevelOfCare').ejDropDownList({
+            dataSource: @Html.Raw(Json.Encode(ViewBag.LevelOfCare)),
+            width: "240px",
+            fields: { value: "level_of_care_code", text: "level_of_care" }, showCheckbox: true,
+        }).data("ejDropDownList");
+        $('#SCTO').ejDropDownList({
+            dataSource: @Html.Raw(Json.Encode(ViewBag.Scto)),
+            width: "240px",
+            fields: { value: "SCTO", text: "SCTO" }, showCheckbox: true,
+        }).data("ejDropDownList");
+        $('#Sector').ejDropDownList({
+            dataSource: @Html.Raw(Json.Encode(ViewBag.Sector)),
+            width: "240px",
+            fields: { value: "ZoneCode", text: "ZoneDescription" }, showCheckbox: true,
+        }).data("ejDropDownList");
+    });
+    function LoadReport() {
+        var dateobject = $("#EndDate01").data("ejDatePicker");
+        var StartDate = dateobject.getValue();
+
+        var dateobject1 = $("#EndDate02").data("ejDatePicker");
+        var EndDate = dateobject1.getValue();
+
+        var productCategory1 = $('#ProductCategory').data("ejDropDownList");
+        var productCategory = productCategory1.option("value");
+
+        var Facility1 = $('#Facility').data("ejDropDownList");
+        var _Facility = Facility1.option("value");
+
+        var District1 = $('#District').data("ejDropDownList");
+        var _District = District1.option("value");
+
+        var Region1 = $('#Region').data("ejDropDownList");
+        var _Region = Region1.option("value");
+
+        var IP1 = $('#IP').data("ejDropDownList");
+        var _IP = IP1.option("value");
+
+        var LevelOfCare1 = $('#LevelOfCare').data("ejDropDownList");
+        var _LevelOfCare = LevelOfCare1.option("value");
+
+        var SCTO1 = $('#SCTO').data("ejDropDownList");
+        var _SCTO = SCTO1.option("value");
+
+        var Sector1 = $('#Sector').data("ejDropDownList");
+        var _Sector = Sector1.option("value");
+        $("#mqpartial").load("@Url.Action("LoadFrostReport", "LMIS_Reports")",
+                {
+                    'productCategory': productCategory,
+                    'facility': _Facility,
+                    'district': _District,
+                    'Region': _Region,
+                    'ip': _IP,
+                    'levelOfCare': _LevelOfCare,
+                    'SCTO': _SCTO,
+                    'sector': _Sector,
+                    'sdate': StartDate,
+                    'edate': EndDate
+                },
+                                            function (response, status, xhr) {
+                                                if (status == "error") {
+                                                    alert("An error occurred while loading the results.");
+                                                }
+                                            }
+            );
+    }
+</script>

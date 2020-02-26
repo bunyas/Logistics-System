@@ -1,0 +1,123 @@
+﻿<style type="text/css">
+
+</style>
+<div class="controlframe">
+    @{Html.EJ().Accordion("basicAccordion").ShowRoundedCorner(true).Width("250px").Height("850px").Items(data =>
+        {
+        data.Add().Text("ORDERS").ContentTemplate(@<div>
+            <div class="emp-list">
+                <b class="headername">Custom HSIP Orders</b><br />
+                <table class="table">
+                    <tr>
+                        <td>
+                            @Html.ActionLink("ART", "HSIPCustomOrders", "LMIS_FacilityART")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("HIV Test Kits", "HSIPCustomOrders", "LMIS_FacilityHIVTestKits")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("Laboratory", "HSIPCustomOrders", "LMIS_FacilityLaboratory")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("SMC", "HSIPCustomOrders", "LMIS_FacilitySMC")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("OI", "HSIPCustomOrders", "LMIS_FacilityOISTI")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("Viral Load", "HSIPCustomOrders", "LMIS_FacilityViralLoad")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="emp-list">
+                <b class="headername">Routine HSIP Orders</b><br />
+                <table class="table">
+                    <tr>
+                        <td>
+                            @Html.ActionLink("ART", "HSIPRoutineOrders", "LMIS_FacilityART")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("HIV Test Kits", "HSIPRoutineOrders", "LMIS_FacilityHIVTestKits")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("Laboratory", "HSIPRoutineOrders", "LMIS_FacilityLaboratory")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("SMC", "HSIPRoutineOrders", "LMIS_FacilitySMC")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("OI", "HSIPRoutineOrders", "LMIS_FacilityOISTI")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink("Viral Load", "HSIPRoutineOrders", "LMIS_FacilityViralLoad")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </table>
+            </div> 
+         
+        </div>);
+
+        data.Add().Text("PHYSICAL COUNTS").ContentTemplate(@<div>
+         <div class="emp-list">
+               <b class="headername">Manage Physical Counts</b><br />
+                 <table class="table">
+                    <tr>
+                        <td>
+                       @Html.ActionLink("ART", "PC_ART", "LMIS_Physical_Count")
+                        </td>
+                         </tr>
+                          <tr>
+                       <td>
+                    @Html.ActionLink("Laboratory", "PC_Lab", "LMIS_Physical_Count")
+                       </td>
+                      </tr>
+                     <tr>
+                         <td>
+                             @Html.ActionLink("HIV TEST KITS", "PC_HIV", "LMIS_Physical_Count")
+                         </td>
+                     </tr>
+              <tr>
+                   <td>
+                        @Html.ActionLink("OIs", "PC_OISTI", "LMIS_Physical_Count")
+                          </td>
+                        </tr>
+                      <tr>
+                            <td>
+                        @Html.ActionLink("SMC", "PC_SMC", "LMIS_Physical_Count")
+                            </td>
+                      </tr>
+                     <tr><td>
+                         </td></tr>
+                        </table>
+             </div>
+        </div>);
+
+        }).HeightAdjustMode(HeightAdjustMode.Content).Render();}
+</div>

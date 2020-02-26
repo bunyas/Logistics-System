@@ -1,0 +1,120 @@
+﻿
+@{
+    ViewBag.Title = "StockStatusReport";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+@(Html.EJ().Dialog("basicDialog").Title("Warning")@*.ShowFooter(true).FooterTemplateId("sample")*@.ShowOnInit(false))
+<table>
+    <tr>
+        <td style="padding-left:5px;">Product</td>
+        <td style="padding-left:5px;">@Html.EJ().DropDownList("DDProduct").WatermarkText("Please select a Product").Datasource((IEnumerable<object>)ViewBag.product).EnableFilterSearch(true).ShowCheckbox(true).DropDownListFields(df => df.ID("product_code").Text("product_description").Value("product_code")).Width("100%")</td>
+        <td style="padding-left:5px;">Product Category</td>
+        <td style="padding-left:5px;">@Html.EJ().DropDownList("DDCategory").WatermarkText("Please select a Category").Datasource((IEnumerable<object>)ViewBag.Category).EnableFilterSearch(true).ShowCheckbox(true).DropDownListFields(df => df.ID("category_code").Text("category_desc").Value("category_code")).Width("100%")</td>
+       <td></td>
+    </tr>
+    <tr>
+        <td style="padding-left:10px;">Start date of reporting period:</td>
+        <td style="padding-left:5px;"><input type="text" id="dp_start_date" name="dp_start_date" class=" e-field e-ejinputtext valid" style="width:100%" /></td>
+        <td style="padding-left:10px;">End Date of reporting period:</td>
+        <td style="padding-left:5px;"><input type="text" id="dp_end_date" name="dp_end_date" class=" e-field e-ejinputtext valid" style="width:100%" /></td>
+        <td style="padding-left:15px;"><input id="LoadDatabtn" class="btn btn-sm btn-primary" type="button" value="Load Records" onclick="myfunc()" /></td>
+    </tr>
+</table>
+
+@(Html.EJ().Grid<object>("Grid")
+            ///.Datasource((IEnumerable<object>)ViewBag.dispensingLog)
+            .ShowColumnChooser()
+ .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+ {
+     items.AddTool(ToolBarItems.ExcelExport);
+ }))
+.AllowSorting().AllowFiltering().ShowColumnChooser().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+.AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+.Columns(col =>
+
+{
+    col.Field("SAP_code").HeaderText("SAP code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing(false).Add();
+
+    col.Field("product_code").HeaderText("Product code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing(false).Add();
+    //col.Field("Region_Description").HeaderText("Region").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing(false).Add();
+    col.Field("product_description").HeaderText("Product").Width("300").AllowEditing(false).Add();
+    col.Field("packsize").HeaderText("Pack Size").Width("100").AllowEditing(false).Add();
+
+    col.Field("category_desc").HeaderText("Product Category").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing(false).Add();
+
+    col.Field("Quantity_Required").HeaderText("Quantity Required").Format("{0:N0}").TextAlign(TextAlign.Left).Width("100").AllowEditing(false).Add();
+
+    col.Field("Quantity_Allocated").HeaderText("Quantity Fulfilled").Format("{0:N0}").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing(false).Add();
+    col.Field("OnHand").HeaderText("SOH").Width("100").Format("{0:N0}").AllowEditing(false).Add();
+
+    col.Field("Before_Adjustment").HeaderText("SOH-Stock required before adjustments").Format("{0:N0}").TextAlign(TextAlign.Left).Width("100").AllowEditing(false).Add();
+    col.Field("After_Adjustment").HeaderText("SOH-Stock required after adjustments").Format("{0:N0}").TextAlign(TextAlign.Left).Priority(4).Width(100).Add();
+    col.Field("Fulfilled").HeaderText("Product fulfilled from SOH  1=Yes 0 = No").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing(false).Add();
+    col.Field("AMC").HeaderText("AMC").TextAlign(TextAlign.Left).Priority(4).Format("{0:N0}").Width("100").Add();
+    col.Field("MOS_ISSUED").HeaderText("MOS Issued").TextAlign(TextAlign.Left).Format("{0:N1}").Priority(4).Width("100").AllowEditing(false).Add();
+
+    col.Field("MOS_OnHand").HeaderText("MOS On Hand").Format("{0:N1}").Width("100").Add();
+
+    col.Field("MOS_Remaining").HeaderText("MOS Remaining").Format("{0:N1}").Width("100").Add();
+
+}).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick")))
+
+<script>
+    $(function () {
+        $("#dp_start_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+        $("#dp_end_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+    });
+    function OnToolbarClick(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            //this.model["MyData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+            var grid = $('#Grid').ejGrid('instance');
+            grid.ignoreOnExport.splice(grid.ignoreOnExport.indexOf('pageSettings'), 1);
+        }
+    }
+    function myfunc() {
+        var dateobject = $("#dp_start_date").data("ejDatePicker");
+        var StartDate = dateobject.getValue();
+        var dateobject1 = $("#dp_end_date").data("ejDatePicker");
+        var EndDate = dateobject1.getValue();
+        var Productobj = $("#DDProduct").data("ejDropDownList");
+        var Product = Productobj.option("value");
+        var Categoryobj = $("#DDCategory").data("ejDropDownList");
+        var Category = Categoryobj.option("value");
+        //if (facility == null) { facility = 0; }
+        if ((StartDate == null || StartDate == "") && (EndDate == null || EndDate == "")) {
+            var str = "Please select atleast one of the reporting period dates";
+            $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+            $("#button1").ejButton({
+                cssClass: "e-primary",
+                size: "large",
+                showRoundedCorner: true,
+                contentType: "textandimage",
+                prefixIcon: "e-icon e-handup",
+                visible: false,
+                style: "float:right",
+                click: function (args) {
+                    $("#basicDialog").ejDialog("close");
+                }
+            });
+            $("#basicDialog").ejDialog({ enableModal: true });
+            $("#basicDialog").ejDialog("open");
+            return;
+        }
+        else {
+            var grid = $("#Grid").ejGrid("instance");
+            grid.dataSource(ej.DataManager({ url: 'GetStockStatus?Product=' + Product + '&&Category=' + Category + '&&StartDate=' + StartDate + '&&EndDate=' + EndDate, adaptor: "UrlAdaptor" }));
+        }
+       
+
+    }
+</script>

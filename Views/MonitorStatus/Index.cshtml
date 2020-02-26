@@ -1,0 +1,82 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+<h2>Index</h2>
+
+@Html.Hidden("Get",Url.Action("GetStatus", "MonitorStatus"))
+<table class="table">
+    <thread>
+        <tr>
+            <th>OrderNumber</th>
+            <th>CurrentReccord</th>
+            <th>RecOrderadBySAP</th>
+            <th>DocNum</th>
+        </tr>
+    </thread>
+    <tbody id="tblinfo">
+
+    </tbody>
+</table>
+
+<script type="text/javascript">
+
+      $(function () {
+          //proxy created on the fly
+          var cus = $.connection.monitorHub;
+          //declre a function on ajob hub so the server can invoke it
+          cus.client.displayStatus = function () {
+              getData();
+          };
+          //start the connection
+          $.connection.hub.start();
+          getData();
+      });
+
+      function getData() {
+          var $tbl = $('#tblinfo');
+          $.ajax({
+              url: "GetStatus",
+              type: 'Get',
+              datatype: 'json',
+              success: function (data) {
+                  //alert(data[1].OrderNumber);
+                  //debugger;
+                  $tbl.empty();
+                  //$tbl.append(
+                  //        '<tr>' +
+                  //        '<td>' + data[0].OrderNumber + '<td>' +
+                  //        '<td>' + data[0].CurrentReccord + '<td>' +
+                  //        '<td>' + data[0].RecOrderadBySAP + '<td>' +
+                  //        '<tr>'
+                  //    );
+                  //$tbl.empty();
+                  //for (var i = 0; i < data.length; i++) {
+                  //    $tbl.append(
+                  //        '<tr>' +
+                  //        '<td>' + data[i].OrderNumber + '<td>' +
+                  //        '<td>' + data[i].CurrentReccord + '<td>' +
+                  //        '<td>' + data[i].RecOrderadBySAP + '<td>' +
+                  //        '<tr>'
+                  //    );
+                  //}
+                  $.each(data, function (i, model) {
+                      $tbl.append(
+                          '<tr>' +
+                          '<td>' + model.OrderNumber + '<td>' +
+                          '<td>' + model.CurrentReccord + '<td>' +
+                          '<td>' + model.RecOrderadBySAP + '<td>' +
+                          '<td>' + model.DocNum + '<td>' +
+                          '<tr>'
+                      );
+                      //$tbl.append(rows.join(''));
+                  });
+              }
+          });
+      };
+</script>
+
+
+

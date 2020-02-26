@@ -1,0 +1,255 @@
+﻿
+@{
+    ViewBag.Title = "SAPExport";
+    Layout = "~/Views/Shared/_LayoutCordinator.cshtml";
+}
+@section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexCodinator", "Home")
+                </li>
+                <li class="active">
+                    <strong>ART: Routine Orders</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+@(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("DataSourceSAPExportHSIP")/*.BatchURL("SaveCodinator")*/.Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+         .AllowFiltering().ShowColumnChooser()
+        .AllowTextWrap()
+        .AllowGrouping()
+        .AllowKeyboardNavigation(true)
+          .SelectionType(SelectionType.Multiple)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .EditSettings(edit => { edit.AllowEditing().EditMode(EditMode.Batch); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    items.AddTool(ToolBarItems.Edit);
+                    items.AddTool(ToolBarItems.Update);
+                    items.AddTool(ToolBarItems.Cancel);
+                    items.AddTool(ToolBarItems.Search);
+                });
+            })
+        .Columns(col =>
+        {
+            col.Type("checkbox").Width(50).Add();//OrderTypeId
+            col.Field("OrderTypeId").AllowEditing(false).HeaderText("Order Type").ForeignKeyField("OrderTypeId").ForeignKeyValue("OrderType").DataSource((IEnumerable<Object>)ViewBag.OrderType).Add();
+            col.Field("OrderNumber").AllowEditing(false).HeaderText("Order Number").IsPrimaryKey(true).Add();
+            col.Field("FacilityCode").AllowEditing(false).HeaderText("Facility").ForeignKeyField("FacilityCode").ForeignKeyValue("Facility").DataSource((IEnumerable<Object>)ViewBag.FacilityDataSource).Add();
+            //col.Field("StartDate").AllowEditing(false).Visible(false).HeaderText("Start of reporting period").Format("{0:dd/MM/yyyy}").Add();
+            // col.Field("EndDate").AllowEditing(false).Visible(false).HeaderText("End of reporting period").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("EmergencyOrder").EditType(EditingType.BooleanEdit).AllowEditing(false).TextAlign(TextAlign.Center).HeaderText("Emergency Order").Add();
+            col.Field("DatePrepared").AllowEditing(false).HeaderText("Date prepared").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("OrderStatusId").AllowEditing(false).HeaderText("Order Status").ForeignKeyField("StatusId").ForeignKeyValue("Status").DataSource((IEnumerable<Object>)ViewBag.OrderStatusDataSource).Add();
+        })
+         .ChildGrid(child =>
+         {  //child.Datasource(ds => ds.Json(ViewBag.Orders).Adaptor(AdaptorType.RemoteSaveAdaptor))
+             child.Datasource(datasource => datasource.URL("LoadGridFiles").Adaptor(AdaptorType.UrlAdaptor))
+            .QueryString("OrderNumber")
+               .EnableAltRow(true)
+                .Columns(col =>
+                {
+                    col.Field("SAP_code").Width("100px").Visible(false).HeaderText("Product SAP Code").TextAlign(TextAlign.Right).Add();
+                    col.Field("DrugCode").Width("350px").HeaderText("Product").ForeignKeyField("product_code").ForeignKeyValue("product_description").DataSource((IEnumerable<Object>)ViewBag.products).Add();
+                    col.Field("ART_eMTCT_Consumption").Width("120px").Visible(false).HeaderText("Consumption").Add();
+                    col.Field("Quantity_Required_Current_Patients").Width("120px").HeaderText("Quantity Required For Current Patients").Add();
+                    col.Field("Quantity_Allocated").Width("120px").HeaderText("Quantity Allocated").Add();
+                    col.Field("Notes").Width("350px").HeaderText("Facility Comments").Add();
+                    col.Field("RFSONotes").Width("350px").HeaderText("SCTO Comments").Add();
+                }).ClientSideEvents(eve =>
+                {
+                    eve.Load("childLoad");
+                });
+         })
+)
+<hr />
+
+<div>
+    <input  type="button" onclick="CheckButton()" class="btn btn-danger btn-lg" value="Approve" />
+</div>
+
+<script>
+    function CheckButton(agrs) {
+
+        // Create grid object.
+        var gridObj = $("#Grid").data("ejGrid");
+        // Gets the selected row element list
+        var records = gridObj.getSelectedRows();
+
+        if (records.length) {
+            var count = 0;
+            for (var i = 0; i < records.length; i++) {
+                var orderNo = gridObj.getSelectedRecords()[i].OrderNumber;
+                //var facility = gridObj.getSelectedRecords()[i].FacilityCode;
+                //var enddate = gridObj.getSelectedRecords()[i].EndDate;
+                //var prepareddate = gridObj.getSelectedRecords()[i].DatePrepared;
+
+                //alert(enddate); alert(prepareddate);
+                $.ajax({
+                    url: "SaveCodinator?Order_Number=" + orderNo,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    //data: { values: mymsg },
+                    type: 'GET',
+
+                    success: function (result) {
+                        // alert(data.msg);
+                        successSave();
+                        count++;
+                        if (count == records.length) {
+                            successSave();
+                        }
+                    },
+                }
+                )
+            }
+        }
+
+
+    }
+</script>
+
+<script>
+    function failure(args) {
+        $("#Grid").ejWaitingPopup("hide");
+        var str = "";
+        str = ($($(args.error.responseText).find('b')[0]).text() + ":" + $(args.error.responseText).find('i').text());
+        $("#ErrorList").html('<p style="font-family: cursive;color: red;">' + str + '</p></br><button id="button1" style="size: large; showRoundedCorner: true; cssClass:customCss1">---OK---</button>');
+        $("#button1").ejButton({
+
+            click: function (args) {
+                $("#ErrorList").ejDialog("close");
+            }
+        });
+        $("#ErrorList").ejDialog({ enableModal: true });
+        $("#ErrorList").ejDialog("open");
+    }
+
+    function successSave(args) {
+        //alert(window._Event);
+        if (window._Event == "beginedit" || window._Event == "add") { }
+        else {
+
+            $("#Grid").ejWaitingPopup("hide");
+
+            var proddesc = $('#ClubID').val();
+            var str = "Record" + " Approved Successfully!!!";
+
+            //$("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+            $("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str /*+ '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>'*/);
+
+
+            $("#btn1").ejButton({
+                cssClass: "e-primary",
+                size: "large",
+                showRoundedCorner: true,
+                contentType: "textandimage",
+                prefixIcon: "e-icon e-handup",
+                visible: false,
+                style: "float:right",
+                click: function (args) {
+                    $("#SuccessDial").ejDialog("close");
+                }
+            });
+
+            $("#button1").ejButton({
+                cssClass: "e-success",
+                size: "medium",
+                showRoundedCorner: true,
+                contentType: "textandimage",
+                prefixIcon: "e-icon e-handup",
+
+                click: function (args) {
+                    $("#SuccessDial").ejDialog("close");
+                }
+            });
+            $("#SuccessDial").ejDialog({ enableModal: true });
+            $("#SuccessDial").ejDialog("open");
+        }
+        var gridObj = $("#Grid").data("ejGrid");
+        gridObj.refreshContent(true);
+
+    }
+
+    function cancelSave(args) {
+        $("#Grid").ejWaitingPopup("hide");
+        var proddesc = $('#ClubID').val();
+        var str = "The edits on " + " have been Cancelled!!!";
+        //$("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+        $("#CancelDial").html('<p style="font-family: cursive;color: red;">' + str /*+ '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>'*/);
+
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+        $("#btnOK").ejButton({
+            cssClass: "e-danger",
+            size: "large",
+            showRoundedCorner: true,
+            contentType: "textandimage",
+            prefixIcon: "e-icon e-handup",
+            visible: false,
+            style: "float:right",
+            click: function (args) {
+
+                $("#CancelDial").ejDialog("close");
+            }
+        });
+
+        $("#CancelDial").ejDialog({ enableModal: true });
+        $("#CancelDial").ejDialog("open");
+    }
+</script>
+
+
+    <script id="sample" type="text/x-jsrender">
+        <div class="footerspan" style="float:right">
+
+            @Html.EJ().Button("btn1").Size(ButtonSize.Medium).Height("30").Width("70").Text("Ok")
+
+            @*@Html.EJ().Button("btn2").Size(ButtonSize.Mini).Height("30").Width("70").Text("Cancel")*@
+
+        </div>
+        @*<div class="condition" style="float:left; margin-left:15px">
+                @Html.EJ().CheckBox("check1").Text("Don't ask me this again")
+            </div>*@
+    </script>
+
+    <script id="cancelfooter" type="text/x-jsrender">
+        <div class="footerspan" style="float:right">
+            @Html.EJ().Button("btnOK").Size(ButtonSize.Medium).Height("30").Width("70").Text("Ok")
+            @Html.EJ().Button("btnCancel").Size(ButtonSize.Mini).Height("30").Width("70").Text("Cancel")
+
+        </div>
+        <div class="condition" style="float:left; margin-left:15px">
+            @Html.EJ().CheckBox("check1").Text("Don't ask me this again")
+        </div>
+    </script>
+    @(Html.EJ().Dialog("ErrorList").Title("Exception Thrown").ShowOnInit(false))
+    @(Html.EJ().Dialog("SuccessDial").Title("Record Saved").ShowFooter(true).FooterTemplateId("sample").ShowOnInit(false))
+    @(Html.EJ().Dialog("CancelDial").Title("Record Not Saved").ShowFooter(true).FooterTemplateId("cancelfooter").ShowOnInit(false))
+
+<script>
+    function childLoad(args) {
+        //var jsonResponse = JSON.parse(this.model.parentDetails.parentRowData);
+        console.log(JSON.stringify(this.model.parentDetails.parentRowData));
+        // console.log(JSON.stringify(this.model));
+        var data = this.model.parentDetails.parentRowData.OrderNumber;
+
+        //Global Variables to use while saving the docs
+        window.regcode = data;//window.batchno = batch_nodata;
+
+        this.model.query = new ej.Query();
+        this.model.query.addParams("OrderNumber", data);
+        //alert(data);
+    }
+</script>

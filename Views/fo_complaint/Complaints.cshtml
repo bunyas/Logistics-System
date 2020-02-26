@@ -1,0 +1,2329 @@
+﻿
+@{
+    ViewBag.Title = "Complaints";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+
+}
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+<script type="text/x-jsrender" id="columnTemplate">
+    <img style="width: 75px; height: 70px" src="../content/images/grid/Employees/{{:EmployeeID}}.png" alt="{{: EmployeeID }}" />
+</script>
+<script id="tempx" type="text/x-template">
+    @*@Html.ActionLink("${Required_Evidence}", "Index")*@
+    <a rel='nofollow' href=" DownloadFile?fileNamePath={{:Required_Evidence}}">{{:Required_Evidence}}</a>
+</script> 
+
+
+<script id="FileURLtemplate" type="text/x-template">
+    @*@Html.ActionLink("${Required_Evidence}", "Index")*@
+    <a rel='nofollow' href=" DownloadFile?fileNamePath={{:FileURL}}">{{:Details}}</a>
+</script>
+
+<script>
+    window.batchno = '';
+    window.productcode = '';
+    //   public ActionResult SaveSupportingDoc(IEnumerable<HttpPostedFileBase> UploadSupFile, string regcode, string batch_no, string product_code, int product_comp_code)
+    window.regcode = '';
+    window.product_comp_code = '';
+</script>
+
+
+
+
+<script type="text/x-jsrender" id="columnTemplate">
+    <img style="width: 75px; height: 70px" src="../content/images/grid/Employees/{{:EmployeeID}}.png" alt="{{: EmployeeID }}" />
+</script>
+
+<h3>Complaints Report Form</h3>
+
+<div id="ControlRegion">
+    @(Html.EJ().Dialog("ErrorList").Title("Exception Thrown").ShowOnInit(false))
+    @(Html.EJ().Dialog("SuccessDial").Title("Record Saved").ShowFooter(true).FooterTemplateId("sample").ShowOnInit(false))
+    @(Html.EJ().Dialog("CancelDial").Title("Record Not Saved").ShowFooter(true).FooterTemplateId("cancelfooter").ShowOnInit(false))
+
+
+    @(Html.EJ().Grid<object>("Grid").AllowRowDragAndDrop()
+        .Datasource(datasource => datasource.URL("GetComplaints")/*.UpdateURL("DialogUpdate").InsertURL("DialogInsert")*/.RemoveURL("DialogDelete").Adaptor(AdaptorType.UrlAdaptor))
+        .EnableAltRow()
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+        .AllowPaging()
+        .AllowFiltering()
+        .AllowTextWrap()
+        .AllowGrouping()
+
+        .SelectionType(SelectionType.Multiple)
+        .AllowScrolling()
+        .IsResponsive(true)
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })
+        .ToolbarSettings(toolbar =>
+        {
+            toolbar.ShowToolbar().ToolbarItems(items =>
+            {
+                items.AddTool(ToolBarItems.Add);
+                items.AddTool(ToolBarItems.Edit);
+                items.AddTool(ToolBarItems.Delete);
+                items.AddTool(ToolBarItems.Update);
+                items.AddTool(ToolBarItems.Cancel);
+                items.AddTool(ToolBarItems.Search);
+                //items.AddTool(ToolBarItems.ExcelExport);
+                //items.AddTool(ToolBarItems.WordExport);
+                //items.AddTool(ToolBarItems.PdfExport);
+            });
+        })
+        .Columns(col =>
+        {
+
+            col.Field("e_reg_complaint_code").HeaderText("e_reg_complaint_code").IsPrimaryKey(true).Visible(false).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("e_reg_complaint_No").HeaderText("Complaint Number").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Justify).Width(100).Add();
+            col.Field("e_reg_date_recieved").Type("date").HeaderText("Date Recieved").Format("{0:dd/MMM/yyyy}").Width(100).Add();
+            col.Field("e_reg_date_complaint").Type("date").HeaderText("Date Complaint").Format("{0:dd/MMM/yyyy}").Width(100).Add();
+
+            col.Field("e_reg_complaint_category").HeaderText("Complaint Category").ForeignKeyField("complaint_category_code").ForeignKeyValue("complaint_category_desc").DataSource((IEnumerable<object>)ViewBag.e_reg_complaint_category).Width(200).Add();
+            col.Field("e_reg_complaint_details").HeaderText("Complaint Details").Width(250).Add();
+            //col.Field("e_reg_affected_sites").HeaderText("Sites").Width(80).Add();
+            // col.Field("e_reg_product_category").HeaderText("Product Category").ForeignKeyField("category_code").ForeignKeyValue("category_desc").DataSource((IEnumerable<object>)ViewBag.Product_Category).Width(150).Add();
+            // col.Field("e_reg_communication_mode").HeaderText("Communication Mode").ForeignKeyField("comm_mode_code").ForeignKeyValue("comm_mode_desc").DataSource((IEnumerable<object>)ViewBag.e_reg_communication_mode).Width(150).Add();
+            col.Field("e_reg_date_resolved").Type("date").HeaderText("Date Resolved").Format("{0:dd/MMM/yyyy}").Width(100).Add();
+            //col.Field("e_reg_expected_date_resolution").Type("date").HeaderText("Expected Date of Resolution").Format("{0:dd/MMM/yyyy}").Width(100).Add();
+            col.Field("e_reg_contact_person_id").HeaderText("Contact Person").Width(200).Add();
+            col.Field("e_reg_complaint_accuteness").HeaderText("e_reg_complaint_accuteness").Width(200).Add();
+            //col.Field("DeletedRecord").HeaderText("DeletedRecord").Width(200).Add();
+            //col.Field("AffectedSites").HeaderText("AffectedSites").Type("string").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("ActionTaken").HeaderText("Action Taken").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+
+            // col.Field("Sup_Doc_Evidence_Rec").HeaderText("Sup_Doc_Evidence_Rec").EditType(EditingType.BooleanEdit).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            // col.Field("Prod_Samples_Provided").HeaderText("Prod_Samples_Provided").EditType(EditingType.BooleanEdit).IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            // col.Field("Communicated_By_Lev1").HeaderText("Communicated_By_Lev1").Visible(true).TextAlign(TextAlign.Left).Width(100).Add();
+            // col.Field("Email_letter_attached").HeaderText("Email_letter_attached").EditType(EditingType.BooleanEdit).Type("").TextAlign(TextAlign.Right).Width(100).Add();
+            //  col.Field("Communicated_By_Lev2").HeaderText("Communicated_By_Lev2").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("Feedback").HeaderText("Feedback").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("Feedback_Communicated").HeaderText("Feedback_Communicated").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            // col.Field("Feedback_Date").Type("date").HeaderText("Feedback_Date").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            // col.Field("No_Feedback_Reason").HeaderText("No_Feedback_Reason").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            //col.Field("is_quality_issue").HeaderText("Quality Issue?").Width(200).Add();
+            //col.Field("is_quality_issue").HeaderTemplateID("#headerTemplate").Template(true).Template("#checkboxTemplate")./*HeaderText("")*//*.Type("checkbox").*/Width(200).Add();
+
+        })
+    .ClientSideEvents(evt => evt.ActionBegin("onActionBegin").ActionComplete("edit").ActionFailure("failure"))
+
+    // .ClientSideEvents(eve => { eve.ActionComplete("edit"); })
+    //.ClientSideEvents(eve => eve.Create("create").ActionComplete("edit").RecordClick("recordClick"))
+
+    )
+
+</div>
+
+<script type="text/javascript">
+
+    ///Function to return the dd-mm-YYYY format
+    function dateString(args) {
+        var date_complaint = new Date(args); //        date = new Date('2013-08-03T02:00:00Z');
+        var year = date_complaint.getFullYear();
+        var month = date_complaint.getMonth() + 1;
+        var dt = date_complaint.getDate();
+
+        if (dt < 10) {
+            dt = '0' + dt;
+        }
+        if (month < 10) {
+            month = '0' + month;
+        }
+        return (dt + '-' + month + '-' + year);
+    }
+
+
+
+    function onActionBegin(args) {
+        if (args.requestType == "save") {
+            //  alert('Save Called!!!');
+            //Updating the file as one of the column data
+            //args.data["UploadedFile"] = window.uploadData.files;
+
+            alert('(args.requestType == "save")');
+            var dateTimeObj1 = $("#e_reg_date_complaint").ejDatePicker('getValue');
+            args.data["e_reg_date_complaint"] = dateTimeObj1;
+            args.data["date_complaint"] = dateString(dateTimeObj1);// dt + '-' + month + '-' + year; //date_complaint;// dateTimeObj1;
+
+            var dateTimeObj2 = $("#e_reg_date_recieved").ejDatePicker('getValue');
+            var date_recieved = new Date(dateTimeObj2);
+            args.data["DateReceived"] = dateString(dateTimeObj2);//dt + '-' + month + '-' + year; // date_recieved;//dateTimeObj2;
+
+            var dateTimeObj2 = $("#e_reg_date_recieved").ejDatePicker('getValue');
+            var date_recieved = new Date(dateTimeObj2);
+            args.data["DateReceived"] = dateTimeObj2;//dateString(dateTimeObj2);//dt + '-' + month + '-' + year; // date_recieved;//dateTimeObj2;
+            
+            args.data["e_reg_date_complaint"] = dateString($("#e_reg_date_complaint").ejDatePicker('getValue'));
+            args.data["e_reg_date_resolved"] = dateString($("#e_reg_date_resolved").ejDatePicker('getValue'));
+            args.data["Communicated_By_Lev1Date"] = dateString($("#Communicated_By_Lev1Date").ejDatePicker('getValue'));
+            args.data["e_reg_expected_date_resolution"] = dateString($("#e_reg_expected_date_resolution").ejDatePicker('getValue'));
+            args.data["Feedback_Date"] = dateString($("#Feedback_Date").ejDatePicker('getValue'));
+            args.data["Communicated_By_Lev2Date"] = dateString($("#Communicated_By_Lev2Date").ejDatePicker('getValue'));
+
+            var Sup_Doc = $('#Sup_Doc_Evidence_Rec:checked').val();
+            var checkedValue = $('#Sup_Doc_Evidence_Rec:checked').val();
+            //alert('Sup_Doc '+Sup_Doc);
+            //alert('checkedValue ' + checkedValue);
+
+
+            args.data["e_reg_date_recieved"] = date_recieved;//dateTimeObj2;
+            args.data["AffectedSites"] = $("#AffectedSites").val();
+            var complaintcode = $("#e_reg_complaint_code").val();
+
+            window.uploadData["editData"] = new FormData();
+            // alert(window.uploadData.url);
+            //Converting the grid data to form data to send files to controller
+            for (var d in args.data)
+                uploadData.editData.append(d, args.data[d]);
+            ////Update the child grids with the compliants code
+            setCodePreInvestGrd(complaintcode);
+            setCodeDetailInvestGrd(complaintcode);
+
+            proxy = this;
+            $.ajax({
+                url: window.uploadData.url,
+                type: 'POST',
+                data: window.uploadData.editData,
+                contentType: false,
+                processData: false,
+                success: function () {
+                    proxy.refreshContent();
+
+                    //Save the files ...............
+
+                    var upload = $('#UploadInput').ejUploadbox("instance");
+                    if (upload != null && upload != undefined) {
+                        if (upload.diaObj != null && upload.diaObj != undefined) {
+                            var wrapper = upload.diaObj.wrapper;
+                            var fileItem = wrapper.find(".e-ul li.e-upload-file");
+                            for (var i = 0; i < fileItem.length; i++) {
+                                alert('Using begin(args) ------');
+                                upload._xhrPerformUpload($(fileItem[i]).data("file"));
+                            }
+                        }
+                    }
+                    var objPreInvest = $("#PreInvestGrd").ejGrid("instance");
+                    objPreInvest.batchSave();
+
+                    var objDetailInvest = $("#DetailInvestGrd").ejGrid("instance");
+                    objDetailInvest.batchSave(); 
+
+                    var objMedicines = $("#medicinesGrid").ejGrid("instance");
+                    objMedicines.batchSave();
+
+                    var objotherProducts = $("#otherProductsGrid").ejGrid("instance");
+                    objotherProducts.batchSave();
+
+                    var objActionTakenGrd = $("#ActionTakenGrd").ejGrid("instance");
+                    objActionTakenGrd.batchSave();
+                }
+            }); 
+
+        }
+         
+    }
+    
+    function onClick(args) {
+        var obj = $("#Grid").ejGrid("instance"), rec = [];
+        var check = obj.checkSelectedRowsIndexes;  // collection which holds the page index and the selected record index
+        if (check.length) {
+            for (var pageInx = 0; pageInx < check.length; pageInx++) {
+                if (!ej.isNullOrUndefined(check[pageInx]))
+                    rec = getRecords(pageInx, check[pageInx], obj, rec);
+            }
+        }
+
+        console.log(rec);
+    }
+    function getRecords(pageInx, inx, proxy, rec) {
+
+        if (inx.length) {
+            for (var i = 0; i < inx.length; i++) {
+                var pageSize = proxy.model.pageSettings.pageSize;  //gets the page size of grid
+                var data = proxy.model.dataSource[pageInx * pageSize + inx[i]];
+                rec.push(data);     //pushing all the selected Records
+
+            }
+        }
+
+        return rec;
+    }
+</script>
+
+
+<script id="sample" type="text/x-jsrender">
+    <div class="footerspan" style="float:right">
+
+        @Html.EJ().Button("btn1").Size(ButtonSize.Medium).Height("30").Width("70").Text("Ok")
+
+        @*@Html.EJ().Button("btn2").Size(ButtonSize.Mini).Height("30").Width("70").Text("Cancel")*@
+
+    </div>
+    @*<div class="condition" style="float:left; margin-left:15px">
+            @Html.EJ().CheckBox("check1").Text("Don't ask me this again")
+        </div>*@
+</script>
+
+<script id="cancelfooter" type="text/x-jsrender">
+    <div class="footerspan" style="float:right">
+        @Html.EJ().Button("btnOK").Size(ButtonSize.Medium).Height("30").Width("70").Text("Ok")
+        @Html.EJ().Button("btnCancel").Size(ButtonSize.Mini).Height("30").Width("70").Text("Cancel")
+
+    </div>
+    <div class="condition" style="float:left; margin-left:15px">
+        @Html.EJ().CheckBox("check1").Text("Don't ask me this again")
+    </div>
+</script>
+
+
+
+<script>
+
+
+    function CheckButtom(agrs) {
+
+        // Create grid object.
+        var gridObj = $("#Grid").data("ejGrid");
+        // Gets the selected row element list
+        var records = gridObj.getSelectedRows();
+
+        if (records.length) {
+            for (var i = 0; i < records.length; i++) {
+                var cat = gridObj.getSelectedRecords()[i].e_reg_complaint_category;
+                var code = gridObj.getSelectedRecords()[i].e_reg_complaint_code;
+                var details = gridObj.getSelectedRecords()[i].e_reg_complaint_details;
+                //alert(code + ' - ' + code + ' - ' + details);
+            }
+        }
+
+    }
+
+</script>
+
+<script type="text/template" id="template" @*style="width: 100%"*@>
+    @*<b>Complaints</b>*@
+
+    <div id="defaultTab" style="width: 100%;">
+        
+
+        <div id="tab1">
+
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default" id="complaintHeader">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                                Complaint Header
+                            </a>
+                        </h2>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse in">
+                        <div>
+                            <table @*id="table2" border="1" cellpadding="3" cellspacing="0" border-collapse="none"*@>
+
+                                <tr>
+                                    <td style="text-align:left;" @*hidden="hidden"*@>Complaint Number</td>
+                                    <td style="text-align: left" hidden="hidden"> <input type="text" id="e_reg_complaint_code" name="e_reg_complaint_code" value="{{:e_reg_complaint_code}}" class="e-field e-ejinputtext valid" hidden="hidden" /> </td>
+                                    <td style="text-align: left" @*hidden="hidden"*@> <input type="text" id="e_reg_complaint_No" name="e_reg_complaint_No" value="{{:e_reg_complaint_No}}" class="e-field e-ejinputtext valid" @*hidden="hidden"*@ /> </td>
+                                    <td style="text-align: left;">Date Complaint received at MAUL</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_date_recieved" name="e_reg_date_recieved" value="{{:e_reg_date_recieved}}" class="e-field e-ejinputtext valid" /></td>
+
+                                </tr>
+                                <tr>
+
+                                    <td style="text-align: left;">Complaint category</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_complaint_category" name="e_reg_complaint_category" value="{{:e_reg_complaint_category}}" class="e-field e-ejinputtext valid" /> </td>
+
+                                    <td style="text-align: left;">Affected Sites</td>
+                                    <td style="text-align: left"> <input @*type="text"*@ id="AffectedSites" name="AffectedSites" value="{{:AffectedSites}}" /> </td>
+
+                                </tr>
+                                <tr>
+                                    <td class="redLabels">Issue/ Complaint Details</td>
+                                    <td colspan="3" style="text-align: left">
+                                        <textarea id="e_reg_complaint_details" name="e_reg_complaint_details" class="form-control" value="{{: e_reg_complaint_details}}" cols="95" rows="5" style="max-width:100%">{{: e_reg_complaint_details}}</textarea>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="text-align: left;">Product Category</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_product_category" name="e_reg_product_category" value="{{:e_reg_product_category}}" class="e-field e-ejinputtext valid" /> </td>
+                                    <td style="text-align: left;">Mode of Communcation</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_communication_mode" name="e_reg_communication_mode" value="{{:e_reg_communication_mode}}" class="e-field e-ejinputtext valid" /> </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="text-align: left;">MAUL Responsible Staff</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_MAUL_Staff" name="e_reg_MAUL_Staff" value="{{:e_reg_MAUL_Staff}}" class="e-field e-ejinputtext valid" /> </td>
+                                     
+                                </tr>
+
+                                <tr>
+                                    <td style="text-align: left;">Expected Date of Resolution</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_expected_date_resolution" name="e_reg_expected_date_resolution" value="{{:e_reg_expected_date_resolution}}" class="e-field e-ejinputtext valid" /> </td>
+                                    <td class="redLabels">Date Resolved</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_date_resolved" name="e_reg_date_resolved" value="{{:e_reg_date_resolved}}" class="e-field e-ejinputtext valid " /> </td>
+                                </tr>
+
+                            </table>
+
+                             
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" id="complainantDetails">
+                    <div class="panel-heading">
+                        <h4 class="panel-title ">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                                Complainant's Details
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse2">
+                        <div>
+
+                            <table>
+                                 
+                                @*<tr>
+                                    <td style="text-align: left" class="redLabels">Complainant’s Details</td>
+                                </tr>*@
+
+                                <tr>
+                                    <td style="text-align: left;">Category</td>
+                                    <td style="text-align: left"> <input type="text" id="ComplainantCategory" name="ComplainantCategory" value="{{:ComplainantCategory}}" class="e-field e-ejinputtext valid" /> </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="text-align: left;">Name</td>
+                                    <td style="text-align: left">
+                                        <input id="ComplainantName" name="ComplainantName" value="{{: ComplainantName}}" @*class="e-field e-ejinputtext valid"*@ style="text-align: right; width: 175px; height: 28px" />
+                                    </td>
+                                    <td style="text-align: left;">Title</td>
+                                    <td style="text-align: left"> <input type="text" id="ComplainantTitle" style="text-align:left" name="ComplainantTitle" value="{{:ComplainantTitle}}" class="e-field e-ejinputtext valid" /> </td>
+                                    <td style="text-align: left;">Date & Time of Complaint</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_date_complaint" name="e_reg_date_complaint" value="{{:e_reg_date_complaint}}" class="e-field e-ejinputtext valid " /> </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="text-align: left;">Email Address</td>
+                                    <td style="text-align: left"> <input type="text" id="ComplainantEmail" name="ComplainantEmail" value="{{:ComplainantEmail}}" class="e-field e-ejinputtext valid" /> </td>
+                                    <td style="text-align: left;">Mobile</td>
+                                    <td style="text-align: left"> <input type="text" id="ComplainantMobile" name="ComplainantMobile" value="{{:ComplainantMobile}}" class="e-field e-ejinputtext valid " /> </td>
+                                    <td style="text-align: left;">Telephone</td>
+                                    <td style="text-align: left"> <input type="text" id="ComplainantPhone" name="ComplainantPhone" value="{{:ComplainantPhone}}" class="e-field e-ejinputtext valid " /> </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="text-align: left;">Facility Name</td>
+                                    <td style="text-align: left"> <input type="text" id="ComplainantFacilityCode" name="ComplainantFacilityCode" value="{{:ComplainantFacilityCode}}" class="e-field e-ejinputtext valid " /> </td>
+                                    <td style="text-align: left;">District</td>
+                                    <td style="text-align: left"> <input type="text" id="ComplainantDistrict" name="ComplainantDistrict" value="{{:ComplainantDistrict}}" class="e-field e-ejinputtext valid " /> </td>
+                                    <td style="text-align: left;">IP</td>
+                                    <td style="text-align: left"> <input type="text" id="IP" name="IP" value="{{:IP}}" class="e-field e-ejinputtext valid" /> </td>
+
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" id="complaintDetails">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+
+                                Supporting Documentation and Evidence Received
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse3" class="panel-collapse collapse collapse in">
+                        <div class="panel-body">
+                             
+                            <table>
+                                @*<tr>
+                                    <td class="redLabels" colspan="4" id="lblsupportDocs">Supporting Documentation and Evidence Received: </td>
+                                </tr>*@
+                                <tr>
+
+                                    <td colspan="4">
+                                        @*<div class="control">*@
+
+                                            <div class="posupload">
+                                                <div id="UploadInput"></div>
+                                            </div>
+                                        @*</div>*@
+                                        @*<br />*@
+                                        <ul id="uploaded"></ul>
+
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td style="text-align: left;">Documents Provided</td>
+
+                                    <td style="text-align: left">
+                                        {{if Sup_Doc_Evidence_Rec}}
+                                        <input type="checkbox" id="Sup_Doc_Evidence_Rec" name="Sup_Doc_Evidence_Rec" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                                        {{else}}
+                                        <input type="checkbox" id="Sup_Doc_Evidence_Rec" name="Sup_Doc_Evidence_Rec" class="e-field e-checkbox" style="width:30px" />
+                                        {{/if}}
+                                    </td>
+                                    <td style="text-align: left;">Product Samples Provided</td>
+
+                                    <td style="text-align: left">
+                                        {{if Prod_Samples_Provided}}
+                                        <input type="checkbox" id="Prod_Samples_Provided" name="Prod_Samples_Provided" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                                        {{else}}
+                                        <input type="checkbox" id="Prod_Samples_Provided" name="Prod_Samples_Provided" class="e-field e-checkbox" style="width:30px" />
+                                        {{/if}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <div style="color: Red;">
+                                            @ViewBag.Message
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="panel panel-default" id="productDetails">
+                    <div class="panel-heading">
+                        <h4 class="panel-title ">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseproduct">
+                                Product details                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseproduct">
+                        <div>
+
+                            <table>
+
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="panel panel-default" id="complaintmedicines">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapsemedicines">For Medicines</a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapsemedicines" class="panel-collapse collapse collapse in">
+                                                <div @*class="panel-body"*@>
+                                                    <table>
+                                                        <tr style="width:100%">
+                                                            <td width="100%">
+                                                                <div id="medicinesGrid" width:100%"> </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="panel panel-default" id="detailedotherProducts">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseotherProducts">For Other Products </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapseotherProducts" class="panel-collapse collapse collapse in">
+                                                <div @*class="panel-body"*@>
+                                                    <table>
+                                                        <tr style="width:100%">
+                                                            <td width="100%">
+                                                                <div id="otherProductsGrid" width:100%"> </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="panel panel-default" id="supportingDocuments">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseSupportDocs">
+                                Supporting Documents
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseSupportDocs" class="panel-collapse collapse collapse in">
+                        <div @*class="panel-body"*@>
+                            <table>
+                                <tr>
+                                    <td colspan="4" style="text-align: justify;">
+
+                                        <div id="partialPlaceHolder" style="width:100%"> </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" id="level1Communication">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse4"> Level One Communication
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse4" class="panel-collapse collapse collapse in">
+                        <div @*class="panel-body"*@>
+                            <table>
+                                <tr>
+                                    <td style="text-align: left;">Communicated By</td>
+                                    <td style="text-align: left"> <input type="text" id="Communicated_By_Lev1" name="Communicated_By_Lev1" value="{{:Communicated_By_Lev1}}" class="e-field e-ejinputtext valid " /> </td>
+                                    <td style="text-align: left;">Title</td>
+                                    <td style="text-align: left"> <input type="text" id="Communicated_By_Lev1Title" name="Communicated_By_Lev1Title" value="{{:Communicated_By_Lev1Title}}" class="e-field e-ejinputtext valid " /> </td>
+                                    <td style="text-align: left;">Date</td>
+                                    <td style="text-align: left"> <input type="text" id="Communicated_By_Lev1Date" name="Communicated_By_Lev1Date" value="{{:Communicated_By_Lev1Date}}" class="e-field e-ejinputtext valid " /> </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right;">Email to facility and/or copy of letter attached </td>
+
+                                    <td style="text-align: left">
+                                        {{if Email_letter_attached}}
+                                        <input type="checkbox" id="Email_letter_attached" name="Email_letter_attached" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                                        {{else}}
+                                        <input type="checkbox" id="Email_letter_attached" name="Email_letter_attached" class="e-field e-checkbox" style="width:30px" />
+                                        {{/if}}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" id="complaintClassification">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse5"> Compliant Classification 
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse5" class="panel-collapse collapse collapse in">
+                        <div @*class="panel-body"*@>
+                            <table>
+
+                                <tr>
+                                    <td class="redLabels">Complaint Severity</td>
+                                    <td style="text-align: left"> <input type="text" id="e_reg_complaint_accuteness" name="e_reg_complaint_accuteness" value="{{:e_reg_complaint_accuteness}}" class="e-field e-ejinputtext valid " /> </td>
+
+
+
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" id="panelActionTakenGrd">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseActionTakenGrd">
+                                Action Taken
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseActionTakenGrd" class="panel-collapse collapse collapse in">
+                        <div class="panel-body">
+                            <table>
+
+                                @* <tr><td style="text-align: justify;">acc</td> <td style="text-align: left"> <input type="text" id="acc" name="acc" value="{{:acc}}" class="e-field e-ejinputtext valid" /> </td></tr>*@
+
+                                <tr style="width:100%">
+                                    <td width="100%" @*style="text-align: justify;"*@>
+                                        <!-- Place where you will insert your partial -->
+                                        <div id="ActionTakenGrd" @*style="display:none;*@ width:100%"> </div>
+                                    </td> 
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="panel panel-default" id="complaintInvestigation">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse6">
+                               Complaint Investigation
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse6" class="panel-collapse collapse collapse in">
+                        <div @*class="panel-body"*@>
+                            <table>
+
+                                <tr style="width:100%">
+                                    <td width="100%">
+                                        <!-- Place where you will insert your partial -->
+                                        <div id="PreInvestGrd" width:100%"> </div>
+                                    </td>
+
+
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" id="level2Communication">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse7">Level 2 Communication (Supplier, MAUL & Facilities)
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse7" class="panel-collapse collapse collapse in">
+                        <div @*class="panel-body"*@>
+                            <table>
+
+                                <tr style="width:100%">
+                                    <td class="redLabels" style="text-align: right;">Communicated by: Name</td>
+                                    <td style="text-align: left"> <input type="text" id="Communicated_By_Lev2" name="Communicated_By_Lev2" value="{{:Communicated_By_Lev2}}" class="e-field e-ejinputtext valid " /> </td>
+                                    <td style="text-align: right;">Title</td>
+                                    <td style="text-align: left"> <input type="text" id="Communicated_By_Lev2Title" name="Communicated_By_Lev2Title" value="{{:Communicated_By_Lev2Title}}" class="e-field e-ejinputtext valid " /> </td>
+                                    <td style="text-align: right;">Date</td>
+                                    <td style="text-align: left"> <input type="text" id="Communicated_By_Lev2Date" name="Communicated_By_Lev2Date" value="{{:Communicated_By_Lev2Date}}" class="e-field e-ejinputtext valid " /> </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right;">Email to facility and/or copy of letter attached </td>
+
+                                    <td style="text-align: left">
+                                        {{if Communicated_By_Lev2Email}}
+                                        <input type="checkbox" id="Communicated_By_Lev2Email" name="Communicated_By_Lev2Email" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                                        {{else}}
+                                        <input type="checkbox" id="Communicated_By_Lev2Email" name="Communicated_By_Lev2Email" class="e-field e-checkbox" style="width:30px" />
+                                        {{/if}}
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" id="detailedInvestigation">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse8"> 
+                                Detailed Investigation 
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse8" class="panel-collapse collapse collapse in">
+                        <div @*class="panel-body"*@>
+                            <table>
+
+                                <tr style="width:100%">
+                                    <td width="100%">
+                                        <!-- Place where you will insert your partial -->
+                                        <div id="DetailInvestGrd" @*style="display:none;*@ width:100%"> </div>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        
+    </div>
+</script>
+
+<script>
+
+    function loadpics() {
+        var regcode = $('#e_reg_complaint_code').val();
+        //alert('Loading ... ');
+        // Home is your controller, Index is your action name
+        $("#partialPlaceHolder").load("@Url.Action("loadEvidence", "fo_complaint")",
+            { 'e_reg_complaint_code': regcode },
+                function (response, status, xhr) {
+                    if (status == "error") {
+                        errormessage();
+                    }
+                });
+    };
+
+
+
+    function selectContact(e) {
+
+        //Clear the vales
+        $('#ComplainantName').val('');
+        $('#ComplainantTitle').val('');
+        $('#ComplainantEmail').val('');
+        $('#ComplainantMobile').val('');
+        $('#ComplainantPhone').val('');
+        $('#ComplainantFacilityCode').val('');
+        $('#ComplainantDistrict').val('');
+
+
+        var mComplainantCategoryDesc = e.text; //Name
+        mid = e.value;
+        //alert(mid);
+        var mComplainantCategory = e.value;
+        $('#e_reg_complaint_details').ejDropDownList({
+            dataSource: null,
+            enabled: false,
+            width: "150px",
+            fields: { value: "cp_name", text: "cp_name" },
+        }).data("ejDropDownList");
+
+        $.ajax({
+            url: 'contactPersons?cp_category=' + mComplainantCategory,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'GET',
+            success: function (datadetails) {
+                if (datadetails.length > 0) {
+                    // debugger;
+                    //console.log(JSON.stringify(datadetails));
+                    $('#ComplainantName').ejDropDownList({
+
+                        dataSource: datadetails,
+                        enabled: true,
+                        width: "150px",
+                        change:"setContactdetails",
+                        fields: { value: "cp_code", text: "cp_name" },
+                    }).data("ejDropDownList");
+                }
+            },
+        });
+    }
+
+    function  setContactdetails(e) {
+        var mComplainant = e.text; //Name
+        mid = e.value;
+        //alert(e.value);
+        var mComplainantCode = e.value;
+        //Clear the vales
+        $('#ComplainantName').val('');
+        $('#ComplainantTitle').val('');
+        $('#ComplainantEmail').val('');
+        $('#ComplainantMobile').val('');
+        $('#ComplainantPhone').val('');
+        $('#ComplainantFacilityCode').val('');
+        $('#ComplainantDistrict').val('');
+
+
+        //contactPerson(int? cp_code)
+        $.ajax({
+            url: 'contactPerson?cp_code=' + mComplainantCode,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'GET',
+            success: function (contactdetails) {
+                console.log(JSON.stringify(contactdetails));
+
+                 if (Object.keys(contactdetails).length > 0) {
+                     $('#ComplainantName').val(contactdetails.cp_name);
+                    //$('#ComplainantTitle').val(contactdetails.cp_title);
+                    setTitle(contactdetails.cp_title);
+
+                    $('#ComplainantEmail').val(contactdetails.fo_contact_email);
+                    $('#ComplainantMobile').val(contactdetails.ComplainantMobile);
+                    $('#ComplainantPhone').val(contactdetails.fo_contact_telephone);
+                    //$('#ComplainantFacilityCode').val(contactdetails.cp_facility);
+                    setFacility(contactdetails.cp_facility);
+                   // $('#ComplainantDistrict').val(contactdetails.cp_district);
+                    setDistrict(contactdetails.cp_district);
+                }
+            },
+        });
+
+    }
+
+    function setTitle(args)
+    {
+        $('#ComplainantTitle').val('');
+        if (args == null || args === 'undefined')
+        {
+            return;
+        }
+        $.ajax({
+            url: 'contactTitle?title_code=' + args,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'GET',
+            success: function (titledetails) {
+                if (Object.keys(titledetails).length > 0) {
+
+                    // When you use .Where(c => c.title_code...  the result is an array
+                    //alert(titledetails[0].title_desc);
+
+                    //When you use .FirstOrDefault(c => c.title_code  ...
+                     //alert(contactdetails.title_desc);
+                    // console.log(JSON.stringify(titledetails));
+
+                    $('#ComplainantTitle').val(titledetails.title_desc);
+                }
+                //else {
+                //    alert('Potea');
+                //}
+            },
+        });
+    }
+
+    function setFacility(args) {
+        if (args == null || args === 'undefined') {
+            return;
+        }
+        $.ajax({
+            url: 'contactFacility?fac_code=' + args,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'GET',
+            success: function (Facilitydetails) {
+               // debugger;
+                // console.log(JSON.stringify(Facilitydetails));
+                if (Object.keys(Facilitydetails).length > 0) {
+                    $('#ComplainantFacilityCode').val(Facilitydetails.Facility);
+                }
+            },
+        });
+    }
+
+    function setDistrict(args) {
+        if (args == null || args === 'undefined') {
+            return;
+        }
+        $.ajax({
+            url: 'contactDistrict?dist_code=' + args,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'GET',
+            success: function (Districtdetails) {
+                console.log(JSON.stringify(Districtdetails));
+                if (Object.keys(Districtdetails).length > 0) {
+                    $('#ComplainantDistrict').val(Districtdetails.District_Name);
+                }
+            },
+        });
+    }
+</script>
+<script id="childGridHeader" type="text/x-jsrender">
+    <h2>Supporting Documents</h2>
+</script>
+
+<script>
+
+    $.validator.setDefaults({
+        //to validate all fields(hidden also)
+        ignore: [],
+
+        errorClass: 'e-validation-error',
+        //it specifies the error message display position
+        errorPlacement: function (error, element) {
+            $(error).insertAfter(element.closest(".e-widget"));
+        },
+    });
+
+
+    function edit(args) {
+
+        if (args.requestType == "save") {
+            var proddesc = $('#e_reg_complaint_details').val();
+            var str = proddesc + " Saved Successfully!!!";
+            //alert(proddesc);
+            successSave();
+        }
+        var objDialog = $("#Grid").data("ejGrid");
+
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+            $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+            $("#EditDialog_Grid_Cancel").ejButton("destroy");
+            $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+            $("#cancel").css({ "width": "100px", "height": "50px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+
+            // $("#EditDialog_Grid_Save").addClass('btn btn-success btn-sm');
+            //$("#EditDialog_Grid_Save").css({ "width": "100px", "height": "50px", "font-size": "17px", "margin-left": "190px" });
+
+
+            $("#" + objDialog._id + "_dialogEdit").ejDialog({ open: "open" })
+            //$("#defaultTab").ejTab({ selectedItemIndex: 0 }).ejTab({ showRoundedCorner: true });;
+
+
+            //A Global var to track and hold file uploading info
+            window.uploadData = {};
+            // Date of Visit
+            $("#e_reg_date_recieved").ejDatePicker(
+                {
+                    maxDate: new Date(), value: new Date(new Date($("#e_reg_date_recieved").attr("value"))),
+                    validationRules: {
+                        required: true
+                    },
+                    validationMessage: {
+                        required: "Date recieved is Required"
+                    },
+                }
+            );
+            var YesNo =@Html.Raw(Json.Encode(ViewBag.YesNo));
+            var Facilities =@Html.Raw(Json.Encode(ViewBag.Facilities ));
+            var contacts =@Html.Raw(Json.Encode(ViewBag.Contacts));
+            var products =@Html.Raw(Json.Encode(ViewBag.Products));
+            var productsOP =@Html.Raw(Json.Encode(ViewBag.ProductsOP));
+            var Dosage =@Html.Raw(Json.Encode(ViewBag.Dosage));
+
+            var maul_staff =@Html.Raw(Json.Encode(ViewBag.MAUL_Staff));
+            var productCategories =@Html.Raw(Json.Encode(ViewBag.Product_Category));
+            var CommunicationModes =@Html.Raw(Json.Encode(ViewBag.e_reg_communication_mode));
+            var Action_Taken =@Html.Raw(Json.Encode(ViewBag.fo_a_action_taken));
+
+            var DDprodCat = $('#e_reg_product_category').ejDropDownList({
+                dataSource: productCategories,
+                width: "150px",
+                fields: { value: "category_code", text: "category_desc" },
+                //change: "selectContact",
+            }).data("ejDropDownList");
+
+
+            var DropDownListCC = $('#e_reg_communication_mode').ejDropDownList({
+                dataSource: CommunicationModes,
+                width: "150px",
+                fields: { value: "comm_mode_code", text: "comm_mode_desc" },
+                //change: "selectContact",
+            }).data("ejDropDownList");
+
+            var DD_MS = $('#e_reg_MAUL_Staff').ejDropDownList({
+                dataSource: maul_staff,
+                width: "150px",
+                fields: { value: "cp_code", text: "cp_name" },
+                //change: "selectContact",
+            }).data("ejDropDownList");
+
+            var DropDownListCC = $('#ComplainantCategory').ejDropDownList({
+                dataSource: contacts,
+                width: "150px",
+                fields: { value: "category_id", text: "category_desc" },
+                change: "selectContact",
+            }).data("ejDropDownList");
+            $("#e_reg_date_complaint").ejDatePicker({ maxDate: new Date() });
+
+            $("#e_reg_date_resolved").ejDatePicker({ maxDate: new Date() });
+            $("#Communicated_By_Lev1Date").ejDatePicker({ maxDate: new Date() });
+            $("#e_reg_expected_date_resolution").ejDatePicker();
+            $("#Feedback_Date").ejDatePicker({ maxDate: new Date() });
+            $("#Communicated_By_Lev2Date").ejDatePicker({ maxDate: new Date() });
+            $("#e_reg_contact_person_id").ejAutocomplete();
+
+            $('#e_reg_complaint_category').ejDropDownList({
+                dataSource: @Html.Raw(Json.Encode(ViewBag.e_reg_complaint_category)),
+                width: "200px",
+                validationRules: {
+                    required: true
+                },
+                validationMessage: {
+                    required: "Complaint Category is Required"
+                },
+                fields: { value: "complaint_category_code", text: "complaint_category_desc" },
+
+            }).data("ejDropDownList");
+
+
+            var ASDropDownList = $('#AffectedSites').ejDropDownList({
+                dataSource: Facilities,
+                width: "240px",
+                fields: { value: "FacilityCode", text: "Facility" },
+                showCheckbox: true,
+            }).data("ejDropDownList");
+
+            $('#e_reg_complaint_accuteness').ejDropDownList({
+                dataSource: @Html.Raw(Json.Encode(ViewBag.Accuteness)),
+                width: "200px",
+                fields: { value: "accuteness_code", text: "accuteness_desc" },
+            }).data("ejDropDownList");
+
+            $('#IP').ejDropDownList({
+                dataSource: @Html.Raw(Json.Encode(ViewBag.YesNo)),
+                fields: { value: "yes_no_id", text: "yes_no_desc" },
+            }).data("ejDropDownList");
+
+
+            if (args.requestType == "add") {
+                $.ajax({
+                    type: 'GET',
+                    url: "complaintCode",
+                    success: function (result) {
+                        $('#e_reg_complaint_code').val(++result);
+                    },
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "ComplaintCodeString",
+                    data: {},
+                    datatype: "html",
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data) {
+                        $('#e_reg_complaint_No').val(data.msg);
+                    },
+                    error: function () {
+                        alert("Error occured!!");
+                    }
+                });
+            }
+            window.e_reg_complaint_code = $('#e_reg_complaint_code').val();;
+
+            // alert($('#e_reg_complaint_code').val());
+
+            // window.uploadData = [];
+            window.uploadData = {};
+            //window.uploadData = [];
+            window.uploadData.url = args.requestType == "add" ? "DialogInsert2" : "DialogUpdate2";
+
+            $('#UploadInput').ejUploadbox({
+                saveUrl: "SaveSupportDoc",
+                dialogAction: { closeOnComplete: true },
+                multipleFilesSelection: true,
+                showFileDetails: false,
+                begin: "onbegin",
+                success: "onsuccess",
+
+            });
+
+
+
+            //$("#UploadInput").ejUploadbox("disable");
+            //$("#UploadInput").ejUploadbox("enable");
+            $('#e_reg_complaint_code').attr('readonly', 'readonly');
+            $('#e_reg_complaint_No').attr('readonly', 'readonly');
+
+            loadpics();
+
+
+
+            $("#PreInvestGrd").ejGrid({
+                dataSource: ej.DataManager({ url: "BatchData?regCompCode=" + window.e_reg_complaint_code, batchUrl: "BatchUpdate", adaptor: "UrlAdaptor" }),
+                allowGrouping: false,
+                isResponsive: true,
+                enableAltRow: true,
+                allowTextWrap: true,
+                textWrapSettings: { wrapMode: "both" },
+                cellEdit: "cellEdit",
+                allowResizeToFit: true,
+                showStackedHeader: true,
+                enableResponsiveRow: true,
+                queryCellInfo: "queryCellInfo",
+                toolbarSettings: { showToolbar: false, toolbarItems: ['search'] },
+                editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+                allowResizeToFit: true,
+                columns: [
+                    { field: "e_reg_complaint_code", visible: true, allowEditing: true, headerText: "HHcode", width: 50, isPrimaryKey: false },
+                    { field: "investigation_code", visible: true, allowEditing: false, headerText: "", isPrimaryKey: true },
+                    { field: "investigation_desc", visible: true, allowEditing: false, headerText: "COMPLAINT INVESTIGATION", width: 400 },
+                    { field: "yes_no", visible: true, headerText: "Yes/No", width: 100, foreignKeyField: "yes_no_id", foreignKeyValue: "yes_no_desc", dataSource: YesNo },
+                    //{ field: "Required_Evidence_Exist", visible: true, headerText: "Recieved Evidence", width: 400, template: "<a rel='nofollow' href='//www.syncfusion.com/?OrderID={{:OrderID}}'>Click Me</a>" },
+
+
+                    @*{
+                        headerText: "Existing Evidence",
+                        template: "@Html.ActionLink("${Required_Evidence}", "DownloadFile", new { fileNamePath = "${Required_Evidence}" })"
+                    },*@
+                    { headerText: "Submitted Evidence", template: "#tempx", textAlign: "center", width: 110 },
+
+                    {
+                        field: "Required_Evidence", headerText: "Required Evidence", headerTooltip: "Click the button to add Select file(s)", editTemplate: {
+                            create: function () {
+                                return $("<div class='e-field'>");
+                            },
+                            write: function (args) {
+                                var proxy = args;
+                                args.element.ejUploadbox({
+                                    saveUrl: "SaveSupportDoc",
+                                    extensionsAllow: ".zip",
+                                    complete: function (args) {
+                                        proxy.element.val(args.responseText);
+                                    },
+                                    uploadName: "PreInvestGrdRequired_Evidence",
+                                });
+                                proxy.element.val(proxy.rowdata.Required_Evidence);
+                            },
+                            read: function (args) {
+                                return args.val();
+                            },
+                        }
+                        , width: 300,
+                    },
+                ],
+                create: "onGridCreate"
+            });
+
+            $("#DetailInvestGrd").ejGrid({
+                dataSource: ej.DataManager({ url: "BatchDataDetailInvestGrd?regCompCode=" + window.e_reg_complaint_code, batchUrl: "BatchUpdate", adaptor: "UrlAdaptor" }),
+                allowGrouping: false,
+                isResponsive: true,
+                enableAltRow: true,
+                allowTextWrap: true,
+                textWrapSettings: { wrapMode: "both" },
+                cellEdit: "cellEdit",
+                allowResizeToFit: true,
+                showStackedHeader: true,
+                enableResponsiveRow: true,
+                queryCellInfo: "queryCellInfo",
+                toolbarSettings: { showToolbar: false, toolbarItems: ['search'] },
+                editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+                allowResizeToFit: true,
+                columns: [
+                    { field: "e_reg_complaint_code", visible: false, allowEditing: true, headerText: "HHcode", width: 50, isPrimaryKey: false },
+                    { field: "investigation_code", visible: false, allowEditing: false, headerText: "", isPrimaryKey: true },
+                    { field: "investigation_desc", visible: true, allowEditing: false, headerText: "COMPLAINT INVESTIGATION", width: 400 },
+                    { field: "yes_no", visible: true, headerText: "Yes/No", width: 100, foreignKeyField: "yes_no_id", foreignKeyValue: "yes_no_desc", dataSource: YesNo },
+                    { field: "Required_Evidence", visible: true, headerText: "Required Evidence", width: 400/*, isPrimaryKey: true */ },
+
+                ],
+            });
+
+            //Find the complaints that exist
+            var compcode = $('#e_reg_complaint_code').val();
+           
+
+            //var fileDesc = $('#Details').val();
+            //alert(window.e_reg_complaint_code);
+            $("#medicinesGrid").ejGrid({
+                dataSource: ej.DataManager({ url: 'Quality_Complaints?e_reg_complaint_code=' + window.e_reg_complaint_code, batchUrl: "BatchUpdateQualityIssues", adaptor: "UrlAdaptor" }),
+                childGrid: {
+                    dataSource: ej.DataManager({
+                        //url: 'LoadGridFiles?e_reg_complaint_code=' + window.e_reg_complaint_code + '&batchno=' + window.batchno + '&productcode=' + window.productcode,
+                        url: 'LoadGridFiles',
+                        updateUrl: "DialogInsertSupDoc?compcode=" + compcode,
+                        insertUrl: "DialogInsertSupDoc?compcode=" + compcode,
+                        removeUrl: "DialogDeleteSupDoc", //DialogDeleteSupDoc
+                        adaptor: new ej.UrlAdaptor()}),
+                    queryString: "QualityIssue_code",
+                    load: "childLoad",// function (args) { },
+                    allowPaging: true, pageSettings: { pageSize: 2 },
+                    editSettings: {allowEditing: true, allowAdding: true, allowDeleting: true,
+                        editMode: "dialogtemplate",
+                        dialogEditorTemplateID: "#SupportDocUploadtemplate",
+                        showDeleteConfirmDialog: true
+                    },
+                    toolbarSettings: {
+                        showToolbar: true,
+                        toolbarItems: ["add", /*"edit",*/ "delete", "update"/*, "cancel"*/]
+                    }, 
+                    //create: "createchiled_ConfirmDialog",
+                    columns: [
+                        { field: "Id", visible: false, headerText: 'ID', textAlign: ej.TextAlign.Right, width: 85, isPrimaryKey: true },
+                       // { field: "FileURL", headerText: 'Location', textAlign: ej.TextAlign.Left, width: 100 },
+                        { headerText: "Submitted Evidence", template: "#FileURLtemplate", textAlign: "center", width: 110 },
+                        { field: "Details", headerText: 'Details', textAlign: ej.TextAlign.Left, width: 120 },
+                        { field: "e_reg_complaint_code", visible: false, headerText: 'Complaint No.', textAlign: ej.TextAlign.Left, width: 100 },
+                        { field: "batch_no", visible: false, headerText: 'Batch No.', textAlign: ej.TextAlign.Left, width: 50 },
+                        { field: "product_code", visible: false, headerText: 'Product Code', textAlign: ej.TextAlign.Left, width: 50 },
+                        { field: "QualityIssue_code", visible: true, headerText: "QualityIssue_code", width: 100 },
+                 {
+                            headerText: "Manage Records",
+                            commands: [
+                                { type: "edit", buttonOptions: { text: "Edit" } },
+                                { type: "delete", buttonOptions: { text: "Delete" } },
+                                //{ type: "save", buttonOptions: { text: "Save" } },
+                                //{ type: "cancel", buttonOptions: { text: "Cancel" } }
+                            ],
+                            width: 150
+                        }
+                    ],
+                    actionComplete: "childGridcomplete",
+                    onActionBegin:"onActionBeginSupDocs"
+                },
+                allowGrouping: false,
+                isResponsive: true,
+                enableAltRow: true,
+                allowTextWrap: true,
+                textWrapSettings: { wrapMode: "both" },
+                allowResizeToFit: true,
+                showStackedHeader: true,
+                enableResponsiveRow: true,
+                toolbarSettings: {
+                    showToolbar: true,
+                    toolbarItems: ["add", "edit", "delete", "update", "cancel"]
+                },
+                editSettings: {
+                    allowEditing: true,
+                    allowAdding: true,
+                    allowDeleting: true,
+                    rowPosition: "bottom"
+                },
+                allowPaging: true,
+                cellEdit: "cellEditMedicine",
+                beforeBatchSave: "SaveBatch" /*function (args) { }*/,
+
+                editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+                allowResizeToFit: true,
+                columns: [
+                    { field: "e_reg_complaint_code", visible: true, allowEditing: true, headerText: "e_reg_complaint_code", width: 50/*, isPrimaryKey: true*/ },
+                    { field: "product_code", isPrimaryKey: true, editType: "dropdownedit", editParams: { enableAnimation: true }, validationRules: { required: true }, visible: true, allowEditing: true, headerText: "Generic name (& strength)", foreignKeyField: "product_code", foreignKeyValue: "product_description", dataSource: products, /*change: "ValChangeProdcutType",*/ width: 400 },
+                    { field: "batch_no", isPrimaryKey: true, validationRules: { required: true }, visible: true, allowEditing: true, headerText: "Batch No.", width: 100, isPrimaryKey: true },
+                    { field: "Manufacturer", visible: true, headerText: "Manufacturer", width: 300 },
+                    { field: "QualityIssue_code", visible: true, headerText: "QualityIssue_code", width: 100 },
+                    { field: 'date_quality_issue_identified', type: "date", headerText: 'Date Quality issue was identified', editType: "datepicker", format: "{0:MM/dd/yyyy}", editParams: { buttonText: "Now" }, width: 150 },
+                    { field: "dosage_form", visible: true, allowEditing: true, headerText: "Dosage form", foreignKeyField: "dosage_id", foreignKeyValue: "dosage_desc", dataSource: Dosage, width: 100 },
+                ],
+            });
+           
+            $("#otherProductsGrid").ejGrid({
+                dataSource: ej.DataManager({ url: 'Quality_ComplaintsOP?e_reg_complaint_code=' + window.e_reg_complaint_code, batchUrl: "BatchUpdateQualityIssues", adaptor: "UrlAdaptor" }),
+
+                childGrid: {
+                    dataSource: ej.DataManager({
+                        //url: 'LoadGridFiles?e_reg_complaint_code=' + window.e_reg_complaint_code + '&batchno=' + window.batchno + '&productcode=' + window.productcode,
+                        url: 'LoadGridFiles',
+                        updateUrl: "DialogInsertSupDoc?compcode=" + compcode,
+                        insertUrl: "DialogInsertSupDoc?compcode=" + compcode,
+                        removeUrl: "DialogDeleteSupDoc", //DialogDeleteSupDoc
+                        adaptor: new ej.UrlAdaptor()
+                    }),
+                    queryString: "QualityIssue_code",
+                    load: "childLoad",// function (args) { },
+                    allowPaging: true, pageSettings: { pageSize: 2 },
+                    editSettings: {
+                        allowEditing: true, allowAdding: true, allowDeleting: true,
+                        editMode: "dialogtemplate",
+                        dialogEditorTemplateID: "#SupportDocUploadtemplate",
+                        showDeleteConfirmDialog: true
+                    },
+                    toolbarSettings: {
+                        showToolbar: true, customToolbarItems: [{ templateID: "#childGridHeader"}],
+                        toolbarItems: ["add", /*"edit",*/ "delete", "update"/*, "cancel"*/]
+                    },
+                    
+                    //create: "createchiled_ConfirmDialog",
+                    columns: [
+                        { field: "Id", visible: false, headerText: 'ID', textAlign: ej.TextAlign.Right, width: 85, isPrimaryKey: true },
+                        // { field: "FileURL", headerText: 'Location', textAlign: ej.TextAlign.Left, width: 100 },
+                        { headerText: "Submitted Evidence", template: "#FileURLtemplate", textAlign: "center", width: 110 },
+                        { field: "Details", headerText: 'Details', textAlign: ej.TextAlign.Left, width: 120 },
+                        { field: "e_reg_complaint_code", visible: false, headerText: 'Complaint No.', textAlign: ej.TextAlign.Left, width: 100 },
+                        { field: "batch_no", visible: false, headerText: 'Batch No.', textAlign: ej.TextAlign.Left, width: 50 },
+                        { field: "product_code", visible: false, headerText: 'Product Code', textAlign: ej.TextAlign.Left, width: 50 },
+                        { field: "QualityIssue_code", visible: true, headerText: "QualityIssue_code", width: 100 },
+                        {
+                            headerText: "Manage Records",
+                            commands: [
+                                { type: "edit", buttonOptions: { text: "Edit" } },
+                                { type: "delete", buttonOptions: { text: "Delete" } },
+                                //{ type: "save", buttonOptions: { text: "Save" } },
+                                //{ type: "cancel", buttonOptions: { text: "Cancel" } }
+                            ],
+                            width: 150
+                        }
+                    ],
+                    actionComplete: "childGridcomplete",
+                    onActionBegin: "onActionBeginSupDocs"
+                },
+
+
+                allowGrouping: false,
+                isResponsive: true,
+                enableAltRow: true,
+                allowTextWrap: true,
+                textWrapSettings: { wrapMode: "both" },
+                allowResizeToFit: true,
+                showStackedHeader: true,
+                enableResponsiveRow: true,
+
+                toolbarSettings: {
+                    showToolbar: true,
+                    toolbarItems: ["add", "edit", "delete", "update", "cancel"]
+
+                },
+                editSettings: {
+                    allowEditing: true,
+                    allowAdding: true,
+                    allowDeleting: true,
+                    rowPosition: "bottom"
+                },
+                allowPaging: true,
+                cellEdit: "cellEditOtherProducts",
+                editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+                allowResizeToFit: true,
+                columns: [
+                    { field: "QualityIssue_code", visible: true, headerText: "QualityIssue_code", width: 100 },
+                    { field: "e_reg_complaint_code", visible: true, allowEditing: true, headerText: "e_reg_complaint_code", width: 50/*, isPrimaryKey: true*/ },
+                    { field: "product_code", isPrimaryKey: true, validationRules: { required: true }, visible: true, allowEditing: true, headerText: "Generic name (& strength)", foreignKeyField: "product_code", foreignKeyValue: "product_description", dataSource: productsOP, /*change: "ValChangeProdcutType",*/ width: 400 },
+                    { field: "batch_no", isPrimaryKey: true, validationRules: { required: true }, visible: true, allowEditing: true, headerText: "Batch No.", width: 100, isPrimaryKey: true },
+                    { field: "Manufacturer", visible: true, headerText: "Manufacturer", width:300 },
+                    { field: 'date_quality_issue_identified', type: "date", headerText: 'Date Quality issue was identified', editType: "datepicker", format: "{0:MM/dd/yyyy}", editParams: { buttonText: "Now" } , width: 150 },
+
+                ],
+            });
+
+            $("#ActionTakenGrd").ejGrid({
+                dataSource: ej.DataManager({ url: "BatchData_Complaint_Tracker?e_reg_track_code=" + window.e_reg_complaint_code, batchUrl: "BatchUpdateComplaint_Tracker", adaptor: "UrlAdaptor" }),
+
+
+                allowGrouping: false,
+                isResponsive: true,
+                enableAltRow: true,
+                allowTextWrap: true,
+                textWrapSettings: { wrapMode: "both" },
+                cellEdit: "cellEditActionTaken",
+                allowResizeToFit: true,
+                showStackedHeader: true,
+                enableResponsiveRow: true,
+                queryCellInfo: "queryCellInfo",
+                toolbarSettings: {
+                    showToolbar: true,
+                    toolbarItems: ["add", "edit", "delete", "update", "cancel"]
+                },
+
+                editSettings: { rowPosition: "bottom", allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+                allowResizeToFit: true,
+                columns: [
+                    { field: "e_reg_track_code", visible: true, allowEditing: true, headerText: "HHcode", width: 100, isPrimaryKey: false },
+
+                    { field: "e_reg_track_complaint_code", visible: true, allowEditing: true, headerText: "Comp. Code", width: 100, isPrimaryKey: false },
+
+                    { field: "e_reg_track_date_of_action", headerText: "Date Action was taken", editType: "datepicker", format: "{0:MM/dd/yyyy}", width: 100 },
+
+                    {
+                        field: "e_reg_track_action_details", headerText: "Details", headerTooltip: "To add new line use Shift-Enter ", editTemplate: {
+                            create: function () {
+                                return "<textarea style='width:100%; display:block; max-width:100%;line-height:3.0;padding:15px 15px  30px; border-radius:3px; border:1px solid #F7E98D; font:13px Tahoma, cursive; transition:box-shadow 0.5s ease; box-shadow:0 4px 6px rgba(0,0,0,0.1); font-smoothing:subpixel-antialiased; background:linear-gradient(#F9EFAF, #F7E98D); background:-o-linear-gradient(#F9EFAF, #F7E98D); background:-ms-linear-gradient(#F9EFAF, #F7E98D); background:-moz-linear-gradient(#F9EFAF, #F7E98D); background:-webkit-linear-gradient(#F9EFAF, #F7E98D);'>{{:e_reg_track_action_details}}</textarea>";
+                            },
+                            write: function (args) {
+                                $('.text').css("max-width", args.element.parent("td").width());
+                                $('.text').css("max-height", args.element.parent("td").height());
+                                null;
+                            },
+                            read: function (args) {
+                                return args.val();
+                            },
+                        }
+                        , width: 300,
+                    },
+                    { field: "e_reg_track_action_taken", width: 200, headerText: "Action Taken", editType: "dropdownedit", editParams: { showCheckbox: true }, foreignKeyValue: "action_taken_desc", foreignKeyField: "action_taken_code", dataSource: Action_Taken },
+                ],
+            });
+
+        }
+    }
+
+    function setCodePreInvestGrd(args) {
+
+        $.ajax({
+            type: 'GET',
+            url: "PreInvestigationGrid",
+            success: function (result) {
+                if (result > 0) {
+                    //debugger;
+
+                    for (i = 0; i < result; i++) {
+                        $("#PreInvestGrd").ejGrid("setCellValue", i, "e_reg_complaint_code", args);
+                    }
+                }
+            },
+        });
+    }
+    function setCodeDetailInvestGrd(args) {
+        $.ajax({
+            type: 'GET',
+            url: "DetailInvestigationGrid",
+            success: function (result2) {
+                if (result2 > 0) {
+                    //debugger;
+                    for (i = 0; i < result2; i++) {
+                        $("#DetailInvestGrd").ejGrid("setCellValue", i, "e_reg_complaint_code", args);
+                    }
+                }
+            },
+        });
+    }
+
+
+
+    function savess(args) {
+
+        var obj = $("#Grid").ejGrid("instance");
+        obj.endEdit();
+
+       // var myvalues = $("#AffectedSites").val();
+        //alert(myvalues);
+
+        //if (args == null)
+        //{
+        //    alert('Nothing');
+        //}
+        //else {
+        //    alert('Somethoing ');
+        //}
+
+        //debugger;
+
+       // var complaintcode = $("#e_reg_complaint_code").val();
+       // ////Update the child grids with the compliants code
+       // setCodePreInvestGrd(complaintcode);
+       // setCodeDetailInvestGrd(complaintcode);
+
+       // // Check if the master has been saved so that the grids can be saved
+
+
+       // //Save the grid data
+       //// alert('(savess(args)');
+       // //var complaintcode = $("#PreInvestGrd").val();
+
+
+       // //var objPreInvest = $("#PreInvestGrd").ejGrid("instance");
+       // //objPreInvest.batchSave();
+
+       // //var objDetailInvest = $("#DetailInvestGrd").ejGrid("instance");
+       // //objDetailInvest.batchSave();
+       // //Updating the file as one of the column data
+
+       // //Save the files ...............
+       // var upload = $('#UploadInput').ejUploadbox("instance");
+       // if (upload != null && upload != undefined) {
+       //     if (upload.diaObj != null && upload.diaObj != undefined) {
+       //         var wrapper = upload.diaObj.wrapper;
+       //         var fileItem = wrapper.find(".e-ul li.e-upload-file");
+       //         for (var i = 0; i < fileItem.length; i++) {
+       //             // alert('Using begin(args) ------');
+       //             upload._xhrPerformUpload($(fileItem[i]).data("file"));
+       //         }
+       //     }
+       // }
+       // $.ajax({
+
+       //     type: 'GET',
+       //     url: 'ComplaintSaved?e_reg_complaint_code=' + complaintcode,
+       //     success: function (result) {
+       //         //if (Object.keys(result).length > 0)
+       //         {
+       //             //$.alert('Your record exists - Whooray !!!');
+
+       //             //var complaintcode = $("#PreInvestGrd").val();
+       //             var objPreInvest = $("#PreInvestGrd").ejGrid("instance");
+       //             objPreInvest.batchSave();
+
+       //             var objDetailInvest = $("#DetailInvestGrd").ejGrid("instance");
+       //             objDetailInvest.batchSave();
+
+       //             var objMedicines = $("#medicinesGrid").ejGrid("instance");
+       //             objMedicines.batchSave();
+
+       //             var objotherProducts = $("#otherProductsGrid").ejGrid("instance");
+       //             objotherProducts.batchSave();
+
+
+       //         }
+       //     },
+       //     //error: function () {
+       //     //    $.alert('Grids not saved. Master record doesnt exist!!!');
+       //     //},
+       // });
+
+    }
+
+    //function cancelss() {
+    //    //confirmCancel()
+    //    //$.alert('Your record will  be Discarded!');
+    //    //Discard Changes
+    //    var obj = $("#Grid").ejGrid("instance")
+    //    obj.cancelEdit();
+    //}
+    function cancelss() {
+        cancelSave();
+
+    }
+
+    function errormessage(args) {
+        $("#Grid").ejWaitingPopup("hide");
+        var str = "";
+        str = "Error occurred";
+        $("#ErrorList").html('<p style="font-family: cursive;color: red;">' + str + '</p></br><button id="button1" style="size: large; showRoundedCorner: true; cssClass:customCss1">---OK---</button>');
+        $("#button1").ejButton({
+
+            click: function (args) {
+                $("#ErrorList").ejDialog("close");
+            }
+        });
+        $("#ErrorList").ejDialog({ enableModal: true });
+        $("#ErrorList").ejDialog("open");
+    }
+    function open(args) {
+
+        var objDialog = $("#Grid").data("ejGrid");
+        var $dialogWrapper = objDialog.element.find("#" + objDialog._id + "_dialogEdit_wrapper");
+        $dialogWrapper.css("top", "0px");
+        $dialogWrapper.css("left", "0px");
+    }
+    function failure(args) {
+        $("#Grid").ejWaitingPopup("hide");
+        var str = "";
+        str = ($($(args.error.responseText).find('b')[0]).text() + ":" + $(args.error.responseText).find('i').text());
+        $("#ErrorList").html('<p style="font-family: cursive;color: red;">' + str + '</p></br><button id="button1" style="size: large; showRoundedCorner: true; cssClass:customCss1">---OK---</button>');
+        $("#button1").ejButton({
+
+            click: function (args) {
+                $("#ErrorList").ejDialog("close");
+            }
+        });
+        $("#ErrorList").ejDialog({ enableModal: true });
+        $("#ErrorList").ejDialog("open");
+    }
+
+    function cancelSave(args) {
+        $("#Grid").ejWaitingPopup("hide");
+        var proddesc = $('#e_reg_complaint_details').val();
+        var str = "The edits on " + proddesc + " have been Cancelled!!!";
+        //$("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+        $("#CancelDial").html('<p style="font-family: cursive;color: red;">' + str /*+ '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>'*/);
+
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+        $("#btnOK").ejButton({
+            cssClass: "e-danger",
+            size: "large",
+            showRoundedCorner: true,
+            contentType: "textandimage",
+            prefixIcon: "e-icon e-handup",
+            visible: false,
+            style: "float:right",
+            click: function (args) {
+
+                $("#CancelDial").ejDialog("close");
+            }
+        });
+
+        $("#CancelDial").ejDialog({ enableModal: true });
+        $("#CancelDial").ejDialog("open");
+    }
+
+    function successSave(args) {
+        $("#Grid").ejWaitingPopup("hide");
+        var proddesc = $('#e_reg_complaint_details').val();
+        var str = proddesc + " Saved Successfully!!!";
+
+        //$("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+        $("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str /*+ '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>'*/);
+
+
+        $("#btn1").ejButton({
+            cssClass: "e-primary",
+            size: "large",
+            showRoundedCorner: true,
+            contentType: "textandimage",
+            prefixIcon: "e-icon e-handup",
+            visible: false,
+            style: "float:right",
+            click: function (args) {
+                $("#SuccessDial").ejDialog("close");
+            }
+        });
+
+        $("#button1").ejButton({
+            cssClass: "e-success",
+            size: "medium",
+            showRoundedCorner: true,
+            contentType: "textandimage",
+            prefixIcon: "e-icon e-handup",
+
+            click: function (args) {
+                $("#SuccessDial").ejDialog("close");
+            }
+        });
+        $("#SuccessDial").ejDialog({ enableModal: true });
+        $("#SuccessDial").ejDialog("open");
+    }
+
+    function editWarning(args) {
+
+        var str = "Non Editable Record";
+
+        $("#ErrorList").html('<p style="font-family: cursive;color: red;">' + str + '</p></br><button id="button1" style="size: large; showRoundedCorner: true; cssClass:customCss1">---OK---</button>');
+        $("#button1").ejButton({
+
+            click: function (args) {
+                $("#ErrorList").ejDialog("close");
+            }
+        });
+        $("#ErrorList").ejDialog({ enableModal: true });
+        $("#ErrorList").ejDialog("open");
+    }
+
+
+
+
+
+
+    function onbegin(args) {
+        var complaintcode = $('#e_reg_complaint_code').val();
+        //alert(complaintcode);
+        args.data = complaintcode;
+    }
+
+
+    function onsuccess(args) {
+
+        var msg = "<li class='green'><span style='display:inline-block;'><span class='e-icon e-file-empty'></span></span><span style='display:inline-block;margin-left:20px;'><span style='display:block'>" + args.files.path +' - ' + args.files.name + "</span><span style='display:block;font-size: 10px;'>" + (args.files.size / 1024).toFixed(2) + "KB</span></li>"
+        $("#uploaded").append(msg);
+    }
+
+    function queryCellInfo(args) {
+
+        if (args.column.field == "investigation_code" && (args.data.investigation_code.trim() == '4.1' || args.data.investigation_code.trim() == '4.2' ||
+            args.data.investigation_code.trim() == '6.1' || args.data.investigation_code.trim() == '6.2'))
+            $($(args.cell).parent()).css("backgroundColor", "white").css("color", "red").css("font-weight", "bold");/*custom css applied to the row */
+
+
+    }
+
+    function cellEdit(args) {
+        var comcode = args.model.selectedRecords[0].investigation_code;
+        if ((comcode.trim() == '4.1' || comcode.trim() == '4.2' ||
+            comcode.trim() == '6.1' || comcode.trim() == '6.2')) {
+            // alert('Nod editable');
+            editWarning();
+            args.cancel = true;
+        }
+
+    }
+    function onGridCreate(args) {
+
+        this.element.find(".e-gridcontent").on("click", "a", function (e) {
+            e.preventDefault();
+
+            //Do something
+
+
+        });
+    }
+    function cellEditMedicine(args) {
+
+        var result = this.getSelectedRecords();
+        var gridInstance = $("#medicinesGrid").ejGrid("instance");
+        var medicineindex = gridInstance.selectedRowsIndexes;
+        var grid = this._id;
+        var Rcode = $("#e_reg_complaint_code").val();
+        $("#medicinesGrid").ejGrid("setCellValue", medicineindex, "e_reg_complaint_code", Rcode);
+        //window.batchno = '';
+        //window.productcode = '';
+        //var result = gridInstance.getSelectedRecords();
+        //window.batchno = result[0].batch_no;
+        //window.productcode = result[0].product_code; 
+        //var batchno = result[0].batch_no;
+        //var productcode = result[0].product_code;
+        //alert('Batch No: ' + batchno + ' Product No: ' + productcode),
+       // console.log(JSON.stringify(result));
+
+    }
+
+    function cellEditOtherProducts(args) {
+
+        var result = this.getSelectedRecords();
+        var gridInstance = $("#otherProductsGrid").ejGrid("instance");
+        var productindex = gridInstance.selectedRowsIndexes;
+        var grid = this._id;
+        var Rcode = $("#e_reg_complaint_code").val();
+        $("#otherProductsGrid").ejGrid("setCellValue", productindex, "e_reg_complaint_code", Rcode);
+    }
+
+
+    function cellEditActionTaken(args) {
+
+        var gridInstance = $("#ActionTakenGrd").ejGrid("instance");
+        var actionTakenindex = gridInstance.selectedRowsIndexes;
+        var grid = this._id;
+        var Rcode = $("#e_reg_complaint_code").val();
+        alert(Rcode);
+        $("#ActionTakenGrd").ejGrid("setCellValue", actionTakenindex, "e_reg_track_complaint_code", Rcode);
+    }
+
+    function cascadeEventSubCounty(args) {
+        args.requiresDefaultFilter = false; // restrict the built-in mapping for cascading dropdown
+        args.cascadeQuery = ej.Query().where("subcounty_id", "equal", args.cascadeValue); // query to filter value based id
+    }
+
+    function cascadeEventParish(args) {
+        args.requiresDefaultFilter = false; // restrict the built-in mapping for cascading dropdown
+        args.cascadeQuery = ej.Query().where("parish_id", "equal", args.cascadeValue); // query to filter value based id
+    }
+</script>
+
+<script>
+
+    function SaveBatch(args) {
+        
+        var message = ""; 
+        var messageadded = "";
+
+        if (args.batchChanges.added.length > 0)
+        {
+            console.log(JSON.stringify(args.batchChanges.added));
+        }
+         
+        for (var i = 0; i < args.batchChanges.added.length; i++) {
+            var messageadded = messageadded + "\n" + "Are you sure to add new records " + args.batchChanges.added[i].product_code + " Manufactured by " + args.batchChanges.added[i].Manufacturer + " in Batch " + args.batchChanges.added[i].batch_no + " identified on " + args.batchChanges.added[i].date_quality_issue_identified + " in row " + i;
+            //check for validity of columns
+            var date_issue_identified = args.batchChanges.added[i].date_quality_issue_identified;
+            var row = i + 1;
+            if (Date.parse(date_issue_identified)) {
+                //Valid date
+            } else {
+                alert('The Date the issue was identified in row ' + row + ' is invalid!!!');
+                args.cancel = true // Don't save the data'
+            }
+        }
+        if (confirm(messageadded)) {
+            //if yes ,data will save
+        }
+
+
+        for (var i = 0; i < args.batchChanges.changed.length; i++) {
+            var message = message + "\n" + "Would you like to update the following records? " + args.batchChanges.changed[i].product_code + " Manufactured by " + args.batchChanges.changed[i].manufacturer + " in Batch " + args.batchChanges.changed[i].batch_no + " identified on " + args.batchChanges.changed[i].date_quality_issue_identified + " in row " + i
+        }
+        //if (isupdate) {
+        //    if (confirm(message)) {
+        //        //if yes ,data will save
+        //    }
+        //    else
+        //        args.cancel = true // if no the data wount save
+        //}
+        //isupdate = false
+    }
+
+    //function toolbarClick(args) {
+    //    var grid = document.getElementById("Grid").ej2_instances[0];
+    //    if (args.item.properties.prefixIcon == "e-update") {
+    //        isupdate = true
+    //    }
+
+    //}
+
+</script>
+
+
+
+<style>
+    .panel-default > .panel-heading {
+        background-color: #451bb1 /*#3e1111*/;
+        color: white;
+        /*background-color:silver;*/
+        /*color: white;*/
+    }
+</style>
+
+<style type="text/css" class="cssStyles">
+    .control {
+        margin-left: 30px;
+    }
+
+    .ctrllabel {
+        padding-top: 15px;
+    }
+
+    .control {
+        margin-left: 20px;
+    }
+
+    .frame {
+        height: 250px;
+        width: 1000px;
+    }
+
+    .frame1 {
+        height: 240px;
+        width: 900px;
+    }
+
+    .txt {
+        display: block;
+        margin-bottom: 12px;
+    }
+</style>
+
+<style>
+    #lblComplaintTitle {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #c9252b;
+        vertical-align: top;
+        /*width: 700px;*/
+    }
+
+    .redLabels {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #ff0000;
+        vertical-align: top;
+        font-weight: bold;
+        /*width: 700px;*/
+    }
+
+    .myDiv {
+        font-size: 18px;
+        background-color: white;
+        color: orangered;
+        vertical-align: top;
+        text-align: center;
+        /*width: 700px;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+    }
+
+    .custom.e-js .e-header {
+        background: #c9252b;
+    }
+
+    .custom.e-js .e-content {
+        background: #ddd;
+    }
+
+    .custom .e-rbn-button.e-btn.e-select {
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    .tabstyle {
+        background: #F9F9F9;
+        border-radius: 10px;
+        border: 1px solid #99CFE3;
+        display: block;
+    }
+
+    .longcolumns {
+        width: 600px !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        border-right: 5px #666 outset !important;
+        border-left: 5px #666 outset !important;
+    }
+</style>
+
+
+
+
+
+<!--Code corresponding to columnTemplate-->
+<script type="text/x-jsrender" id="checkboxTemplate">
+    <input type="checkbox" class="rowCheckbox" />
+</script>
+
+<!--Code corresponding to headerTemplate-->
+<script type="text/x-jsrender" id="headerTemplate">
+    <input type="checkbox" id="headchk" />
+</script>
+
+<script>
+    function create(args) {
+        $("#Grid .rowCheckbox").ejCheckBox({ "change": checkChange });
+        $("#headchk").ejCheckBox({ "change": headCheckChange });
+    }
+    function complete(args) {
+        $("#Grid .rowCheckbox").ejCheckBox({ "change": checkChange });
+        $("#headchk").ejCheckBox({ "change": headCheckChange, checked: false });
+    }
+
+    function checkChange(e) {
+        //Simple alert
+        //$.alert({
+        //    title: 'Alert!',
+        //    content: 'Simple alert!',
+        //});
+        gridObj = $("#Grid").data("ejGrid");
+        var rowCheck = $(".rowCheckbox:checked");
+        if (rowCheck.length == gridObj.model.pageSettings.pageSize)//check if all checkboxes in the current page are checked
+            $("#headchk").ejCheckBox({ "checked": true });
+        else
+            $("#headchk").ejCheckBox({ "checked": false });
+
+        if (($("#headchk").is(':checked')) && this.model.checked != true) {
+            for (i = 0; i < rowCheck.length; i++) {
+                gridObj.multiSelectCtrlRequest = true;
+                gridObj.selectRows($(rowCheck[i]).parents("tr").index());// To prevent unselection of other rows when a checkbox is unchecked after selectAll rows
+            }
+            //gridObj.clearSelection($(this).parents("tr").index()); // To remove selection of current row when the checkbox is unchecked after selectAll rows
+        }
+        if (this.model.checked == false) {
+            $("#headchk").ejCheckBox({ "checked": false });
+            //$("#Grid .rowCheckbox").ejCheckBox({ "checked": false });
+        }
+        gridObj.multiSelectCtrlRequest = true;//For MultiSelection using Checkbox
+    }
+
+    function recordClick(args) {
+        if (this.multiSelectCtrlRequest == false) {
+            for (var i = 0; i < $("#Grid .rowCheckbox").length; i++)
+                $($("#Grid .rowCheckbox")[i]).ejCheckBox({ "checked": false })  //To clear checkbox when we select row by recordclick rather than checkbox
+            this.clearSelection();
+            $("#headchk").ejCheckBox({ "checked": false });
+        }
+    }
+
+    function headCheckChange(e) {
+        $("#Grid .rowCheckbox").ejCheckBox({ "change": checkChange });
+        gridObj = $("#Grid").data("ejGrid");
+        if ($("#headchk").is(':checked')) {
+            $(".rowCheckbox").ejCheckBox({ "checked": true });
+            gridObj.multiSelectCtrlRequest = true;
+            gridObj.selectRows(0, gridObj.model.pageSettings.pageSize);  // To Select all rows in Grid Content
+        }
+        else {
+            $(".rowCheckbox").ejCheckBox({ "checked": false });
+            gridObj.clearSelection(); // To remove selection for all rows
+        }
+    }
+</script>
+
+<style>
+    .e-grid .e-groupdroparea, /*GroupDropArea */
+    .e-grid .e-groupdroparea:hover, /*GroupDropArea Hover*/
+    .e-grid .e-cloneproperties, /*Column header clone during dragging header*/
+    .e-grid .e-groupheadercell:hover, /*HeaderCell in GroupDropArea*/
+    .e-grid td.e-active, /*During Row Selected*/
+    /*For pager items and their hover*/
+    .e-pager .e-currentitem,
+    .e-pager .e-currentitem:hover,
+    .e-pager .e-link:hover,
+    .e-pager .e-icon:hover {
+        background-color: #ea1b8d;
+    }
+
+    .e-grid .e-gridheader /*For line that separates the grid header and content*/ {
+        border-bottom-color: #ea1b8d;
+    }
+
+    .e-grid tr.e-hover /*For row hover*/ {
+        background-color: #e66aae;
+        color: #FFFFFF;
+    }
+
+    .e-grid .e-alt_row /*For Alternate row color*/ {
+        background-color: #E5E4E2; /*#99CFE3;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+        border-bottom: 1px solid #c8c8c8;
+        border-left: 1px solid #c8c8c8;
+    }
+</style>
+
+
+<script type="text/javascript">
+    function createUploader() {
+        return $("<div class='e-field'>");
+    }
+
+    function writeUploader(args) {
+        var proxy = args;
+        args.element.ejUploadbox({
+            saveUrl: "/Home/saveFiles",
+            extensionsAllow: ".zip",
+            complete: function (args) {
+                proxy.element.val(args.responseText);
+            },
+            uploadName: "PreInvestGrdRequired_Evidence",
+        });
+        proxy.element.val(proxy.rowdata.CustomerID);
+    }
+
+    function readUploader(args) {
+        return args.val();
+
+    }
+
+</script>
+<style class="cssStyles">
+    .posupload {
+        padding: 10px;
+        text-align: center;
+    }
+
+    #PreInvestGrdRequired_Evidence {
+        margin: 0 auto;
+    }
+</style>
+
+<script type="text/template" id="SupportDocUploadtemplate">
+    <b>Supporting Documents Details ****</b> 
+
+    <div id="defaultTab" style="width: 500px;height:200px;">
+
+        <table cellspacing="3">
+            <tr hidden="hidden" >
+                <td style="text-align: left"> <input type="text" id="Id" name="Id" value="{{:Id}}" class="e-field e-ejinputtext valid" /></td>
+                <td style="text-align: left"> <input type="text" id="e_reg_complaint_code" name="e_reg_complaint_code" value="{{:e_reg_complaint_code}}" class="e-field e-ejinputtext valid" /></td>
+            </tr>
+            <tr hidden="hidden"  >
+                <td  style="text-align: left"> <input type="text" id="batch_no" name="batch_no" value="{{:batch_no}}" class="e-field e-ejinputtext valid" /></td>
+                <td style="text-align: left"> <input type="text" id="product_code" name="product_code" value="{{:product_code}}" class="e-field e-ejinputtext valid" /></td>
+            </tr>
+            <tr hidden="hidden" >
+                <td style="text-align: left"> <input type="text" id="QualityIssue_code" name="QualityIssue_code" value="{{:QualityIssue_code}}" class="e-field e-ejinputtext valid" /></td>
+             </tr>
+            <tr hidden="hidden">
+                <td style="text-align: left" colspan="2"> <input type="text" id="FileURL" name="FileURL" value="{{:FileURL}}" class="e-field e-ejinputtext valid" /></td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">
+                    Select File for Upload
+                </td>
+                <td style="text-align: justify">
+                    <div id="UploadSupFile"></div>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:justify;">
+                    File Desc
+                </td>
+                <td style="text-align: left"> 
+                    @*<textarea id="Details" name="Details" class="e-ejinputtext" value="{{: Details}}" style='width:100%; display:block; max-width:100%;line-height:3.0;padding:15px 15px  30px; border-radius:3px; border:1px solid #F7E98D; font:13px Tahoma, cursive; transition:box-shadow 0.5s ease; box-shadow:0 4px 6px rgba(0,0,0,0.1); font-smoothing:subpixel-antialiased; background:linear-gradient(#F9EFAF, #F7E98D); background:-o-linear-gradient(#F9EFAF, #F7E98D); background:-ms-linear-gradient(#F9EFAF, #F7E98D); background:-moz-linear-gradient(#F9EFAF, #F7E98D); background:-webkit-linear-gradient(#F9EFAF, #F7E98D);'>{{:Details}}</textarea>*@
+                    <textarea id="Details" name="Details" class="form-control" value="{{: Details}}" cols="95" rows="5" style="max-width:100%">{{: Details}}</textarea>
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+     
+</script>
+
+<script type="text/x-jsrender" id="dContent">
+    <tr><td>File Desc:</td><td><textarea id="Details" name="Details" class="e-ejinputtext" value="{{: Details}}" style='width:100%; display:block; max-width:100%;line-height:3.0;padding:15px 15px  30px; border-radius:3px; border:1px solid #F7E98D; font:13px Tahoma, cursive; transition:box-shadow 0.5s ease; box-shadow:0 4px 6px rgba(0,0,0,0.1); font-smoothing:subpixel-antialiased; background:linear-gradient(#F9EFAF, #F7E98D); background:-o-linear-gradient(#F9EFAF, #F7E98D); background:-ms-linear-gradient(#F9EFAF, #F7E98D); background:-moz-linear-gradient(#F9EFAF, #F7E98D); background:-webkit-linear-gradient(#F9EFAF, #F7E98D);'>{{:Details}}</textarea></td></tr>
+    <tr><td>Complaint Code:</td><td>{{:e_reg_complaint_code}}</td></tr>
+    @*<tr><td>Employee ID:</td><td>{{>~ForeignKeyvalue(EmployeeID)}}</td></tr>*@
+    <tr><td>FileURL:</td><td>{{:FileURL}}</td></tr>
+    <tr><td>Deletion Date:</td><td>{{>~formatDate(OrderDate)}}</td></tr>
+</script>
+
+<script type="text/javascript">
+    var temp = $.templates(dContent);
+    //create event of the grid
+    function createchiled_ConfirmDialog(args) {
+        //append the title div to the ejDialog
+        $("#GridConfirmDialog_wrapper").prepend("<div id='GridConfirmDialog_title' class='e-titlebar e-header e-draggable e-js' tabindex=''><span class='e-title'>Delete Confirmation Dialog</span></div>")
+        $("#GridConfirmDialog").ejDialog({
+            beforeOpen: "beforeOpen"//bind the function beforeOpen to the beforeOpen event of the ejDialog
+        });
+    }
+
+    function beforeOpenchiled_ConfirmDialog(args) {
+        var gridobj = $("#Grid").data("ejGrid");
+        var data = gridobj.model.currentViewData[gridobj.model.selectedRowIndex];//get the details of the selected record
+        $("#GridConfirmDialog").find(".details").remove();
+        $("#GridConfirmDialog").prepend("<div class= details><table>" + temp.render(data) + "</table></div>")// prepend the selected record details to the ejDialog
+    }
+
+</script>
+ 
+ 
+
+<script>
+    function childGridcomplete(args) {
+        if (/*args.requestType == "beginedit" || */args.requestType == "add") { 
+            //window.product_comp_code = result[0].Id;;  
+            //A Global var to track and hold file uploading info
+            window.supDocuploadData = {};
+            window.supDocuploadData.url = args.requestType == "add" ? "DialogInsertSupDoc" : "DialogInsertSupDoc";
+            // alert(window.supDocuploadData.url);
+            var regcode = $('#e_reg_complaint_code').val();
+            var batch_no = $('#batch_no').val();
+            var product_code = $('#product_code').val();
+            
+            $('#UploadSupFile').ejUploadbox({
+                saveUrl: "SaveSupportingDoc?regcode=" + window.regcode + "&batch_no=" + window.batchno + "&product_code=" + window.productcode + "&product_comp_code=" + window.product_comp_code,
+                removeUrl: "DialogDeleteSupDoc",
+                dialogAction: { closeOnComplete: true },
+                multipleFilesSelection: false,
+                showFileDetails: false,
+                begin: "onbeginSupDocs",
+                success: "onsuccessSupDocs",
+
+            });
+        }
+ 
+        if (args.requestType == "save") {
+
+            //var data = args.responseText; // responseText contains variables 
+            //// that correspond to the FileCollection Class
+            //var jsonResponse = JSON.parse(data);
+
+            args.data["testStr"] = "Peter"; 
+            var recId = $("#Id").val();
+            //Updating the file as one of the column data 
+            // args.data["Photo"] = window.supDocuploadData.files;
+            alert('Saving the Docs details ----->' + recId);
+            window.supDocuploadData["editData"] = new FormData();
+
+            //Converting the grid data to form data to send files to controller
+            for (var d in args.data)
+                 supDocuploadData.editData.append(d, args.data[d]);
+            //console.log(JSON.stringify(window.supDocuploadData.editData));
+            proxy = this;
+            $.ajax({
+                url: window.supDocuploadData.url,
+                type: 'POST',
+                data: window.supDocuploadData.editData,
+                contentType: false,
+                processData: false,
+                success: function () {
+                    proxy.refreshContent();
+
+                    var upload = $('#UploadSupFile').ejUploadbox("instance");
+                    if (upload != null && upload != undefined) {
+                        if (upload.diaObj != null && upload.diaObj != undefined) {
+                            var wrapper = upload.diaObj.wrapper;
+                            var fileItem = wrapper.find(".e-ul li.e-upload-file");
+                            for (var i = 0; i < fileItem.length; i++) {
+                                //alert('Using begin(args) ------');
+                                upload._xhrPerformUpload($(fileItem[i]).data("file"));
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+    }
+
+    function onActionBeginSupDocs(args) { 
+    }
+
+    function onbeginSupDocs(args) { 
+        
+    }
+
+
+    function onsuccessSupDocs(args) {
+        var data = args.responseText; // responseText contains variables 
+        // that correspond to the FileCollection Class
+        var jsonResponse = JSON.parse(data);
+        //console.log(JSON.stringify(jsonResponse));
+        //console.log(JSON.stringify(args.responseText));
+        alert(jsonResponse.Id);
+        $('#Id').val(jsonResponse.Id);
+        $('#FileURL').val(jsonResponse.FileURL);
+        $('#Details').val(jsonResponse.Details);   
+        $('#batch_no').val(jsonResponse.batch_no);
+        $('#product_code').val(jsonResponse.product_code);   
+
+        //Set variables to be used in saving the other infor
+        window.e_reg_complaint_code = $('#e_reg_complaint_code').val();;
+    }
+</script>
+
+<style>
+    #targetElement {
+        width: 500px;
+        height: 500px;
+        margin: 0 auto;
+    }
+
+    #UploadDefault {
+        margin: 0 auto;
+    }
+</style>
+
+<script type="text/javascript">
+
+
+    //$.views.helpers({
+    //    ForeignKeyvalue: function (val) {
+    //        var obj = $("#Grid").ejGrid("instance");
+    //        var foreigndata = ej.DataManager(obj.model.columns[1].dataSource).executeLocal(ej.Query().where("EmployeeID", ej.FilterOperators.equal, val, false).select("FirstName").take(1));
+    //        return foreigndata;
+    //    }
+    //});
+
+    $.views.helpers({
+        formatDate: function (date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [day, month, year].join('-');
+        }
+    });
+
+</script>
+
+<script>
+    function childLoad(args) {
+        //var jsonResponse = JSON.parse(this.model.parentDetails.parentRowData);
+        console.log(JSON.stringify(this.model.parentDetails.parentRowData));
+        // console.log(JSON.stringify(this.model));
+        var data = this.model.parentDetails.parentRowData.e_reg_complaint_code; 
+        var batch_nodata = this.model.parentDetails.parentRowData.batch_no;
+        var product_codedata = this.model.parentDetails.parentRowData.product_code;
+        var QualityIssue_code = this.model.parentDetails.parentRowData.QualityIssue_code;
+
+        //Global Variables to use while saving the docs
+        window.batchno = batch_nodata;
+        window.productcode = product_codedata; 
+        window.product_comp_code=QualityIssue_code
+        window.regcode = data;
+        
+       // alert('complaint_code :' + data + ' Batch No :' + batch_nodata + ' Prod No :' + product_codedata);
+       //  console.log(JSON.stringify(this.model.query));
+        
+        this.model.query = new ej.Query();
+        this.model.query.addParams("e_reg_complaint_code", data);
+        this.model.query.addParams("batchno", batch_nodata);
+        this.model.query.addParams("productcode", product_codedata);
+       // console.log(JSON.stringify(this.model.query));
+        //alert('complaint_code :' + data + ' Batch No :' + batch_nodata + ' Prod No :' + productcode);
+
+    }
+</script>

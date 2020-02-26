@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewBag.Title = "Usermanagement";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="breadcrumb">
+            <li>
+                @Html.ActionLink("Home", "IndexAdministrator", "Home")
+            </li>
+            <li class="active">
+                <strong>Manage Users</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+@(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("DataSourceUserManagement").BatchURL("UpdateUserInformation").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+         .AllowFiltering().ShowColumnChooser()
+        .AllowTextWrap()
+        .AllowGrouping()
+
+        //.AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowScrolling()
+        .ScrollSettings(col => { col.Width(1300).Height(700); })
+        .AllowKeyboardNavigation(true)
+        .AllowResizing()
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+                // fields.Add("Email");
+                fields.Add("Role");
+                fields.Add("UserTypeId");
+                fields.Add("FacilityId");
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.Batch); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    //items.AddTool(ToolBarItems.Add);
+                    //items.AddTool(ToolBarItems.Edit);
+                    items.AddTool(ToolBarItems.Update);
+                    items.AddTool(ToolBarItems.Cancel);
+                    items.AddTool(ToolBarItems.Search);
+                });
+            })
+        .Columns(col =>
+        {
+            col.Field("Id").AllowEditing(false).Visible(false).HeaderText("Id").IsPrimaryKey(true).Add();
+            //col.Field("Email").AllowEditing(true).AllowEditing(false).HeaderText("Email").Add();
+            col.Field("Role").AllowEditing(true).HeaderText("User Role").ForeignKeyField("Name").ForeignKeyValue("Name").DataSource((IEnumerable<Object>)ViewBag.Roles).Add();
+            col.Field("UserTypeId").AllowEditing(true).HeaderText("User Type").ForeignKeyField("UserTypeId").ForeignKeyValue("UserType").DataSource((IEnumerable<Object>)ViewBag.UserType).Add();
+            col.Field("FacilityId").AllowEditing(true).HeaderText("Facility").ForeignKeyField("FacilityCode").ForeignKeyValue("Facility").DataSource((IEnumerable<Object>)ViewBag.Facility).Add();
+            col.Field("UserName").AllowEditing(false).Visible(true).HeaderText("User Name").Add();
+            col.Field("Name").AllowEditing(true).HeaderText("Name").ForeignKeyField("cp_name").ForeignKeyValue("cp_name").DataSource((IEnumerable<Object>)ViewBag.Contact).Add();
+            col.Field("PhoneNumber").AllowEditing(true).HeaderText("Phone Number") .Add();
+            col.Field("LockoutEndDateUtc").AllowEditing(true).Visible(true).HeaderText("Lock Out End Date").EditType(EditingType.DateTimePicker).Format("{0:dd/MM/yyyy hh:mm:ss}").Add();
+            col.Field("LockoutEnabled").AllowEditing(true).Visible(true).EditType(EditingType.BooleanEdit).HeaderText("Lock Out Enabled").Add();
+            col.Field("AccessFailedCount").AllowEditing(false).Visible(false).HeaderText("AccessFailedCount").Add();
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("Complete"); })
+)
+
+<script>
+
+    function Complete(args) {
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            //$("#GridCountry").ejDropDownList({ change: "ValChange" });//bind the change event to dropdown
+            //if (args.requestType == "beginedit") {
+            //    var titleObj = $("#GridCountry").data("ejDropDownList");//get the edited dropdown object
+            //    alert(titleObj.currentValue);
+            //    $.ajax({
+            //        url: 'DirectorateDataSource',
+            //        contentType: "application/json; charset=utf-8",
+            //        dataType: "json",
+            //        type: 'GET',
+            //        data: { "institution": titleObj.currentValue },//passed the selectedValue of the dropdown to server side
+            //        success: function (data1) {
+            //            $("#GridDirectorate").ejDropDownList({ dataSource: data1 });//assign the filtered dataSource obtained from serverSide
+            //        }
+            //    })
+            //}
+        }
+    }
+
+    //change event of the Designation dropdown.
+    //function ValChange(e) {
+    //    $.ajax({
+    //        url: 'DirectorateDataSource',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        type: 'GET',
+    //        data: { "institution": e.text },//pass the selectedValue of the dropdown to server side
+    //        success: function (data1) {
+    //            $("#GridDirectorate").ejDropDownList({ dataSource: data1, selectedItemIndex: 0 });//assign the filtered dataSource obtained from serverSide
+    //        }
+    //    })
+    //}
+</script>

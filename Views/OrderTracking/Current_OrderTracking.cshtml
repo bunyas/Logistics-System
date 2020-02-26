@@ -1,0 +1,946 @@
+﻿
+@{
+    ViewBag.Title = "Current_OrderTracking";
+    Layout = "~/Views/Shared/_LayoutFacilityHSIP.cshtml";
+}
+
+@*<h2>Order Tracking Module</h2>*@
+
+@section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexFacilityHSIP", "Home")
+                </li>
+                <li class="active">
+                    <strong>Facility: Order Tracking Module</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+
+@*@using (Html.BeginForm("Current_OrderTracking", "OrderTracking", FormMethod.Post))
+    {<div class="row">
+            <div class="col-lg-4">
+                <p>Order Number</p>
+                <p><input type="text" id="OrderNumber" width="250" class="e-field e-ejinputtext valid" /></p>
+            </div>
+
+            <div class="col-lg-4">
+                <p>Product Category</p>
+                <p><input type="text" id="ProductCategoryId" name="ProductCategoryId" value="{{:ProductCategoryId}}" class="e-field e-ejinputtext valid" /></p>
+            </div>
+           <br />
+            <div class="col-lg-4">
+                @Html.EJ().Button("Load").Type(ButtonType.Submit).Size(ButtonSize.Large).Text("Search")
+
+            </div>
+        </div>
+    }*@
+
+
+<div class="row">
+    @*<div class="col-lg-3">
+        <p>Order Number</p>
+        <p><input type="text" id="OrderNumber" width="250" class="e-field e-ejinputtext valid" /></p>
+    </div>*@
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-3">
+                <p style="font-size:larger; color:#D32F2F">Select Date Prepared Range:</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-lg-3">
+                <p>Product Category</p>
+                <p><input type="text" id="ProductCategoryId" name="ProductCategoryId" value="{{:ProductCategoryId}}" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+
+                <p>Start Date:</p>
+                <p><input type="text" id="dp_start_date" name="dp_start_date" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>End Date:</p>
+                <p><input type="text" id="dp_end_date" name="dp_end_date" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <br />
+                <input id="LoadDatabtn" style="margin-top:7px;" class="btn btn-block btn-danger" type="button" value="Load" onclick="myfunc()" />
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<script>
+    $(function () {
+        $("#dp_start_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+        $("#dp_end_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+    });
+
+    function myfunc() {
+        var dateobject = $("#dp_start_date").data("ejDatePicker");
+        var StartDate = dateobject.getValue();
+
+        var dateobject1 = $("#dp_end_date").data("ejDatePicker");
+        var EndDate = dateobject1.getValue();
+
+        var pc = $('#ProductCategoryId').data("ejDropDownList");
+        var ProductCategoryId = pc.option("value");
+
+        //var OrderNumber = $('#OrderNumber').val();
+
+        $.ajax({
+            url: "GetCurrentDataSearch",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "productCateory": ProductCategoryId,
+                //"order_no": OrderNumber,
+                "startdate": StartDate,
+                "enddate": EndDate,
+            },
+
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#grd").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+    }
+</script>
+
+<br />
+
+<div class="row">
+    <div class="col-sm-10">
+
+        <div class="col-sm-2">
+            <div><img style="width: 50px; height: 50px" class="imgId" src="~/Images/6.png" alt="PS" /><div class="ename">Order Received </div>  </div>
+            <ul id="OrderVerified"></ul>
+        </div>
+
+        <div class="col-sm-2">
+            <div><img style="width: 50px; height: 50px" class="imgId" src="~/Images/4.png" alt="PS" /><div class="ename"> Order Confirmed </div> </div>
+            <ul id="OrderProcessed"></ul>
+        </div>
+
+        <div class="col-sm-2">
+            <div><img style="width: 50px; height: 50px" class="imgId" src="~/Images/7.png" alt="PS" /><div class="ename"> Order Processed </div> </div>
+            <ul id="OrderTransit"></ul>
+        </div>
+
+        <div class="col-sm-2">
+            <div><img style="width: 50px; height: 50px" class="imgId" src="~/Images/8.png" alt="PS" /><div class="ename"> Order Dispatched </div> </div>
+            <ul id="OrderDeliverd"></ul>
+        </div>
+
+        <div class="col-sm-2">
+            <div><img style="width: 50px; height: 50px" class="imgId" src="~/Images/9.PNG" alt="PS" /><div class="ename">Order Delivered </div>  </div>
+            <ul id="OrderDeliverd"></ul>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <button id="print_pod" style="border-color:red; float:right">Print POD</button>
+    <button id="print" style="border-color:red; float:right; margin-right:10px">Print DN</button>
+</div>
+
+
+
+
+<script>
+
+    $.ajax({
+        //url: 'HAT/Districts',
+        url: 'GetProductCategoryData',
+        //data: JSON.stringify(mid),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        type: 'GET',
+        success: function (data) {
+            if (data.length > 0) {
+                var DropDownListDist = $('#ProductCategoryId').ejDropDownList({
+                    dataSource: data,
+                    width: "250px",
+                    fields: { value: "category_code", text: "category_desc" },
+                }).data("ejDropDownList");
+            }
+        },
+    });
+    @*var mfacility =@Html.Raw(Json.Encode(ViewBag.FacilityDataSource));
+    var mStatus =@Html.Raw(Json.Encode(ViewBag.OrderStatusDataSource));*@
+
+</script>
+
+@(Html.EJ().Grid<object>
+                ("grd")
+                .Datasource(datasource => datasource.URL("GetCurrentData").Adaptor(AdaptorType.UrlAdaptor))
+                .AllowPaging()
+                 .AllowFiltering()
+                //.ShowColumnChooser()
+                .AllowTextWrap()
+                .AllowGrouping()
+                .GridLines(GridLines.None)
+                .EnableAltRow(true)
+                .AllowKeyboardNavigation(true)
+                .GroupSettings(group => { group.ShowGroupedColumn(true); })
+                .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+                .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+                   //.EditSettings(edit => { edit.AllowEditing().EditMode(EditMode.Dialog); })
+                   .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+                    .ToolbarSettings(toolbar =>
+                    {
+                        toolbar.ShowToolbar().ToolbarItems(items =>
+                        {
+                            items.AddTool(ToolBarItems.PrintGrid);
+                            items.AddTool(ToolBarItems.Search);
+                            items.AddTool(ToolBarItems.Cancel);
+                            items.AddTool(ToolBarItems.Edit);
+                        });
+                    })
+                .Columns(col =>
+                {
+        //col.Type("checkbox").Width(50).Add();
+        col.Field("orderstatus").Template("#columnTemplateo").HeaderText("Order Status").Width(150).Add();
+                    col.Field("OrderStatusId").Visible(false).AllowEditing(false).HeaderText("Order Status").ForeignKeyField("StatusId").ForeignKeyValue("Status").DataSource((IEnumerable<Object>)ViewBag.OrderStatusDataSource).Add();
+                    col.Field("OrderNumber").AllowEditing(false).HeaderText("Order Number").Add();
+                    col.Field("OrderType").AllowEditing(false).HeaderText("Order Type").Add();
+                    col.Field("category_desc").AllowEditing(false).HeaderText("Product Category").Add();
+                    col.HeaderText("View More Details").Commands(command =>
+                    {
+                        command.Type("detail")
+                           .ButtonOptions(new Syncfusion.JavaScript.Models.ButtonProperties()
+                           {
+                               Text = "View Order",
+                               Width = "100px",
+                               Click = "onClick"
+                           }).Add();
+                    })
+                        .TextAlign(TextAlign.Center)
+                        .Width(150)
+                        .Add();
+                    col.Field("Facility").AllowEditing(false).Visible(false).HeaderText("Facility").Add();
+                    col.Field("DatePrepared").AllowEditing(false).Visible(false).HeaderText("Date prepared").Format("{0:dd/MM/yyyy}").Add();
+                    col.HeaderText("Order Status Rating").Visible(false).Template("#columnTemplate").Add();
+                    col.Field("verification").HeaderText("verification").Visible(false).Template("#columnTemplate1").Width(150).Add();
+                    col.HeaderText("verificationArrow").Template("#columnTemplate2").Visible(false).Width(150).Add();
+                    col.Field("Proccessing").HeaderText("verification").Visible(false).Template("#columnTemplate3").Width(150).Add();
+                    col.HeaderText("ProccessingArrow").Visible(false).Template("#columnTemplate2").Width(150).Add();
+                })
+                 .ClientSideEvents(eve => { eve.ActionComplete("complete"); eve.TemplateRefresh("template"); })
+)
+
+<script type="text/template" id="template">
+    <div style="min-width:1400px;"></div>
+    <p>Your Order Number is : <span><input type="text" style="color:yellowgreen; font:700; border:hidden; font-size:larger" id="orderno" value=" " readonly /></span>Order Status at: <span><input type="text" style="color:yellowgreen; font:700; border:hidden; font-size:larger" id="orderstatus" value=" " readonly /></span>  </p>
+
+    <hr />
+    <div id="defaultTab" style="width: 100%;">
+        <div id="tab" style="height:100px;width:100%">
+            <br />
+            <hr />
+            Destination Facility:
+            <span><input type="text" style="color:yellowgreen; width: 80%; font:700; border:hidden; font-size:larger" id="facility" value=" " readonly /></span>
+
+            <ol class="progtrckr" data-progtrckr-steps="5">
+                <li id="order1" @*style="width:20%"*@ class="progtrckr-done">Order Received</li>
+
+                <!--
+                -->
+                <li id="order2" @*style="width:20%"*@ class="progtrckr-todo">Order Confirmed</li>
+                <!--
+                -->
+                <li id="order3" @*style="width:20%"*@ class="progtrckr-todo">Order Processed</li>
+                <!--
+                -->
+                <li id="order4" @*style="width:20%"*@ class="progtrckr-todo">Order Dispatched</li>
+                <!--
+                -->
+                <li id="order5" @*style="width:20%"*@ class="progtrckr-todo">Order Delivered</li>
+            </ol>
+
+
+
+            @*{{/if}}*@
+            @*{{ if OrderStatusId  == 4  }}
+                    <ol class="progtrckr" data-progtrckr-steps="5">
+                        <li class="progtrckr-done">Order Approved</li>
+                        <!--
+                -->
+                        <li class="progtrckr-done">Pre-Production</li>
+                        <!--
+                -->
+                        <li class="progtrckr-todo">In Production</li>
+                        <!--
+                -->
+                        <li class="progtrckr-todo">Shipped</li>
+                        <!--
+                -->
+                        <li class="progtrckr-todo">Delivered</li>
+
+                    </ol>*@
+            @*{{/if}}*@
+
+
+        </div>
+
+        <div id="tab1">
+            <div class="myDiv">
+            </div>
+
+
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                View product Details
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div id="order_grid"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <div>
+
+            </div>
+        </div>
+    </div>
+    <br />
+</script>
+<script>
+    function open(args) {
+
+        var objDialog = $("#grd").data("ejGrid");
+        var $dialogWrapper = objDialog.element.find("#" + objDialog._id + "_dialogEdit_wrapper");
+        $dialogWrapper.css("top", "0px");
+        $dialogWrapper.css("left", "0px");
+    }
+
+    function complete(args) {
+        if ((args.requestType == "beginedit") && args.model.editSettings.editMode == "dialogtemplate") {
+            $('#' + this._id + '_dialogEdit').ejDialog("option", "title", "Order Tracking Details: Check Order Status"); //change dialog title
+            //$("#" + this._id + "_dialogEdit").ejDialog({ open: "open" })
+            $("#defaultTab").ejTab({ selectedItemIndex: 0 }).ejTab({ showRoundedCorner: true });;
+
+            // var objDialog = $("#grd").data("ejGrid");
+
+            if (args.requestType == "beginedit") {
+                //$("#" + this._id + "_dialogEdit").ejDialog({ open: "open" })
+
+                $("#EditDialog_grd_Save").ejButton("destroy");
+                $($("#EditDialog_grd_Save").hide());//.after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+                //$("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "margin-left": "190px" });
+
+                $("#EditDialog_grd_Cancel").ejButton("destroy");
+                $($("#EditDialog_grd_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+                $("#cancel").css({ "width": "100px", "height": "50px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+
+                var header_grid = $('#grd').ejGrid('instance');
+
+                if (args.requestType == "beginedit") {
+                    var order_no = header_grid.getSelectedRecords()[0].OrderNumber;
+                    var order_status = header_grid.getSelectedRecords()[0].OrderStatusId;
+                    var fc = header_grid.getSelectedRecords()[0].Facility;
+
+                    document.getElementById('orderno').value = order_no;
+                    document.getElementById('facility').value = fc;
+
+                    //window.x = $("#Order_Number").text = header_grid.getSelectedRecords()[0].OrderNumber;
+                    // alert(window.order_no);
+                    if (order_status == 6 || order_status == 3 || order_status == 2) {
+                        document.getElementById('orderstatus').value = "Order Received";
+                        //var a = document.getElementById('order1').add;
+                        $("#order1").addClass('progtrckr-done');
+                        $("#order1").removeClass("progtrckr-todo");
+                        $("#order2").addClass('progtrckr-todo');
+                        //$("#order2").removeClass("progtrckr-todo");
+
+                    } else if (order_status == 4) {
+                        document.getElementById('orderstatus').value = "Order Confirmed";
+                        //var a = document.getElementById('order1');
+                        $("#order1").addClass('progtrckr-done');
+                        $("#order1").removeClass("progtrckr-todo");
+
+                        $("#order2").removeClass("progtrckr-todo");
+                        $("#order2").addClass('progtrckr-done2');
+                    }
+                    else if (order_status == 7) {
+                        document.getElementById('orderstatus').value = "Order Processed";
+                        //var a = document.getElementById('order1');
+                        $("#order1").addClass('progtrckr-done');
+                        $("#order1").removeClass("progtrckr-todo");
+                        $("#order2").addClass('progtrckr-done2');
+                        $("#order2").removeClass("progtrckr-todo");
+
+                        $("#order3").removeClass("progtrckr-todo");
+                        $("#order3").addClass('progtrckr-done3');
+                    } else if (order_status == 8) {
+                        document.getElementById('orderstatus').value = "Order Dispatched";
+                        //var a = document.getElementById('order1');
+                        $("#order1").addClass('progtrckr-done');
+                        $("#order1").removeClass("progtrckr-todo");
+                        $("#order2").addClass('progtrckr-done2');
+                        $("#order2").removeClass("progtrckr-todo");
+
+                        $("#order3").removeClass("progtrckr-todo");
+                        $("#order3").addClass('progtrckr-done3');
+
+                        $("#order4").removeClass("progtrckr-todo");
+                        $("#order4").addClass('progtrckr-done4');
+                    }
+                    else if (order_status == 9) {
+                        document.getElementById('orderstatus').value = "Order Delivered";
+                        //var a = document.getElementById('order1');
+                        $("#order1").addClass('progtrckr-done');
+                        $("#order1").removeClass("progtrckr-todo");
+                        $("#order2").addClass('progtrckr-done2');
+                        $("#order2").removeClass("progtrckr-todo");
+
+                        $("#order3").removeClass("progtrckr-todo");
+                        $("#order3").addClass('progtrckr-done3');
+
+                        $("#order4").removeClass("progtrckr-todo");
+                        $("#order4").addClass('progtrckr-done4');
+
+                        $("#order5").removeClass("progtrckr-todo");
+                        $("#order5").addClass('progtrckr-done5');
+                    }
+                    else {
+                        $("#order1").addClass('progtrckr-todo');
+                        $("#order1").removeClass("progtrckr-done");
+                        $("#order2").addClass('progtrckr-todo');
+                        $("#order2").removeClass("progtrckr-done2");
+                        $("#order3").addClass('progtrckr-todo');
+                        $("#order3").removeClass("progtrckr-done3");
+                        $("#order4").addClass('progtrckr-todo');
+                        $("#order4").removeClass("progtrckr-done4");
+                        $("#order5").addClass('progtrckr-todo');
+                        $("#order5").removeClass("progtrckr-done5");
+                    }
+
+                }
+
+                $("#order_grid").ejGrid({
+                    dataSource: ej.DataManager({ url: "GetOrder", adaptor: "UrlAdaptor" }),
+                    query: new ej.Query().addParams('param_on', order_no),
+                    allowGrouping: false,
+                    toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.PrintGrid, "cancel"] },
+                    editSettings: { allowDeleting: false, allowEditing: false, allowAdding: false, editMode: 'batch' },
+                    allowScrolling: true,
+                    scrollSettings: { width: "100%", height: "auto" },
+                    allowPaging: false,
+                    enableAltRow: true,
+                    allowTextWrap: true,
+                    textWrapSettings: { wrapMode: "both" },
+                    cellEdit: "cellEdit",
+                    allowResizeToFit: true,
+                    showStackedHeader: true,
+                    isResponsive: true,
+                    enableResponsiveRow: true,
+                    allowScrolling: true,
+
+                    columns: [
+
+                        { field: "SAP_code", width: 100, visible: false, headerText: "Product SAP Code" },
+                        { field: "product_description", headerText: "Product Description", allowEditing: false, width: 300 },
+                        { field: "packsize", headerText: "Pack Size", visible: false, allowEditing: false, width: 90 },
+                        { field: "strength", headerText: "Strength", visible: false, allowEditing: false, width: 90 },
+                        { field: "Quantity_Required", headerText: "Quantity Required", allowEditing: true, width: 100 },
+                        { field: "Quantity_Allocated", headerText: "Quantity Allocated", allowEditing: true, width: 100 },
+                        { field: "Notes", headerText: "Notes", visible: false, allowEditing: true, width: 200 },
+                        { field: "RFSONotes", headerText: "SCTO Notes", allowEditing: false, width: 200 }
+                    ]
+                });
+
+            }
+        }
+    }
+
+</script>
+
+
+
+
+<script type="text/x-jsrender" id="columnTemplateo">
+    <img style="width: 45px; height: 45px" src="../Images/{{: OrderStatusId }}.png" alt="{{: OrderStatusId }}" />
+</script>
+
+<script type="text/x-jsrender" id="columnTemplate1">
+    <img style="width: 50px; height: 50px" src="../Images/6.PNG" alt="{{: OrderStatusId }}" />
+</script>
+<script type="text/x-jsrender" id="columnTemplate3">
+    <img style="width: 50px; height: 50px" src="../Images/4.png" alt="{{: OrderStatusId }}" />
+</script>
+<script type="text/x-jsrender" id="columnTemplate2">
+    <img style="width: 50px; height: 50px" src="../Images/images.png" />
+</script>
+<script>
+
+    //   $(function () {
+
+    //    $("#grd").ejGrid({
+    //        dataSource: ej.DataManager({ url: "GetData", adaptor: "UrlAdaptor" }),
+    //        toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.PrintGrid, 'search'] },
+    //        //editSettings: { allowEditing: true, editMode: 'batch' },
+    //        isResponsive: true,
+    //        enableResponsiveRow: true,
+    //        allowPaging: true,
+    //        allowFiltering: true,
+    //        //selectionType: "multiple",
+    //        filterSettings: {
+    //            filterType: "excel"
+    //        },
+
+    //        allowTextWrap: true,
+    //        allowResizeToFit: true,
+    //        showStackedHeader: true,
+    //        minWidth: 400,
+    //        allowSorting: true,
+    //        allowScrolling: true,
+    //        allowReordering: true,
+    //        scrollSettings: { width: "100%", height: "100%" },
+    //        queryCellInfo:"queryCellInfo",
+    //        columns: [
+    //            //{ field: "Status", width: 200, headerText: "Order Status", allowEditing: false },
+    //            { field: "OrderStatusId", width: 100, headerText: "Order Status", foreignKeyField: "StatusId", foreignKeyValue: "Status", dataSource: mStatus },
+    //           // { field: "District_Name", headerText: "District Name", allowEditing: false, width: 100, visible: true },
+    //            //{ field: "ImplementingPartnerDescription", width: 80, headerText: "Implementing Partner", allowEditing: false },
+    //           // { field: "level_of_care", width: 100, headerText: "Level of Care", allowEditing: false },
+    //           // { field: "Facility", width: 100, headerText: "Facility", allowEditing: false },
+    //            { field: "OrderNumber", width: 100, headerText: "Order Number", allowEditing: false},
+    //            { field: "OrderType", width: 100, headerText: "Order Type", allowEditing: false },
+    //            { field: "category_desc", width: 100, headerText: "Product Category", allowEditing: false },
+    //            //{ field: "OrderStatusChangedBy", width: 100, headerText: "Order Status Changed By", allowEditing: false },
+    //           // { field: "OrderStatusDateChanged", width: 100, headerText: "Date Changed", allowEditing: false, format: "{0:dd/MM/yyyy}" },
+    //            { field: "DatePrepared", width: 100, headerText: "Date Prepared", allowEditing: false, format: "{0:dd/MM/yyyy}" },
+    //        ]
+    //    });
+    //});
+</script>
+
+
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+        grid-row-gap: 50px;
+        grid-column-gap: 10px;
+        /*background-color: #2196F3;*/
+        padding: 10px;
+    }
+
+        .grid-container > div {
+            /*background-color: rgba(255, 255, 255, 0.8);*/
+            text-align: center;
+            padding: 20px 0;
+            font-size: 30px;
+        }
+</style>
+
+<script type="text/javascript">
+    function queryCellInfo(args) {
+        //if (args.column.field == "OrderStatusId" && args.data.OrderStatusId == "1")
+        //    $(args.cell).addClass("green");
+        //else if (args.column.field == "OrderStatusId" && args.data.OrderStatusId == "3")
+        //    $(args.cell).addClass("red");
+        if (args.column.field == "OrderStatusId") {
+            if (args.data.OrderStatusId == "1") {
+                $(args.cell).addClass("amber badge");
+            }
+            if (args.data.OrderStatusId == "2") {
+                $(args.cell).addClass("stop badge");
+            }
+            if (args.data.OrderStatusId == "3") {
+                $(args.cell).addClass("green badge");
+            }
+            if (args.data.OrderStatusId == "4") {
+                $(args.cell).addClass("green badge");
+            }
+            if (args.data.OrderStatusId == "6") {
+                $(args.cell).addClass("start badge");
+            }
+        }
+        if (args.column.field == "verification") {
+
+            if (args.data.OrderStatusId == "6") {
+                $(args.cell).addClass("start badge");
+            }
+            if (args.data.OrderStatusId == "4") {
+                $(args.cell).addClass("green badge");
+            }
+        }
+
+        if (args.column.field == "Proccessing") {
+
+            if (args.data.OrderStatusId == "4") {
+                $(args.cell).addClass("green badge");
+            }
+
+        }
+        if (args.column.field == "verification" || args.column.field == "Proccessing" || args.column.field == "verificationArrow") {
+
+            if (args.data.OrderStatusId != "4" && args.data.OrderStatusId != "6") {
+                $(args.cell).addClass("stop badge");
+            }
+
+        }
+    }
+
+    function cancelss() {
+        var obj = $("#grd").ejGrid("instance")
+        obj.cancelEdit();
+        //$("#CancelDial").ejDialog("open");
+    }
+</script>
+<style type="text/css">
+    .red {
+        background-color: #c9252b;
+        color: whitesmoke;
+        font-size: larger;
+        /*font-weight: 700;*/
+        animation: mymove 5s infinite;
+    }
+
+    .e-grid .e-headercell {
+        color: whitesmoke;
+        background-color: #c9252b;
+        font-weight: 700;
+    }
+    /*.e-grid .e-headercell {
+            background-color: chocolate;
+        }*/
+    .green {
+        background-color: darkgreen;
+        color: whitesmoke;
+        font-size: larger;
+        /*font-weight:700;*/
+        animation: mymove 5s infinite;
+    }
+
+    .amber {
+        background-color: crimson;
+        color: whitesmoke;
+        font-size: larger;
+        /*font-weight: 700;*/
+        animation: mymove 5s infinite;
+    }
+
+    .stop {
+        background-color: red !important;
+        color: whitesmoke;
+        font-size: larger;
+        /*font-weight: 700;*/
+        animation: mymove 5s infinite;
+    }
+
+    .start {
+        background-color: yellow;
+        color: whitesmoke;
+        font-size: larger;
+        /*font-weight: 700;*/
+        animation: mymove 5s infinite;
+    }
+</style>
+
+<script type="text/x-jsrender" id="columnTemplate">
+    {{if OrderStatusId==1}}
+
+    <input type="text" class="rating" value="1" />
+
+    {{else OrderStatusId==6 }}
+
+    <input type="text" class="rating" value="2" />
+
+    {{else OrderStatusId==2 }}
+
+    <input type="text" class="rating" value="3" />
+
+    {{else OrderStatusId==3 }}
+
+    <input type="text" class="rating" value="4" />
+
+    {{else OrderStatusId==4}}
+    <input type="text" class="rating" value="5" />
+
+    {{/if}}
+</script>
+
+<script type="text/javascript">
+    function template(args) {
+        $(args.cell).find(".rating").ejRating({ allowReset: false });
+    }
+</script>
+
+<script type="text/javascript">
+
+    $("#print").ejButton({
+
+        showRoundedCorner: true,
+        size: "max", /*class:"btn btn-success btn-lg",*/
+        click: function () {
+            $("#grd").ejGrid("print");
+        }
+
+    });
+
+    $("#print_pod").ejButton({
+
+        showRoundedCorner: true,
+        size: "max", /*class:"btn btn-success btn-lg",*/
+        click: function () {
+            $("#grd").ejDialog("print");
+        }
+
+    });
+
+</script>
+
+<style>
+    ol.progtrckr {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+
+        ol.progtrckr li {
+            display: inline-block;
+            text-align: center;
+            line-height: 3.5em;
+        }
+
+        ol.progtrckr[data-progtrckr-steps="2"] li {
+            width: 49%;
+        }
+
+        ol.progtrckr[data-progtrckr-steps="3"] li {
+            width: 33%;
+        }
+
+        ol.progtrckr[data-progtrckr-steps="4"] li {
+            width: 24%;
+        }
+
+        ol.progtrckr[data-progtrckr-steps="5"] li {
+            width: 19%;
+        }
+
+        ol.progtrckr[data-progtrckr-steps="6"] li {
+            width: 16%;
+        }
+
+        ol.progtrckr[data-progtrckr-steps="7"] li {
+            width: 14%;
+        }
+
+        ol.progtrckr[data-progtrckr-steps="8"] li {
+            width: 12%;
+        }
+
+        ol.progtrckr[data-progtrckr-steps="9"] li {
+            width: 11%;
+        }
+
+        ol.progtrckr li.progtrckr-done {
+            color: black;
+            border-bottom: 4px solid yellowgreen;
+            /*background-image: url('/Images/6.png') ;*/
+        }
+
+        ol.progtrckr li.progtrckr-done2 {
+            color: black;
+            border-bottom: 4px solid yellowgreen;
+            /*background-image: url('/Images/6.png') ;*/
+        }
+
+        ol.progtrckr li.progtrckr-done3 {
+            color: black;
+            border-bottom: 4px solid yellowgreen;
+            /*background-image: url('/Images/6.png') ;*/
+        }
+
+        ol.progtrckr li.progtrckr-done4 {
+            color: black;
+            border-bottom: 4px solid yellowgreen;
+            /*background-image: url('/Images/6.png') ;*/
+        }
+
+        ol.progtrckr li.progtrckr-done5 {
+            color: black;
+            border-bottom: 4px solid yellowgreen;
+            /*background-image: url('/Images/6.png') ;*/
+        }
+
+        ol.progtrckr li.progtrckr-todo {
+            color: silver;
+            border-bottom: 4px solid silver;
+        }
+
+        ol.progtrckr li:after {
+            content: "\00a0\00a0";
+        }
+
+        ol.progtrckr li:before {
+            position: relative;
+            bottom: -2.5em;
+            float: left;
+            left: 50%;
+            line-height: 1em;
+        }
+
+        ol.progtrckr li.progtrckr-done:before {
+            content: url('../Images/resizeimage6.png') /*"\2713"*/;
+            height: 10px;
+            width: 10px;
+            color: white;
+            background-color: yellowgreen;
+            height: 2.2em;
+            width: 2.2em;
+            line-height: 2.2em;
+            border: none;
+            border-radius: 2.2em;
+            /*background: url('/Images/6.PNG') no-repeat left 9px;*/
+        }
+
+        ol.progtrckr li.progtrckr-done2:before {
+            content: url('../Images/resizeimage4.png') /*"\2713"*/;
+            height: 10px;
+            width: 10px;
+            color: white;
+            background-color: yellowgreen;
+            height: 2.2em;
+            width: 2.2em;
+            line-height: 2.2em;
+            border: none;
+            border-radius: 2.2em;
+            /*background: url('/Images/6.PNG') no-repeat left 9px;*/
+        }
+
+        ol.progtrckr li.progtrckr-done3:before {
+            content: url('../Images/resize7.png') /*"\2713"*/;
+            height: 10px;
+            width: 10px;
+            color: white;
+            background-color: yellowgreen;
+            height: 2.2em;
+            width: 2.2em;
+            line-height: 2.2em;
+            border: none;
+            border-radius: 2.2em;
+            /*background: url('/Images/6.PNG') no-repeat left 9px;*/
+        }
+
+        ol.progtrckr li.progtrckr-done4:before {
+            content: url('../Images/resize8.png') /*"\2713"*/;
+            height: 10px;
+            width: 10px;
+            color: white;
+            background-color: yellowgreen;
+            height: 2.2em;
+            width: 2.2em;
+            line-height: 2.2em;
+            border: none;
+            border-radius: 2.2em;
+            /*background: url('/Images/6.PNG') no-repeat left 9px;*/
+        }
+
+        ol.progtrckr li.progtrckr-done5:before {
+            content: url('../Images/resize9.png') /*"\2713"*/;
+            height: 10px;
+            width: 10px;
+            color: white;
+            background-color: yellowgreen;
+            height: 2.2em;
+            width: 2.2em;
+            line-height: 2.2em;
+            border: none;
+            border-radius: 2.2em;
+            /*background: url('/Images/6.PNG') no-repeat left 9px;*/
+        }
+
+        ol.progtrckr li.progtrckr-todo:before {
+            content: "\039F";
+            color: silver;
+            background-color: white;
+            font-size: 2.2em;
+            bottom: -1.2em;
+        }
+</style>
+
+
+<script>
+
+    function onClick(args) {
+        var grid = $("#grd").ejGrid("instance");
+        //var param_on = grid.getSelectedRecords()[0].OrderNumber;
+        //var order_status = grid.getSelectedRecords()[0].OrderStatusId;
+        @*location.href = '@Url.Action("GetOrder", "OrderTracking")?param_on=' + param_on;*@
+
+        //var grid = $("#Grid").ejGrid("instance");
+        if (grid.getSelectedRows().length > 0)
+            grid.startEdit(grid.getSelectedRows());
+        else
+            alert(grid.localizedLabels.EditOperationAlert);
+
+    }
+</script>
+<style>
+    li.OrderReceived {
+        background: url('../../Images/6.png') no-repeat left 9px;
+        padding-left: 12px;
+        display: block;
+    }
+
+    li.OrderConfirmed {
+        background: url('../../Images/4.png') no-repeat left 9px;
+        padding-left: 12px;
+        display: block;
+    }
+</style>
+
+
+@*<div class="container">*@
+
+
+@*</div>  end container*@
+
+<style>
+    .panel-heading .accordion-toggle:after {
+        /* symbol for "opening" panels */
+        font-family: 'Glyphicons Halflings'; /* essential for enabling glyphicon */
+        content: "\e114"; /* adjust as needed, taken from bootstrap.css */
+        float: right; /* adjust as needed */
+        color: grey; /* adjust as needed */
+    }
+
+    .panel-heading .accordion-toggle.collapsed:after {
+        /* symbol for "collapsed" panels */
+        content: "\e080"; /* adjust as needed, taken from bootstrap.css */
+    }
+</style>

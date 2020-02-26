@@ -1,0 +1,243 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+@section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexHSIP", "Home")
+                </li>
+                <li class="active">
+                    <strong>Laboratory:Routine Orders Allocation Index</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+@(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("DataSourceAllocationHSIP").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+        .AllowFiltering()
+        .AllowTextWrap()
+        .AllowGrouping()
+
+        //.AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+                //fields.Add("Outcome");
+                //fields.Add("Output");
+                //fields.Add("Indicator");
+                //fields.Add("Indicator_2");
+                //fields.Add("PerformanceTargetNotes");
+                //fields.Add("ExplanatoryNotes");
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    //items.AddTool(ToolBarItems.Add);
+                    items.AddTool(ToolBarItems.Edit);
+                    items.AddTool(ToolBarItems.Update);
+                    items.AddTool(ToolBarItems.Cancel);
+                    items.AddTool(ToolBarItems.Search);
+                });
+            })
+        .Columns(col =>
+        {
+            col.Field("OrderTypeId").AllowEditing(false).Visible(false).Width(100).HeaderText("Order Type").IsPrimaryKey(true).Add();
+            col.Field("OrderType").AllowEditing(false).Width(100).HeaderText("Order Type").IsPrimaryKey(true).Add();
+            col.Field("date_completed").AllowEditing(false).Width(100).HeaderText("Date Prepared").IsPrimaryKey(true).Format("{0:dd/MM/yyyy}").Add();
+            // col.Field("end_date").AllowEditing(false).Width(100).HeaderText("End of reporting period").IsPrimaryKey(true).Format("{0:dd/MM/yyyy}").Add();
+            col.Field("product_code").AllowEditing(false).Width(100).HeaderText("Product Code").IsPrimaryKey(true).Add();
+            col.Field("product_code").AllowEditing(false).Width(400).HeaderText("Product").ForeignKeyField("product_code").ForeignKeyValue("product_description").DataSource((IEnumerable<object>)ViewBag.ProductDataSource).Add();
+
+            //col.HeaderText("Allocation List").Commands(command =>
+            //{
+            //    command.Type("detail")
+            //       .ButtonOptions(new Syncfusion.JavaScript.Models.ButtonProperties()
+            //       {
+            //           Text = "Details",
+            //           Width = "100px",
+            //           Click = "onClick"
+            //       }).Add();
+            //})
+            //    .TextAlign(TextAlign.Center)
+            //    .Width(150)
+            //    .Add();
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete"); })
+)
+
+<script type="text/template" id="template">
+
+    @*<div class="row">
+            <div class="col-lg-3">
+                <p>Order Status</p>
+                <p><input type="text" id="OrderStatusId" name="OrderStatusId" value="{{:OrderStatusId}}" class="e-field e-ejinputtext valid" /></p>
+              </div>
+        </div>*@
+    <hr />
+    <div id="defaultTab" style="width: 100%;">
+        <ul>
+            <li><a href="#tab1"> ALLOCATIONS BY PRODUCT</a></li>
+        </ul>
+
+        <div id="tab1">
+            <div class="myDiv">
+            </div>
+            <div>
+                <div id="order_grid"></div>
+            </div>
+        </div>
+    </div>
+    <br />
+</script>
+
+<script>
+    function complete(args) {
+        if ((args.requestType == "beginedit" || args.requestType == "add") && args.model.editSettings.editMode == "dialogtemplate") {
+            $('#' + this._id + '_dialogEdit').ejDialog("option", "title", "LABORATORY ORDER ALLOCATION TEMPLATE"); //change dialog title
+
+            $.ajax({
+                //url: 'HAT/Districts',
+                url: 'GetOrderStatusData',
+                //data: JSON.stringify(mid),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: 'GET',
+                success: function (data) {
+                    if (data.length > 0) {
+                        var DropDownListDist = $('#OrderStatusId').ejDropDownList({
+                            dataSource: data,
+                            width: "240px",
+                            fields: { value: "StatusId", text: "Status" },
+                        }).data("ejDropDownList");
+                    }
+                },
+            });
+            $("#defaultTab").ejTab({ selectedItemIndex: 0 }).ejTab({ showRoundedCorner: true });;
+
+            if (args.requestType == "add") {
+                var nullstr = '';
+            }
+
+
+            if (args.requestType == "beginedit" || args.requestType == "add") {
+
+                $("#EditDialog_Grid_Save").ejButton("destroy");
+                $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+                $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "margin-left": "190px" });
+                $("#EditDialog_Grid_Cancel").ejButton("destroy");
+                $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+                $("#cancel").css({ "width": "100px", "height": "50px", "margin-left": "10px" })
+
+                var header_grid = $('#Grid').ejGrid('instance');
+
+                if (args.requestType == "beginedit") {
+                    var fc =@Html.Raw(Json.Encode(ViewBag.fc));
+                    var pc =@Html.Raw(Json.Encode(ViewBag.ProductDataSource));
+
+                    var Order_Type = header_grid.getSelectedRecords()[0].OrderTypeId;
+                    var itemcode = header_grid.getSelectedRecords()[0].item_code;
+
+                    $("#order_grid").ejGrid({
+                        dataSource: ej.DataManager({ url: "GetAllocation?param_ot=" + Order_Type + "&param_pc=" + itemcode, batchUrl: "UpdateAllocation", adaptor: "UrlAdaptor" }),
+                      allowGrouping: false,
+                      editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                        allowScrolling: true,
+                        scrollSettings: { width: "100%", height: "auto" },
+                        allowPaging: false,
+                        enableAltRow: true,
+                        allowTextWrap: true,
+                        textWrapSettings: { wrapMode: "both" },
+                        allowResizeToFit: true,
+                        showStackedHeader: true,
+                        isResponsive: true,
+                        enableResponsiveRow: true,
+                        allowScrolling: true,
+                        allowFiltering: true,
+                        filterSettings: {
+                            filterType: "excel"
+                        },
+                        columns: [
+                            { field: "OrderNumber", headerText: "Order No.", visible: true, allowEditing: false, isPrimaryKey: true, width: 180 },
+                            { field: "FacilityCode", headerText: "Facility", visible: true, allowEditing: false, width: 150 , foreignKeyField: "FacilityCode", foreignKeyValue: "Facility", dataSource: fc },
+                            { field: "date_completed", headerText: " Date Prepared", visible: true, allowEditing: false, format: "{0:dd/MMM/yyyy}" },
+                            //{ field: "end_date", headerText: "End Date", visible: true, allowEditing: false, format: "{0:dd/MMM/yyyy}" },
+                            { field: "product_code", headerText: "Product Code", allowEditing: false, width: 100, isPrimaryKey: true },
+                            { field: "product_code", headerText: "Product Description", allowEditing: false, width: 400, foreignKeyField: "product_code", foreignKeyValue: "product_description", dataSource: pc  },
+                            //{ field: "Basic_Unit", headerText: "Basic Unit", allowEditing: false, width: 80 },
+                            { field: "opening_balance", headerText: "Opening Balance", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center },
+                            { field: "quantity_recieved", headerText: "Quantity Recieved", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center },
+                            { field: "consumption", headerText: "Consumption", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center },
+                            { field: "losses_adjustment", headerText: "Losses / Adjustments", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center},
+                            { field: "closing_balance", headerText: "Closing Balance", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center },
+                            { field: "quantity_to_order", headerText: "Quantity to Order", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center},
+                            //{ field: "Quantity_Required", headerText: "Quantity Required", allowEditing: false, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }, textAlign: ej.TextAlign.Center},
+                            { field: "quantity_allocated", headerText: "Quantity Allocated", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }, cssClass: "customCSS", textAlign: ej.TextAlign.Center},
+                            { field: "comments", headerText: "Notes", allowEditing: false, width: 200 },
+                            { field: "RFSONotes", headerText: "RFSO Notes", allowEditing: false, width: 200 }
+                        ]
+                    });
+                }
+                var nullstr = '';
+            }
+        }
+    }
+
+</script>
+
+<script>
+    function savess() {
+            var obj = $("#Grid").ejGrid("instance");
+            var grd_order = $("#order_grid").ejGrid("instance");
+            //obj.endEdit();
+            grd_order.batchSave();
+            cancelss();
+    }
+    function cancelss() {
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+    }
+
+</script>
+<style>
+    .customCSS.e-rowcell {
+        background-color: #EFF5FB;
+        font-family: 'Bell MT';
+        font-style: italic;
+        /*color: whitesmoke;*/
+        font-size: 20px;
+    }
+</style>
+
+<script>
+
+    function onClick(args) {
+        var grid = $("#Grid").ejGrid("instance");
+        var order_type = grid.getSelectedRecords()[0].OrderType;
+        var product_code = grid.getSelectedRecords()[0].DrugCode;
+        location.href = '@Url.Action("AllocationHSIP", "LMIS_Laboratory")?order_type=' + order_type + ' & product_code=' + product_code ;
+        //alert(myvistdate);
+    }
+</script>

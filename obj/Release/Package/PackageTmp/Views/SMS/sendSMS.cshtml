@@ -1,0 +1,65 @@
+﻿@model  mascis.Models.SMS
+@{
+    ViewBag.Title = "sendSMS";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<h2>send SMS</h2>*@
+
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="box-title">
+            <b>SMS Composer</b>
+        </h3>
+    </div>
+
+    <div class="panel-body">
+        @if (ViewData["SuccessMsg"] != null)
+        {
+            <p class="alert alert-success" id="successMessage">@ViewData["SuccessMsg"] </p>
+        }
+         
+        
+
+        @using (Html.BeginForm(@*"sendSMS", "SMS", FormMethod.Post, new { @class = "form-horizontal", role = "form" }*@))
+        {
+            @*<h4>Send SMS</h4>
+            <hr />*@
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            @*@Html.HiddenFor(model => model.)*@
+            <div class="form-group">
+                @Html.LabelFor(m => m.ReceipientsNumbers, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.ReceipientsNumbers, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Message, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @*@Html.TextBoxFor(m => m.Message, new { @class = "form-control" })*@
+                    @Html.TextAreaFor(model => model.Message,  new { style = "width: 400px; height: 200px;", @class = "form-control" })
+                </div>
+                
+
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" class="btn btn-primary" value="Send" />
+                </div>
+            </div>
+        }
+
+    </div>
+    <div class="panel-footer">
+        <p class="box-title"><b>@String.Format("{0 : dddd, MMMM d, yyyy}", DateTime.Now)  : </b><span class="label label-primary"> </span></p>
+    </div>
+</div>
+<style>
+    div.messagebody {
+        width: 400px;
+        height: 200px;
+    }
+</style>

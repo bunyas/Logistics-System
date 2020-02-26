@@ -1,0 +1,99 @@
+﻿
+@{
+    ViewBag.Title = "AllocationIndex";
+    Layout = "~/Views/Shared/_LayoutMAULT.cshtml";
+}
+
+@section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexMAULT", "Home")
+                </li>
+                <li class="active">
+                    <strong>ART: Allocations Index</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+@(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("DataSourceAllocation").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+         .AllowFiltering().ShowColumnChooser()
+        .AllowTextWrap()
+        .AllowGrouping()
+
+        //.AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+                //fields.Add("Outcome");
+                //fields.Add("Output");
+                //fields.Add("Indicator");
+                //fields.Add("Indicator_2");
+                //fields.Add("PerformanceTargetNotes");
+                //fields.Add("ExplanatoryNotes");
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    //items.AddTool(ToolBarItems.Add);
+                    //items.AddTool(ToolBarItems.Edit);
+                    //items.AddTool(ToolBarItems.Update);
+                    //items.AddTool(ToolBarItems.Cancel);
+                    //items.AddTool(ToolBarItems.Search);
+                });
+            })
+        .Columns(col =>
+        {
+            //col.Field("category_code").AllowEditing(false).Width(100).HeaderText("Product Category").IsPrimaryKey(true).Add();
+            col.Field("category_code").AllowEditing(false).Width(250).HeaderText("Product Category").ForeignKeyField("category_code").ForeignKeyValue("category_desc").DataSource((IEnumerable<object>)ViewBag.ProductCategoryDataSource).IsPrimaryKey(true).Width(150).Add();
+
+            col.Field("ProductCode").AllowEditing(false).Width(100).HeaderText("Product Code").IsPrimaryKey(true).Add();
+            col.Field("product_description").AllowEditing(false).Width(400).HeaderText("Product").IsPrimaryKey(true).Add();
+            col.HeaderText("Allocation List").Commands(command =>
+            {
+                command.Type("detail")
+                   .ButtonOptions(new Syncfusion.JavaScript.Models.ButtonProperties()
+                   {
+                       Text = "Details",
+                       Width = "100px",
+                       Click = "onClick"
+                   }).Add();
+            })
+                .TextAlign(TextAlign.Center)
+                .Width(150)
+                .Add();
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete"); })
+)
+<script>
+
+    function onClick(args) {
+        var grid = $("#Grid").ejGrid("instance");
+       
+        var product_category = grid.getSelectedRecords()[0].category_code;
+        var product_code = grid.getSelectedRecords()[0].ProductCode;
+        location.href = '@Url.Action("Allocation", "LMIS_MAULT")?product_category=' + product_category + '&product_code=' + product_code ;
+        //alert(myvistdate);
+    }
+</script>

@@ -1,0 +1,169 @@
+﻿
+@{
+    ViewBag.Title = "ART PATIENTS PER TREATMENT REGIMEN";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-3">
+        <p>Start Of Reporting Period</p>
+        <p><input type="text" id="dp_start_date" name="dp_start_date" class="e-field e-ejinputtext valid" /></p>
+    </div>
+    <div class="col-lg-3">
+        <p>End Of Reporting Period</p>
+        <p><input type="text" id="dp_end_date" name="dp_end_date" class="e-field e-ejinputtext valid" /></p>
+    </div>
+    <div class="col-lg-3">
+        <br />
+        <input id="LoadDatabtn" style="margin-top:7px;" class="btn btn-block btn-primary" type="button" value="Load Query" onclick="myfunc()" />
+    </div>
+</div>
+<br />
+@(Html.EJ().Grid<object>
+        ("grid")
+        //.Datasource(datasource => datasource.URL("DataSourceGetAll").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+        .AllowFiltering()
+        .AllowTextWrap()
+        .AllowGrouping()
+        .ShowColumnChooser()
+        .AllowScrolling()
+         //.ScrollSettings(scroll =>
+         //{
+         //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+         //    VirtualScrollMode(VirtualScrollMode.Normal);
+         //})
+         .ShowStackedHeader()
+        .StackedHeaderRows(row =>
+        {
+            row.StackedHeaderColumns(column =>
+            {
+                column.HeaderText("0-<3 Yrs").Tooltip("0-<3 Yrs").Column(col =>
+                {
+                    col.Add("Existing_0_3Yrs");
+                    col.Add("New_0_3Yrs");
+                }).Add();
+                column.HeaderText("3-<10 Yrs").Tooltip("3-<10 Yrs").Column(col =>
+                {
+                    col.Add("Existing_3_10Yrs");
+                    col.Add("New_3_10Yrs");
+                }).Add();
+                column.HeaderText("10-<15 Yrs less than 35kg").Tooltip("10-<15 Yrs less than 35kg").Column(col =>
+                {
+                    col.Add("Existing_10_15Yrs_Less35Kg");
+                    col.Add("New_10_15Yrs_Less35Kg");
+                }).Add();
+                column.HeaderText("10-<15 Yrs  greater than 35kg").Tooltip("10-<15 Yrs  greater than 35kg").Column(col =>
+                {
+                    col.Add("Existing_10_15Yrs_Greater35Kg");
+                    col.Add("New_10_15Yrs_Greater35Kg");
+                }).Add();
+            }).Add();
+        })
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .AllowFiltering()
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+         //.AllowSearching().SearchSettings(search =>
+         //{
+         //    search.Fields(fields =>
+         //    {
+         //        //fields.Add("Outcome");
+         //        //fields.Add("Output");
+         //        //fields.Add("Indicator");
+         //        //fields.Add("Indicator_2");
+         //        //fields.Add("PerformanceTargetNotes");
+         //        //fields.Add("ExplanatoryNotes");
+         //    });
+         //    search.Operator(Operator.Contains);
+         //    search.IgnoreCase(true);
+         //})
+         .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+         {
+             items.AddTool(ToolBarItems.ExcelExport);
+         }))
+        .Columns(col =>
+        {
+            col.Field("SAP_Code").HeaderText("SAP Code").Width("80px").Add();
+            col.Field("FacilityCode").HeaderText("Facility Code").Width("180px").Add();
+            col.Field("ZoneDescription").HeaderText("Sector").Width("90px").Add();
+            col.Field("ImplementingPartnerDescription").HeaderText("IP").Width("90px").Add();
+            col.Field("Level_desc").HeaderText("Level of Care").Width("90px").Add();
+            col.Field("District_Name").HeaderText("District").Width("100px").Add();
+            col.Field("CDCRegion").HeaderText("CDC Region").Width("90px").Add();
+            col.Field("ComprehensiveImplementingPartnerDescription").HeaderText("Comprehensive IP").Width("90px").Add();
+            col.Field("FacilityType").HeaderText("Facility Type").Width("90px").Add();
+            col.Field("Facility").HeaderText("Facility Name").Width("150px").Add();
+            col.Field("SupportedByMAUL").HeaderText("MAUL Supported").Width("90px").Add();
+            col.Field("IsAccredited").HeaderText("Is Accredited").Width("90px").Add();
+            col.Field("SCTO").HeaderText("SCTO").Width("90px").Add();
+            col.Field("StartDate").HeaderText("Start Date").Width("80px").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("EndDate").HeaderText("End Date").Width("80px").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("DatePrepared").HeaderText("Date Prepared").Format("{0:dd/MM/yyyy}").Width("80px").Add();
+            col.Field("OrderType").HeaderText("Order type").Width("90px").Add();
+            col.Field("Status").HeaderText("Status").Width("100px").Add();
+            col.Field("FinalSubmission").HeaderText("Final Submission").Width("80px").Add();
+            col.Field("OrderNumber").HeaderText("Order Number").Width("170px").Add();
+            col.Field("RegimenCode").HeaderText("Regimen code").AllowFiltering(false).Width("90px").Add();
+            col.Field("RegimenDesc").Width("90px").AllowFiltering(false).HeaderText("Regimen").Add();
+            col.Field("RegimenCategoryDesc").Width("200px").AllowFiltering(false).HeaderText("Regimen Category").Add();
+            col.Field("regimen_classification_desc").Width("90px").AllowFiltering(true).HeaderText("regimen classification").Add();
+            col.Field("Patients_Existing").Width("90px").AllowFiltering(true).HeaderText("No. Existing (at start of previous cycle)").Add();
+            col.Field("Patients_New").HeaderText("No. New (enrolled in the last cycle)").AllowFiltering(true).Width("100px").Add();
+            col.Field("Existing_0_3Yrs").HeaderText("Existing").AllowFiltering(true).Width("80px").Add();
+            col.Field("New_0_3Yrs").Width("80px").AllowFiltering(true).HeaderText("NEW").Add();
+            col.Field("Existing_3_10Yrs").AllowFiltering(true).Width("100px").HeaderText("Exiting").Add();
+            col.Field("New_3_10Yrs").Width("80px").AllowFiltering(true).HeaderText("NEW").Add();
+            col.Field("Existing_10_15Yrs_Less35Kg").HeaderText("Existing").AllowFiltering(true).Width("200px").Add();
+            col.Field("New_10_15Yrs_Less35Kg").HeaderText("New").AllowFiltering(true).Width("200px").Add();
+            col.Field("Existing_10_15Yrs_Greater35Kg").HeaderText("Existing").AllowFiltering(true).Width("200px").Add();
+            col.Field("New_10_15Yrs_Greater35Kg").HeaderText("NEW").AllowFiltering(true).Width("200px").Add();
+
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete"); eve.ToolbarClick("OnToolbarClick"); })
+)
+
+<script>
+    $(function () {
+        $("#dp_start_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+        $("#dp_end_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+    });
+    function OnToolbarClick(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["PatientData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function myfunc() {
+        var dateobject = $("#dp_start_date").data("ejDatePicker");
+        var StartDate = dateobject.getValue();
+        var dateobject1 = $("#dp_end_date").data("ejDatePicker");
+        var EndDate = dateobject1.getValue();
+        $.ajax({
+            url: "GetPatientQuery",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startdate": StartDate,
+                "enddate": EndDate,
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#grid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+    }
+</script>
+

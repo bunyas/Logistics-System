@@ -1,0 +1,260 @@
+﻿
+@model mascis.Models.FileListModel
+@{
+    ViewBag.Title = "loadEvidence";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "";
+}
+
+@*<h2>loadEvidence</h2>*@
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#ShowImage").fancybox({
+            helpers:
+            {
+                title:
+                {
+                    type: 'float'
+                }
+            }
+        });
+    });
+</script>
+<style type="text/css">
+    .imgBox {
+        width: 200px;
+        height: 200px;
+        opacity: 1.0;
+        filter: alpha(opacity=100);
+    }
+
+        .imgBox:hover {
+            -moz-box-shadow: 0 0 10px #ccc;
+            -webkit-box-shadow: 0 0 10px #ccc;
+            box-shadow: 0 0 10px #ccc;
+            opacity: 0.4;
+            filter: alpha(opacity=40);
+        }
+</style>
+
+@*<link href="~/Scripts/jquery.fancybox.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.fancybox.js"></script>*@
+
+
+@if (Model.FileListCollction.Count > 0)
+{
+    <div class="row-fluid">
+        <div class="span2">
+            <div class="item">
+                @foreach (var image in Model.FileListCollction)
+                {
+                    switch (image.FileType)
+
+                    {
+                        case ".jpg":
+                        case ".jpeg":
+                        case ".png":
+                            string myfile = "/" + image.FileURL; //System.Web.HttpContext.Current.Server.MapPath(@"~/" + item.FileURL);
+                            <div>
+                                <h5>
+                                    @{
+                                        string myfileLoc = "file:///" + System.Web.HttpContext.Current.Server.MapPath(@"~/" + image.FileURL);
+
+                                        myfileLoc = HttpUtility.UrlEncode(myfileLoc);
+                                        if (!string.IsNullOrEmpty(@image.Detail))
+                                        {
+                                            @Html.ActionLink(@image.Detail, "DownloadFile", new { fileNamePath = image.FileURL })
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("Download Document", "DownloadFile", new { fileNamePath = image.FileURL })
+                                        }
+                                    }
+                                </h5>
+
+                                <a href="@Url.Content("~/" + @image.FileURL)" data-fancybox data-caption="<h3>@image.Detail</h3>">
+                                    <img src="@Url.Content("~/" + @image.FileURL)" class="imgBox" />
+                                </a>
+
+
+                            </div>
+
+
+                                            break;
+
+                                        case ".doc":
+                                        case ".docx":
+
+                                            <div>
+                                                <h5>
+                                                    @{
+                                                        string mydocLoc = "file:///" + System.Web.HttpContext.Current.Server.MapPath(@"~/" + image.FileURL);
+                                                        mydocLoc = HttpUtility.UrlEncode(mydocLoc);
+                                                        if (!string.IsNullOrEmpty(@image.Detail))
+                                                        {
+                                                            @Html.ActionLink(@image.Detail, "DownloadFile", new { fileNamePath = image.FileURL })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.ActionLink("Download Document", "DownloadFile", new { fileNamePath = image.FileURL })
+                                                        }
+                                                    }
+                                                </h5>
+                                                <div @*class="zoom"*@>
+                                                    <a href="@Url.Action("DownloadFile", "fo_complaint", new { fileNamePath = image.FileURL })">
+                                                        @*<img src="@Url.Content("../../Icons/Word_1.png")" style="width:100px; height:100px" />*@
+                                                    </a>
+
+                                                </div>
+
+                                            </div>
+                                                            break;
+                                                        case ".pdf":
+                                                            <div>
+                                                                <h5>
+                                                                    @{
+                                                                        string mypdfLoc = "file:///" + System.Web.HttpContext.Current.Server.MapPath(@"~/" + image.FileURL);
+                                                                        mypdfLoc = HttpUtility.UrlEncode(mypdfLoc);
+                                                                        if (!string.IsNullOrEmpty(@image.Detail))
+                                                                        {
+                                                                            @Html.ActionLink(@image.Detail, "DownloadFile", new { fileNamePath = image.FileURL })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @Html.ActionLink("Download Document", "DownloadFile", new { fileNamePath = image.FileURL })
+                                                                        }
+
+                                                                    }
+                                                                </h5>
+
+                                                                <div @*class="zoom"*@>
+                                                                    <a href="@Url.Action("DownloadFile", "fo_complaint", new { fileNamePath = image.FileURL })">
+                                                                        @*<img src="@Url.Content("../../Icons/pdf.png")" style="width:100px; height:100px" />*@
+                                                                    </a>
+
+                                                                </div>
+
+                                                            </div>
+                                                            @*<img src="../../Icons/pdf.png" width="100px" height="100px" />*@
+
+                    break;
+                case ".xls":
+                case ".xlsx":
+                    <div>
+                        <h5>
+                            @{
+                                //string myexcelLoc = "file:///" + System.Web.HttpContext.Current.Server.MapPath(@"~/" + image.FileURL);
+                                //myexcelLoc = HttpUtility.UrlEncode(myexcelLoc);
+                                if (!string.IsNullOrEmpty(@image.Detail))
+                                {
+                                    @Html.ActionLink(@image.Detail, "DownloadFile", new { fileNamePath = image.FileURL })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("Download Document", "DownloadFile", new { fileNamePath = image.FileURL })
+                                }
+
+                            }
+                        </h5>
+                        @*<div>
+                            <a href="@Url.Action("DownloadFile", "fo_complaint", new { fileNamePath = image.FileURL })">                               
+                            </a>
+
+                        </div>*@
+
+                    </div>
+                    @*<img src="../../Icons/Excel.png" width="100px" height="100px" />*@
+                    break;
+                case ".html":
+                    <div>
+                        <div>
+                            @{
+                                string myhtmlLoc = "file:///" + System.Web.HttpContext.Current.Server.MapPath(@"~/" + image.FileURL);
+                                myhtmlLoc = HttpUtility.UrlEncode(myhtmlLoc);
+                                if (!string.IsNullOrEmpty(@image.Detail))
+                                {
+                                    @Html.ActionLink(@image.Detail, "DownloadFile", new { fileNamePath = image.FileURL })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("Download Document", "DownloadFile", new { fileNamePath = image.FileURL })
+                                }
+
+                            }
+                        </div>
+
+
+
+                        <div @*class="zoom"*@>
+                            <a href="@Url.Action("DownloadFile", "fo_complaint", new { fileNamePath = image.FileURL })">
+                                @*<img src="@Url.Content("../../Icons/html.png")" style="width:100px; height:100px" />*@
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                    @*<img src="../../Icons/html.png" width="100px" height="100px" />*@
+                    break;
+
+                default:
+
+                    <div>
+                        <h5>
+                            @{
+                                string documentLoc = "file:///" + System.Web.HttpContext.Current.Server.MapPath(@"~/" + image.FileURL);
+                                documentLoc = HttpUtility.UrlEncode(documentLoc);
+                                if (!string.IsNullOrEmpty(@image.Detail))
+                                {
+                                    @Html.ActionLink(@image.Detail, "DownloadFile", new { fileNamePath = image.FileURL })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("Download Document", "DownloadFile", new { fileNamePath = image.FileURL })
+                                }
+
+                            }
+                        </h5>
+                        <div @*class="zoom"*@>
+                            <a href="@Url.Action("DownloadFile", "fo_complaint", new { fileNamePath = image.FileURL })">
+                                @*<img src="@Url.Content("../../Icons/document.png")" style="width:100px; height:100px" />*@
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                                        break;
+                                    }
+
+
+
+                                }
+            </div>
+        </div>
+    </div>
+                                }
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.imageGallery').fancybox({
+            fitToView: false,
+            width: '600px',
+            height: '400px',
+            autoSize: false,
+            closeClick: false,
+            openEffect: 'none',
+            closeEffect: 'none',
+            padding: 0,
+            closeBtn: false,
+            'afterClose': function () {
+                window.location.reload();
+            },
+        });
+    });
+</script>

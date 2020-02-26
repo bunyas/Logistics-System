@@ -1,0 +1,87 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+<ol class="breadcrumb" style="margin-top:30px;">
+    <li class="breadcrumb-item">
+        <a href="#">Dashboard</a>
+    </li>
+    <li class="breadcrumb-item active">Batch Upload</li>
+</ol>
+<script>
+
+    function successSave(args) {
+        debugger;
+       
+        $("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + args.e.target.StatusDescription+ '</p>'/*</br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>'*/);
+
+
+            $("#btn1").ejButton({
+                cssClass: "e-primary",
+                size: "large",
+                showRoundedCorner: true,
+                contentType: "textandimage",
+                prefixIcon: "e-icon e-handup",
+                visible: false,
+                style: "float:right",
+                click: function (args) {
+                    $("#SuccessDial").ejDialog("close");
+                }
+            });
+
+            $("#button1").ejButton({
+                cssClass: "e-success",
+                size: "medium",
+                showRoundedCorner: true,
+                contentType: "textandimage",
+                prefixIcon: "e-icon e-handup",
+
+                click: function (args) {
+                    $("#SuccessDial").ejDialog("close");
+                }
+            });
+            $("#SuccessDial").ejDialog({ enableModal: true });
+            $("#SuccessDial").ejDialog("open");
+    
+    }
+</script>
+<script id="cancelfooter" type="text/x-jsrender">
+    <div class="footerspan" style="float:right">
+        @Html.EJ().Button("btnOK").Size(ButtonSize.Medium).Height("30").Width("70").Text("Ok")
+        @Html.EJ().Button("btnCancel").Size(ButtonSize.Mini).Height("30").Width("70").Text("Cancel")
+
+    </div>
+    <div class="condition" style="float:left; margin-left:15px">
+        @Html.EJ().CheckBox("check1").Text("Don't ask me this again")
+    </div>
+</script>
+@(Html.EJ().Dialog("SuccessDial").Title("").ShowFooter(true).FooterTemplateId("sample").ShowOnInit(false)
+    .Containment("hey")
+    )
+@using (Html.BeginForm("Index", "BatchUpload", FormMethod.Post))
+{
+    <div class="frame">
+        <div class="control">
+            <div class="posupload">Select a file to upload</div>
+            @Html.EJ().Uploadbox("UploadDefault").SaveUrl(@Url.Action("Index")).RemoveUrl(@Url.Action("RemoveDefault"))@*.ClientSideEvents(e=> e.Complete("successSave"))*@
+        </div>
+        <div>@ViewBag.Message</div>
+    </div>
+    @*.ClientSideEvents(e=> e.Complete("successSave"))*@
+    //<input type="text" id="sample" name="sample" />
+
+}
+
+<style class="cssStyles">
+    .posupload {
+        padding: 10px;
+        text-align: center;
+    }
+
+    #UploadDefault {
+        margin: 0 auto;
+    }
+</style>
+

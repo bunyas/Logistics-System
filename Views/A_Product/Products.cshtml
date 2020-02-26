@@ -1,0 +1,923 @@
+﻿
+@{
+    ViewBag.Title = "Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Products</h2>
+ 
+@*<script>
+        console.log(JSON.stringify(@Html.Raw(Json.Encode(ViewBag.datasource))));
+    </script>*@
+
+<div id="ControlRegion">
+    @(Html.EJ().Dialog("ErrorList").Title("Exception Thrown").ShowOnInit(false))
+    @(Html.EJ().Dialog("SuccessDial").Title("Record Saved").ShowFooter(true).FooterTemplateId("sample").ShowOnInit(false))
+    @(Html.EJ().Dialog("basicDialog").Title("Warning")@*.ShowFooter(true).FooterTemplateId("sample")*@.ShowOnInit(false))
+    @(Html.EJ().Dialog("CancelDial").Title("Record Not Saved").ShowFooter(true).FooterTemplateId("cancelfooter").ShowOnInit(false))
+    @*@{Html.EJ().Dialog("basicDialog").Containment(".control").Title("Software Installation Agreement").ContentTemplate(
+            @<div class="cnt">
+                Do you really leave the session?
+            </div>).Target(".control").ShowFooter(true).FooterTemplateId("sample").ClientSideEvents(evt => evt.Close("onDialogClose")).Render();
+        }*@
+
+    @(Html.EJ().Grid<object>("Grid")
+          // .Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.datasource).UpdateURL("DialogInsert").InsertURL("DialogInsert").RemoveURL("DialogDelete").Adaptor(AdaptorType.RemoteSaveAdaptor))
+          .Datasource(datasource => datasource.URL("BatchData").UpdateURL("DialogInsert").InsertURL("DialogInsert").RemoveURL("DialogDelete").Adaptor(AdaptorType.UrlAdaptor))
+       // .Datasource(datasource => datasource.URL("GetComplaints")/*.UpdateURL("DialogUpdate").InsertURL("DialogInsert")*/.RemoveURL("DialogDelete").Adaptor(AdaptorType.UrlAdaptor))
+       .AllowSearching(true)
+    .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+
+    .ContextMenuSettings(contextMenu =>
+    {
+        contextMenu.EnableContextMenu();
+    })
+    .AllowPaging()
+     .AllowFiltering().ShowColumnChooser()
+    .AllowPaging()
+         .AllowFiltering().ShowColumnChooser()
+        .AllowTextWrap()
+        .AllowGrouping()
+        .ShowColumnChooser()
+        .SelectionType(SelectionType.Multiple)
+        .AllowScrolling()
+         .ScrollSettings(col => { col.Width("100%").Height(450); })
+        .IsResponsive(true)
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })
+        .ToolbarSettings(toolbar =>
+        {
+            toolbar.ShowToolbar().ToolbarItems(items =>
+            {
+                items.AddTool(ToolBarItems.Add);
+                items.AddTool(ToolBarItems.Edit);
+                items.AddTool(ToolBarItems.Delete);
+                items.AddTool(ToolBarItems.Update);
+                items.AddTool(ToolBarItems.Cancel);
+                items.AddTool(ToolBarItems.Search);
+                items.AddTool(ToolBarItems.ExcelExport);
+                //items.AddTool(ToolBarItems.WordExport);
+                //items.AddTool(ToolBarItems.PdfExport);
+            });
+        })
+    .Columns(col =>
+    {
+        col.Field("product_code").HeaderText("Product Code").IsPrimaryKey(true).Width(150).EditType(EditingType.NumericEdit).ValidationRules(rule =>
+                        rule.AddRule("customCompare", new List<object>() { 0, 1000 })).Add();
+        col.Field("product_description").HeaderText("Product Description").ValidationRules(v => v.AddRule("customRegex", 1)).TextAlign(TextAlign.Left).Width(300).Add();
+        col.Field("TracerCommodity").HeaderText("Is it A Tracer Commodity").TextAlign(TextAlign.Left).Width(150).Add();
+        //col.Field("strength").HeaderText("Strength").TextAlign(TextAlign.Left).Width(150).Add();
+        col.Field("carton_size_pkt").Visible(false).HeaderText("Carton Packet Size").TextAlign(TextAlign.Left).Width(150).Add();
+        col.Field("carton_weight_kg").Visible(false).HeaderText("Carton Weight (Kg)").TextAlign(TextAlign.Left).Width(150).Add();
+        col.Field("product_category").HeaderText("Product Category").TextAlign(TextAlign.Left).ForeignKeyField("category_code").ForeignKeyValue("category_desc").DataSource((IEnumerable<object>)ViewBag.product_Category).Width(150).Add();
+        col.Field("Basic_Unit").Visible(true).HeaderText("Form").TextAlign(TextAlign.Left).ForeignKeyField("ItemCode").ForeignKeyValue("ItemForm").DataSource((IEnumerable<object>)ViewBag.DrugBasicUnits).Width(150).Add();
+        col.Field("approved_MOH_NTG").HeaderText("Approved by MOH NTG").Type("boolean").TextAlign(TextAlign.Left).Width(150).Add();
+        col.Field("approved_WHO").HeaderText("Approved by WHO").Type("boolean").TextAlign(TextAlign.Left).Width(150).Add();
+        col.Field("approved_FDA").HeaderText("Approved FDA").Type("boolean").TextAlign(TextAlign.Left).Width(150).Add();
+        col.Field("nda_registration").HeaderText("NDA Registration").TextAlign(TextAlign.Left).Width(150).Add();
+        col.Field("SAP_code").HeaderText("SAP_code").TextAlign(TextAlign.Left).Width(150).Add();
+        col.Field("ConsummableProduct").Visible(false).HeaderText("Consummable Product").Type("boolean").TextAlign(TextAlign.Left).Width(150).Add();
+        col.Field("ART_product_classification").Visible(false).HeaderText("ART Product Classification").TextAlign(TextAlign.Left).Width(150).Add();
+        col.Field("NMS_Codes").Visible(false).HeaderText("NMS Code").TextAlign(TextAlign.Left).Width(150).Add();
+        col.Field("ProductStatusId").HeaderText("Product Status").TextAlign(TextAlign.Left).ForeignKeyField("ProductStatusId").ForeignKeyValue("ProductStatus").DataSource((IEnumerable<object>)ViewBag.productStatus).Width(150).Add();
+        col.Field("ProductExpires").Visible(false).HeaderText("Product Expires").Type("boolean").TextAlign(TextAlign.Left).Width(150).Add();
+        col.Field("TracerCommodity").Visible(false).HeaderText("Tracer Commodity").Type("boolean").TextAlign(TextAlign.Left).Width(150).Add();
+        col.Field("ProductTypeId").HeaderText("Product Type").TextAlign(TextAlign.Left).ForeignKeyField("ProductTypeId").ForeignKeyValue("ProductType").DataSource((IEnumerable<object>)ViewBag.productType).Width(150).Add();
+        col.Field("ProductClassification").HeaderText("Product Classification").TextAlign(TextAlign.Left).ForeignKeyField("ID").ForeignKeyValue("Classification").DataSource((IEnumerable<object>)ViewBag.productClass).Width(150).Add();
+        
+
+    })
+    //.ClientSideEvents(evt => evt.ActionBegin("onActionBegin").ActionComplete("edit").ActionFailure("failure"))
+    .ClientSideEvents(events => events.ActionComplete("edit").ActionFailure("failure").ToolbarClick("OnToolbarClick"))
+    )
+
+</div>
+
+
+<script type="text/template" id="template">
+    <b>Product</b>
+    <div id="defaultTab">
+        <table cellspacing="5">
+            <tr>
+                <td colspan="4" style="color:red;"> The fields with an asterisk(<span style="color:red;">*</span>) are considered mandatory</td>
+            </tr>
+            <tr>
+
+                <td style="text-align: right;">Product Code <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="product_code" name="product_code" value="{{:product_code}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Product Description <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="product_description" name="product_description" value="{{:product_description}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: right;">Strength <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="strength" name="strength" value="{{:strength}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Packsize <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="packsize" name="packsize" value="{{:packsize}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: right;">Carton Size (Pkt)</td>
+                <td style="text-align: left"> <input type="text" id="carton_size_pkt" name="carton_size_pkt" value="{{:carton_size_pkt}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Carton Weight (kg)</td>
+                <td style="text-align: left"> <input type="text" id="carton_weight_kg" name="carton_weight_kg" value="{{:carton_weight_kg}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: right;">Product Category <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="product_category" name="product_category" value="{{:product_category}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Basic Unit <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="Basic_Unit" name="Basic_Unit" value="{{:Basic_Unit}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: right;">Approved by MOH NTG</td>
+                <td style="text-align: left">
+                    {{if approved_MOH_NTG}}
+                    <input type="checkbox" id="approved_MOH_NTG" name="approved_MOH_NTG" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                    {{else}}
+                    <input type="checkbox" id="approved_MOH_NTG" name="approved_MOH_NTG" class="e-field e-checkbox" style="width:30px" />
+                    {{/if}}
+                </td>
+
+
+                <td style="text-align: right;">Approved by WHO</td>
+
+                <td style="text-align: left">
+                    {{if approved_WHO}}
+                    <input type="checkbox" id="approved_WHO" name="approved_WHO" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                    {{else}}
+                    <input type="checkbox" id="approved_WHO" name="approved_WHO" class="e-field e-checkbox" style="width:30px" />
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">Approved by FDA</td>
+                <td style="text-align: left">
+                    {{if approved_FDA}}
+                    <input type="checkbox" id="approved_FDA" name="approved_FDA" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                    {{else}}
+                    <input type="checkbox" id="approved_FDA" name="approved_FDA" class="e-field e-checkbox" style="width:30px" />
+                    {{/if}}
+                </td>
+
+                <td style="text-align: right;">NDA Registration<span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="nda_registration" name="nda_registration" value="{{:nda_registration}}" class="e-field e-ejinputtext valid " /> </td>
+
+
+
+            </tr>
+            <tr>
+                <td style="text-align: right;">SAP code <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="SAP_code" name="SAP_code" value="{{:SAP_code}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Consummable Product</td>
+                <td style="text-align: left">
+                    {{if ConsummableProduct}}
+                    <input type="checkbox" id="ConsummableProduct" name="ConsummableProduct" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                    {{else}}
+                    <input type="checkbox" id="ConsummableProduct" name="ConsummableProduct" class="e-field e-checkbox" style="width:30px" />
+                    {{/if}}
+                </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: right;">ART Product Classification</td>
+                <td style="text-align: left"> <input type="text" id="ART_product_classification" name="ART_product_classification" value="{{:ART_product_classification}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">NMS Codes</td>
+                <td style="text-align: left"> <input type="text" id="NMS_Codes" name="NMS_Codes" value="{{:NMS_Codes}}" class="e-field e-ejinputtext valid " /> </td>
+
+
+            </tr>
+            <tr>
+                <td style="text-align: right;">Product Status <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="ProductStatusId" name="ProductStatusId" value="{{:ProductStatusId}}" class="e-field e-ejinputtext valid " /> </td>
+
+                <td style="text-align: right;">Product Expires</td>
+                <td style="text-align: left">
+                    {{if ProductExpires}}
+                    <input type="checkbox" id="ProductExpires" name="ProductExpires" checked="checked" class="e-field e-checkbox valid" style="width:30px" />
+                    {{else}}
+                    <input type="checkbox" id="ProductExpires" name="ProductExpires" class="e-field e-checkbox valid" style="width:30px" />
+                    {{/if}}
+
+                </td>
+
+            </tr>
+            <tr>
+                <td style="text-align: right;">Tracer Commodity</td>
+                <td style="text-align: left">
+                    {{if TracerCommodity}}
+                    <input type="checkbox" id="TracerCommodity" name="TracerCommodity" checked="checked" class="e-field e-checkbox valid" style="width:30px" />
+                    {{else}}
+                    <input type="checkbox" id="TracerCommodity" name="TracerCommodity" class="e-field e-checkbox valid" style="width:30px" />
+                    {{/if}}
+                </td>
+                <td style="text-align: right;">ProductTypeId <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="ProductTypeId" name="ProductTypeId" value="{{:ProductTypeId}}" class="e-field e-ejinputtext valid " /> </td>
+
+            </tr>
+
+
+        </table>
+
+    </div>
+
+</script>
+
+<script id="sample" type="text/x-jsrender">
+    <div class="footerspan" style="float:right">
+
+        @Html.EJ().Button("btn1").Size(ButtonSize.Medium).Height("30").Width("70").Text("Ok")
+
+        @*@Html.EJ().Button("btn2").Size(ButtonSize.Mini).Height("30").Width("70").Text("Cancel")*@
+
+    </div>
+    @*<div class="condition" style="float:left; margin-left:15px">
+            @Html.EJ().CheckBox("check1").Text("Don't ask me this again")
+        </div>*@
+
+</script>
+
+<script id="cancelfooter" type="text/x-jsrender">
+    <div class="footerspan" style="float:right">
+        @Html.EJ().Button("btnOK").Size(ButtonSize.Medium).Height("30").Width("70").Text("Ok")
+        @Html.EJ().Button("btnCancel").Size(ButtonSize.Mini).Height("30").Width("70").Text("Cancel")
+
+    </div>
+    <div class="condition" style="float:left; margin-left:15px">
+        @Html.EJ().CheckBox("check1").Text("Don't ask me this again")
+    </div>
+</script>
+<script>
+    function OnToolbarClick(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["ProductsData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+            //this.model["CDCRegions"] = JSON.stringify(this.model.currentViewData);
+        }
+    }
+</script>
+<script>
+    function edit(args) {
+
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+            $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+            $("#EditDialog_Grid_Cancel").ejButton("destroy");
+            $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+            $("#cancel").css({ "width": "100px", "height": "50px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+
+
+            //alert("approved_WHO: " + vvv + " ;approved_FDA: " + vvv2 + " ;approved_FDA: " + vvv3);
+            var pcList = $('#product_category').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.product_Category)),
+                width: "240px",
+                fields: { value: "category_code", text: "category_desc" },
+
+            }).data("ejDropDownList");
+
+            var buList = $('#Basic_Unit').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.DrugBasicUnits)),
+                width: "240px",
+                fields: { value: "ItemCode", text: "ItemForm" },
+
+            }).data("ejDropDownList");
+
+            var psList = $('#ProductStatusId').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.productStatus)),
+                width: "240px",
+                fields: { value: "ProductStatusId", text: "ProductStatus" },
+            }).data("ejDropDownList");
+
+            var psList = $('#ProductTypeId').ejDropDownList({
+                dataSource:  @Html.Raw(Json.Encode(ViewBag.productType)),
+                width: "240px",
+                fields: { value: "ProductTypeId", text: "ProductType" },
+
+            }).data("ejDropDownList");
+
+            var YesNo =@Html.Raw(Json.Encode(ViewBag.YesNo));
+            var ndaList = $('#nda_registration').ejDropDownList({
+                dataSource:  YesNo,
+                width: "240px",
+                fields: { value: "yes_no_id", text: "yes_no_desc" },
+
+            }).data("ejDropDownList");
+            //alert(args.requestType);
+            if (args.requestType == "beginedit") {
+                var cpname = $('#product_description').val();
+                //alert(this._id + '_dialogEdit');
+                $('#' + this._id + '_dialogEdit').ejDialog("option", "title", cpname); //change dialog title
+            }
+
+            //$("#approved_FDA").ejCheckBox({ size: "medium"/*, checked: true*/ });
+            //$("#ConsummableProduct").ejCheckBox({ size: "small"/*, checked: true*/ });
+            //$("#approved_MOH_NTG").ejCheckBox({ size: "large"/*, checked: true*/ });
+            //$("#ProductExpires").ejCheckBox({ size: "medium"/*, checked: true*/ });
+            //$("#TracerCommodity").ejCheckBox({ size: "medium"/*, checked: true*/ });
+
+            //$("#approved_WHO").ejCheckBox({ size: "mediun"/*, checked: true*/ });
+
+            //if ($("#approved_WHO").val() == "true")
+            //    $("#approved_WHO").ejCheckBox(/*{ size: "medium", checked: true }*/);
+            //else
+            //    $("#approved_WHO").ejCheckBox(/*{ size: "medium", checked: false }*/);
+
+
+        }
+        if (args.requestType == "save") {
+            successSave();
+        }
+    }
+
+
+
+    ///Function to return the dd-mm-YYYY format
+      $.validator.setDefaults({
+        //to validate all fields(hidden also)
+        ignore: [],
+
+        errorClass: 'e-validation-error',
+        //it specifies the error message display position
+        errorPlacement: function (error, element) {
+            $(error).insertAfter(element.closest(".e-widget"));
+        },
+    });
+
+
+</script>
+
+<script>
+      function savess() {
+
+          var _product_code = $('#product_code').val();
+          var _product_description = $('#product_description').val();
+          var _SAP_code = $('#SAP_code').val();
+          var _packsize = $('#packsize').val();
+          var _strength = $('#strength').val();
+          var _product_category = $('#product_category').data("ejDropDownList").option("value");
+          var _Basic_Unit = $('#Basic_Unit').data("ejDropDownList").option("value");
+          var _ProductStatusId = $('#ProductStatusId').data("ejDropDownList").option("value");
+          var _ProductTypeId = $('#ProductTypeId').data("ejDropDownList").option("value");
+          var _nda_registration = $('#nda_registration').data("ejDropDownList").option("value");
+          // var _cp_category = $('#cp_category').data("ejDropDownList").option("value");
+          if (_product_code == null || _product_code==""){
+              var str = "Please fill in the Product code";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_product_description == null || _product_description == ""){
+              var str = "Please fill in the Product description";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_SAP_code == null || _SAP_code == "") {
+              var str = "Please fill in the SAP code";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_packsize == null || _packsize == "") {
+              var str = "Please fill in the Pack size";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_strength == null || _strength == "") {
+              var str = "Please fill in the Strength";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_product_category == null || _product_category == "") {
+              var str = "Please select in the Product category";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_Basic_Unit == null || _Basic_Unit == "") {
+              var str = "Please Select in the Basic Unit";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_ProductStatusId == null || _ProductStatusId == "") {
+              var str = "Please select in the Product status";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_ProductTypeId == null || _ProductTypeId == "") {
+              var str = "Please select in the Product Type";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_nda_registration == null || _nda_registration == "") {
+              var str = "Please select in the NDA Registration";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else {
+
+              var obj = $("#Grid").ejGrid("instance");
+              obj.endEdit();
+              obj.refreshContent();
+          }
+
+
+      }
+      function cancelss() {
+          cancelSave();
+
+      }
+
+      function failure(args) {
+          $("#Grid").ejWaitingPopup("hide");
+          var str = "";
+          str = ($($(args.error.responseText).find('b')[0]).text() + ":" + $(args.error.responseText).find('i').text());
+          $("#ErrorList").html('<p style="font-family: cursive;color: red;">' + str + '</p></br><button id="button1" style="size: large; showRoundedCorner: true; cssClass:customCss1">---OK---</button>');
+          $("#button1").ejButton({
+
+              click: function (args) {
+                  $("#ErrorList").ejDialog("close");
+              }
+          });
+          $("#ErrorList").ejDialog({ enableModal: true });
+          $("#ErrorList").ejDialog("open");
+      }
+
+      function cancelSave(args) {
+          $("#Grid").ejWaitingPopup("hide");
+          var proddesc = $('#product_description').val();
+          var str = "The edits on "  + " have been Cancelled!!!";
+          //$("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+          $("#CancelDial").html('<p style="font-family: cursive;color: red;">' + str /*+ '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>'*/);
+
+          var obj = $("#Grid").ejGrid("instance")
+          obj.cancelEdit();
+          $("#btnOK").ejButton({
+              cssClass: "e-danger",
+              size: "large",
+              showRoundedCorner: true,
+              contentType: "textandimage",
+              prefixIcon: "e-icon e-handup",
+              visible: false,
+              style: "float:right",
+              click: function (args) {
+
+                  $("#CancelDial").ejDialog("close");
+              }
+          });
+
+          $("#CancelDial").ejDialog({ enableModal: true });
+          $("#CancelDial").ejDialog("open");
+      }
+
+      function successSave(args) {
+          $("#Grid").ejWaitingPopup("hide");
+          var proddesc = $('#product_description').val();
+          var str = "Record" + " Saved Successfully!!!";
+
+          //$("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+          $("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str /*+ '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>'*/);
+
+
+          $("#btn1").ejButton({
+              cssClass: "e-primary",
+              size: "large",
+              showRoundedCorner: true,
+              contentType: "textandimage",
+              prefixIcon: "e-icon e-handup",
+              visible: false,
+              style: "float:right",
+              click: function (args) {
+                  $("#SuccessDial").ejDialog("close");
+              }
+          });
+
+          $("#button1").ejButton({
+              cssClass: "e-success",
+              size: "medium",
+              showRoundedCorner: true,
+              contentType: "textandimage",
+              prefixIcon: "e-icon e-handup",
+
+              click: function (args) {
+                  $("#SuccessDial").ejDialog("close");
+              }
+          });
+          $("#SuccessDial").ejDialog({ enableModal: true });
+          $("#SuccessDial").ejDialog("open");
+      }
+
+      function onActionBegin(args) {
+          if (args.requestType == "save") {
+              //  alert('Save Called!!!');
+              args.data["testVar"] = "Peter";//dateTimeObj2;
+
+              window.uploadData["editData"] = new FormData();
+              //alert(window.uploadData.url);
+              //Converting the grid data to form data to send files to controller
+              for (var d in args.data)
+                  uploadData.editData.append(d, args.data[d]);
+
+              proxy = this;
+              $.ajax({
+                  url: window.uploadData.url,
+                  type: 'POST',
+                  data: window.uploadData.editData,
+                  contentType: false,
+                  processData: false,
+                  success: function (data) {
+                      proxy.refreshContent();
+                      console.log(data.msg);
+                      //  alert('Successss !!!!!');
+                      successSave(data.msg);
+
+                  }
+              });
+
+          }
+
+      }
+
+      function create() {
+          return $("<input>");
+      }
+      function write(args) {
+          args.element.ejMaskEdit({
+              maskFormat: "99-99-9999",
+              value: args.rowdata["ShipPostalCode"]
+          });
+      }
+      function read(args) {
+          return args.ejMaskEdit("get_StrippedValue");
+      }
+      $(function () {
+          $.validator.addMethod("customCompare", function (value, element, params) {
+              return element.value > params[0]/* && element.value < params[1]*/;
+          }, "Product Code must be greater than");
+
+          $.validator.addMethod("customRegex", function (value, element, params) {
+              if (element.value.length >= params)
+                  return true;
+              return false;
+          }, "Product Description must be entered");
+      });
+</script>
+
+
+<style type="text/css" class="cssStyles">
+    /* Customize the button background */
+    .e-button.customCss1 {
+        background-color: #121111;
+    }
+
+    .e-button.customCss2 {
+        background-color: #94bbd5;
+    }
+
+    .e-button.customCss3 {
+        background-color: #f3533c;
+    }
+
+    .e-button.customCss4 {
+        background-color: #d1eeed;
+    }
+
+    .e-button.customCss5 {
+        background-color: #deb66e;
+    }
+    /* Customize the button image & text color */
+    .e-button.customCss1.e-btn.e-select .e-icon, .e-button.customCss1.e-btn.e-select .e-btntxt {
+        color: #94bbd5;
+    }
+
+    .e-button.customCss2.e-btn.e-select .e-icon, .e-button.customCss2.e-btn.e-select .e-btntxt {
+        color: #121111;
+    }
+
+    .e-button.customCss3.e-btn.e-select .e-icon, .e-button.customCss3.e-btn.e-select .e-btntxt {
+        color: #cef6f7;
+    }
+
+    .e-button.customCss5.e-btn.e-select .e-icon, .e-button.customCss5.e-btn.e-select .e-btntxt {
+        color: #534f4f;
+    }
+</style>
+
+
+<style>
+    .e-grid .e-groupdroparea, /*GroupDropArea */
+    .e-grid .e-groupdroparea:hover, /*GroupDropArea Hover*/
+    .e-grid .e-cloneproperties, /*Column header clone during dragging header*/
+    .e-grid .e-groupheadercell:hover, /*HeaderCell in GroupDropArea*/
+    .e-grid td.e-active, /*During Row Selected*/
+    /*For pager items and their hover*/
+    .e-pager .e-currentitem,
+    .e-pager .e-currentitem:hover,
+    .e-pager .e-link:hover,
+    .e-pager .e-icon:hover {
+        background-color: #ea1b8d;
+    }
+
+    .e-grid .e-gridheader /*For line that separates the grid header and content*/ {
+        border-bottom-color: #ea1b8d;
+    }
+
+    .e-grid tr.e-hover /*For row hover*/ {
+        background-color: #e66aae;
+        color: #FFFFFF;
+    }
+
+    .e-grid .e-alt_row /*For Alternate row color*/ {
+        background-color: #E5E4E2; /*#99CFE3;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+        border-bottom: 1px solid #c8c8c8;
+        border-left: 1px solid #c8c8c8;
+    }
+</style> 
+
+<style>
+    .e-grid .e-groupdroparea, /*GroupDropArea */
+    .e-grid .e-groupdroparea:hover, /*GroupDropArea Hover*/
+    .e-grid .e-cloneproperties, /*Column header clone during dragging header*/
+    .e-grid .e-groupheadercell:hover, /*HeaderCell in GroupDropArea*/
+    .e-grid td.e-active, /*During Row Selected*/
+    /*For pager items and their hover*/
+    .e-pager .e-currentitem,
+    .e-pager .e-currentitem:hover,
+    .e-pager .e-link:hover,
+    .e-pager .e-icon:hover {
+        background-color: #ea1b8d;
+    }
+
+    .e-grid .e-gridheader /*For line that separates the grid header and content*/ {
+        border-bottom-color: #ea1b8d;
+    }
+
+    .e-grid tr.e-hover /*For row hover*/ {
+        background-color: #e66aae;
+        color: #FFFFFF;
+    }
+
+    .e-grid .e-alt_row /*For Alternate row color*/ {
+        background-color: #E5E4E2; /*#99CFE3;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+        border-bottom: 1px solid #c8c8c8;
+        border-left: 1px solid #c8c8c8;
+    }
+</style>
+<style>
+    .panel-default > .panel-heading {
+        background-color: #451bb1 /*#3e1111*/;
+        color: white;
+        /*background-color:silver;*/
+        /*color: white;*/
+    }
+</style>
+
+<style type="text/css" class="cssStyles">
+    .control {
+        margin-left: 30px;
+    }
+
+    .ctrllabel {
+        padding-top: 15px;
+    }
+
+    .control {
+        margin-left: 20px;
+    }
+
+    .frame {
+        height: 250px;
+        width: 1000px;
+    }
+
+    .frame1 {
+        height: 240px;
+        width: 900px;
+    }
+
+    .txt {
+        display: block;
+        margin-bottom: 12px;
+    }
+</style>
+
+<style>
+    #lblComplaintTitle {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #c9252b;
+        vertical-align: top;
+        /*width: 700px;*/
+    }
+
+    .redLabels {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #ff0000;
+        vertical-align: top;
+        font-weight: bold;
+        /*width: 700px;*/
+    }
+
+    .myDiv {
+        font-size: 18px;
+        background-color: white;
+        color: orangered;
+        vertical-align: top;
+        text-align: center;
+        /*width: 700px;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+    }
+
+    .custom.e-js .e-header {
+        background: #c9252b;
+    }
+
+    .custom.e-js .e-content {
+        background: #ddd;
+    }
+
+    .custom .e-rbn-button.e-btn.e-select {
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    .tabstyle {
+        background: #F9F9F9;
+        border-radius: 10px;
+        border: 1px solid #99CFE3;
+        display: block;
+    }
+
+    .longcolumns {
+        width: 600px !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        border-right: 5px #666 outset !important;
+        border-left: 5px #666 outset !important;
+    }
+</style>

@@ -1,0 +1,510 @@
+﻿
+@{
+    ViewBag.Title = " Emergency";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+ 
+<script>
+    window._StockonHand = 0;
+    function failure(args) {
+        $("#Grid").ejWaitingPopup("hide");
+        var str = "";
+        str = ($($(args.error.responseText).find('b')[0]).text() + ":" + $(args.error.responseText).find('i').text());
+        $("#ErrorList").html('<p style="font-family: cursive;color: red;">' + str + '</p></br><button id="button1" style="size: large; showRoundedCorner: true; cssClass:customCss1">---OK---</button>');
+        $("#button1").ejButton({
+
+            click: function (args) {
+                $("#ErrorList").ejDialog("close");
+            }
+        });
+        $("#ErrorList").ejDialog({ enableModal: true });
+        $("#ErrorList").ejDialog("open");
+    }
+
+    function successSave(args) {
+        //alert(window._Event);
+        if (window._Event == "beginedit" || window._Event == "add") { }
+        else {
+
+            $("#Grid").ejWaitingPopup("hide");
+
+            var proddesc = $('#ClubID').val();
+            var str = "Record" + " Saved Successfully!!!";
+
+            //$("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+            $("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str /*+ '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>'*/);
+
+
+            $("#btn1").ejButton({
+                cssClass: "e-primary",
+                size: "large",
+                showRoundedCorner: true,
+                contentType: "textandimage",
+                prefixIcon: "e-icon e-handup",
+                visible: false,
+                style: "float:right",
+                click: function (args) {
+                    $("#SuccessDial").ejDialog("close");
+                }
+            });
+
+            $("#button1").ejButton({
+                cssClass: "e-success",
+                size: "medium",
+                showRoundedCorner: true,
+                contentType: "textandimage",
+                prefixIcon: "e-icon e-handup",
+
+                click: function (args) {
+                    $("#SuccessDial").ejDialog("close");
+                }
+            });
+            $("#SuccessDial").ejDialog({ enableModal: true });
+            $("#SuccessDial").ejDialog("open");
+        }
+
+
+    }
+
+    function cancelSave(args) {
+        $("#Grid").ejWaitingPopup("hide");
+        var proddesc = $('#ClubID').val();
+        var str = "The edits on "  + " have been Cancelled!!!";
+        //$("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+        $("#CancelDial").html('<p style="font-family: cursive;color: red;">' + str /*+ '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>'*/);
+
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+        $("#btnOK").ejButton({
+            cssClass: "e-danger",
+            size: "large",
+            showRoundedCorner: true,
+            contentType: "textandimage",
+            prefixIcon: "e-icon e-handup",
+            visible: false,
+            style: "float:right",
+            click: function (args) {
+
+                $("#CancelDial").ejDialog("close");
+            }
+        });
+
+        $("#CancelDial").ejDialog({ enableModal: true });
+        $("#CancelDial").ejDialog("open");
+    }
+</script>
+@section BreadCrumb{
+    <script id="sample" type="text/x-jsrender">
+        <div class="footerspan" style="float:right">
+
+            @Html.EJ().Button("btn1").Size(ButtonSize.Medium).Height("30").Width("70").Text("Ok")
+
+            @*@Html.EJ().Button("btn2").Size(ButtonSize.Mini).Height("30").Width("70").Text("Cancel")*@
+
+        </div>
+        @*<div class="condition" style="float:left; margin-left:15px">
+                @Html.EJ().CheckBox("check1").Text("Don't ask me this again")
+            </div>*@
+    </script>
+
+    <script id="cancelfooter" type="text/x-jsrender">
+        <div class="footerspan" style="float:right">
+            @Html.EJ().Button("btnOK").Size(ButtonSize.Medium).Height("30").Width("70").Text("Ok")
+            @Html.EJ().Button("btnCancel").Size(ButtonSize.Mini).Height("30").Width("70").Text("Cancel")
+
+        </div>
+        <div class="condition" style="float:left; margin-left:15px">
+            @Html.EJ().CheckBox("check1").Text("Don't ask me this again")
+        </div>
+    </script>
+    @(Html.EJ().Dialog("ErrorList").Title("Exception Thrown").ShowOnInit(false))
+    @(Html.EJ().Dialog("SuccessDial").Title("Record Saved").ShowFooter(true).FooterTemplateId("sample").ShowOnInit(false))
+    @(Html.EJ().Dialog("CancelDial").Title("Record Not Saved").ShowFooter(true).FooterTemplateId("cancelfooter").ShowOnInit(false))
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexHSIP", "Home")
+                </li>
+                <li class="active">
+                    <strong>HIV Testkits:Emergency Orders Allocation Index</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+@(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("DataSourceAllocationHSIP_Emergemcy").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+         .AllowFiltering().ShowColumnChooser()
+        .AllowTextWrap()
+        .AllowGrouping()
+
+        //.AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+                //fields.Add("Outcome");
+                //fields.Add("Output");
+                //fields.Add("Indicator");
+                //fields.Add("Indicator_2");
+                //fields.Add("PerformanceTargetNotes");
+                //fields.Add("ExplanatoryNotes");
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })//.EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    //items.AddTool(ToolBarItems.Add);
+                    items.AddTool(ToolBarItems.Edit);
+                    items.AddTool(ToolBarItems.Update);
+                    items.AddTool(ToolBarItems.Cancel);
+                    items.AddTool(ToolBarItems.Search);
+                });
+            })
+        .Columns(col =>
+        {
+            col.Field("OrderTypeId").AllowEditing(false).Visible(false).Width(100).HeaderText("Order Type").IsPrimaryKey(true).Add();
+            col.Field("OrderType").AllowEditing(false).Width(100).HeaderText("Order Type").IsPrimaryKey(true).Add();
+            col.Field("item_code").AllowEditing(false).Width(100).HeaderText("Product Code").IsPrimaryKey(true).Add();
+            col.Field("product_description").AllowEditing(false).Width(400).HeaderText("Product").IsPrimaryKey(false).Add();
+            //col.Field("DatePrepared").AllowEditing(false).Width(100).HeaderText("Date Prepared").IsPrimaryKey(true).Format("{0:dd/MM/yyyy}").Add();
+            //col.Field("OrderStatusId").AllowEditing(true).HeaderText("Order Status").ForeignKeyField("StatusId").ForeignKeyValue("Status").DataSource((IEnumerable<Object>)ViewBag.OrderStatusDataSource).Add();
+            col.Field("EmergencyOrder").EditType(EditingType.BooleanEdit).Width(120).AllowEditing(false).HeaderText("Emergency Order").Add();
+            col.HeaderText("Allocation List").Commands(command =>
+            {
+                command.Type("detail")
+                   .ButtonOptions(new Syncfusion.JavaScript.Models.ButtonProperties()
+                   {
+                       Text = "Details",
+                       Width = "100px",
+                       Click = "onClick"
+                   }).Add();
+            })
+                .TextAlign(TextAlign.Center)
+                .Width(150)
+                .Add();
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete").ActionFailure("failure"); })
+)
+
+<script type="text/template" id="template">
+    <div style="max-width:1450px;">
+        <div class="row">
+            <div class="col-lg-3">
+                <p>SAP Stock on Hand</p>
+                <p><input type="text" id="StockOnHand" readonly name="StockOnHand" value="{{:StockOnHand}}" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>Total Allocation</p>
+                <p><input type="text" id="TotalAllocation" readonly name="TotalAllocation" value="{{:TotalAllocation}}" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>Stock on Hand After:</p>
+                <p><input type="text" id="StockOnHandAfter" readonly name="StockOnHandAfter" value="{{:StockOnHandAfter}}" class="e-field e-ejinputtext valid" /></p>
+            </div>
+
+        </div>
+
+        <hr />
+        <div id="defaultTab" style="width: 100%;">
+            <ul>
+                <li><a href="#tab1"> ALLOCATIONS BY PRODUCT</a></li>
+            </ul>
+
+            <div id="tab1">
+                <div class="myDiv">
+                </div>
+                <div style="min-height:400px;">
+                    <div id="order_grid"></div>
+                </div>
+            </div>
+        </div>
+        <br />
+        </div>
+</script>
+
+<script>
+
+    function open(args) {
+
+        var objDialog = $("#Grid").data("ejGrid");
+        var $dialogWrapper = objDialog.element.find("#" + objDialog._id + "_dialogEdit_wrapper");
+        $dialogWrapper.css("top", "0px");
+        $dialogWrapper.css("left", "0px");
+    }
+
+
+    function complete(args) {
+        if ((args.requestType == "beginedit" || args.requestType == "add") && args.model.editSettings.editMode == "dialogtemplate") {
+            $('#' + this._id + '_dialogEdit').ejDialog("option", "title", "HIV TEST KITS ORDER ALLOCATION TEMPLATE"); //change dialog title
+            $("#" + this._id + "_dialogEdit").ejDialog({ open: "open" });
+            window._Event = args.requestType;
+            $.ajax({
+                //url: 'HAT/Districts',
+                url: 'GetOrderStatusData',
+                //data: JSON.stringify(mid),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: 'GET',
+                success: function (data) {
+                    if (data.length > 0) {
+                        var DropDownListDist = $('#OrderStatusId').ejDropDownList({
+                            dataSource: data,
+                            width: "240px",
+                            fields: { value: "StatusId", text: "Status" },
+                        }).data("ejDropDownList");
+                    }
+                },
+            });
+            $("#defaultTab").ejTab({ selectedItemIndex: 0 }).ejTab({ showRoundedCorner: true });;
+
+            if (args.requestType == "add") {
+                var nullstr = '';
+                $("#" + this._id + "_dialogEdit").ejDialog({ open: "open" })
+            }
+
+
+            if (args.requestType == "beginedit" || args.requestType == "add") {
+                $("#" + this._id + "_dialogEdit").ejDialog({ open: "open" })
+
+
+                $("#EditDialog_Grid_Save").ejButton("destroy");
+                $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+                $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+                $("#EditDialog_Grid_Cancel").ejButton("destroy");
+                $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+                $("#cancel").css({ "width": "100px", "height": "50px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+
+                var header_grid = $('#Grid').ejGrid('instance');
+
+                if (args.requestType == "beginedit") {
+                    var fc =@Html.Raw(Json.Encode(ViewBag.fc));
+                    var pc =@Html.Raw(Json.Encode(ViewBag.ProductDataSource));
+
+                    var Order_Type = header_grid.getSelectedRecords()[0].OrderTypeId;
+                    var itemcode = header_grid.getSelectedRecords()[0].item_code;
+                    window._Order_Type = Order_Type;
+                    window._itemcode = itemcode;
+                    window._StockonHand = 0;
+                    //Stock on Hand
+                    $.ajax({
+                        //url: 'HAT/Districts',
+                        url: 'GetStockOnHandData',
+                        //data: JSON.stringify(mid),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        type: 'GET',
+                        data: {
+                            "Productcode": itemcode
+                        },
+                        success: function (data) {
+                            document.getElementById('StockOnHand').value = data.OnHand;
+                            window._StockonHand = data.OnHand;
+                        },
+                    });
+
+                    $("#order_grid").ejGrid({
+                        dataSource: ej.DataManager({ url: "GetAllocationEmergency?param_ot=" + Order_Type + "&param_pc=" + itemcode, batchUrl: "UpdateAllocationHSIPEmergency", adaptor: "UrlAdaptor" }),
+                      allowGrouping: false,
+                      editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch' },
+                        allowScrolling: true,
+                        scrollSettings: { width: "100%", height: "auto" },
+                        allowPaging: false,
+                        enableAltRow: true,
+                        allowTextWrap: true,
+                        textWrapSettings: { wrapMode: "both" },
+                        allowResizeToFit: true,
+                        showStackedHeader: true,
+                        isResponsive: true,
+                        enableResponsiveRow: true,
+                        showColumnChooser: true,
+                        allowSorting: true,
+                       // allowSearching: true,
+                        allowFiltering: true,
+                        filterSettings: {
+                            filterType: "excel"
+                        },
+                        create: "create",
+                        cellSave: "cellSave",
+                        actionComplete: "successSave",
+                        actionFailure: "failure",
+                        //begin: "begin",
+                        allowScrolling: true,
+                        columns: [
+                            { field: "OrderNumber", headerText: "Order No.", visible: false, allowEditing: false, isPrimaryKey: true, width: 180 },
+                            { field: "Facility", headerText: "Facility", visible: true, allowEditing: false, width: 100 },
+                            //{ field: "FacilityCode", headerText: "Facility", visible: true, allowEditing: false, width: 150, foreignKeyField: "FacilityCode", foreignKeyValue: "Facility", dataSource: fc },
+                            { field: "DatePrepared", headerText: "Date Prepared", visible: true, allowEditing: false, format: "{0:dd/MMM/yyyy}" },
+                            //{ field: "EndDate", headerText: "End Date", visible: true, allowEditing: false, format: "{0:dd/MMM/yyyy}" },
+                            { field: "item_code", headerText: "Product Code", visible: false, allowEditing: false, width: 70, isPrimaryKey: true },
+                            { field: "item_code", headerText: "Product Description", allowEditing: false, width: 400, foreignKeyField: "product_code", foreignKeyValue: "product_description", dataSource: pc  },
+                            //{ field: "Basic_Unit", headerText: "Basic Unit", allowEditing: false, width: 80 },
+                            { field: "No_Test_Start_2Months", headerText: "No. Tests At Start Of 2 Months", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center },
+                            { field: "Test_Recieved_2Months", headerText: "Tests Received In 2 Months", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center },
+                            { field: "Test_Used_2Months", headerText: "Tests Used In 2 Months", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center },
+                            { field: "Loss_Adjustment", headerText: "Losses / Adjustments", visible: false, allowEditing: false, width: 80, textAlign: ej.TextAlign.Center},
+                            { field: "Test_Remaining", headerText: "Tests Remaining", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center },
+                            { field: "Maximum_Stock", headerText: "Maximum Stock", format: "{0:N1}", allowEditing: false, width: 80, textAlign: ej.TextAlign.Center},
+                            { field: "Quantity_Required", headerText: "Quantity Required", allowEditing: false, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }, textAlign: ej.TextAlign.Center},
+                            { field: "Quantity_Allocated", headerText: "Quantity Allocated", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 }, cssClass: "customCSS", textAlign: ej.TextAlign.Center},
+                            { field: "Notes", headerText: "Notes", allowEditing: false, width: 200 },
+                            { field: "RFSONotes", headerText: "SCTO Notes", allowEditing: true, width: 200 }
+                        ]
+                    });
+                }
+                var nullstr = '';
+            }
+        }
+    }
+
+</script>
+
+<script>
+    function savess() {
+            var obj = $("#Grid").ejGrid("instance");
+            var grd_order = $("#order_grid").ejGrid("instance");
+            //obj.endEdit();
+            //grd_order.batchChanges.changed.push(); 
+            //grd_order.batchSave();
+            window._Event = "Saved";
+            cancelss1();
+    }
+    function cancelss1() {
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+    }
+    function cancelss() {
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+        window._Event = "add";
+        cancelSave();
+    }
+
+    var total = diff = temp = StockDiff = 0;
+
+    var batch = null;
+    function begin(args) {
+        var grid = $("#order_grid").ejGrid("instance");
+        if (args.requestType = "save") {
+            batch = this.batchChanges;
+        }
+    }
+    function create(args) {
+        total = 0;
+        $.ajax({
+            url: "GetAllocationsEmergency?param_ot=" + window._Order_Type + "&param_pc=" + window._itemcode,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'GET',
+
+            success: function (result) {
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        total = total + parseInt(result[i].Quantity_Allocated);
+                    }
+                }
+                StockDiff = parseInt(window._StockonHand) - total;
+                $("#TotalAllocation").val(total);
+                $("#StockOnHandAfter").val(StockDiff);
+            },
+        });
+
+    }
+    var flag = true;
+    function cellSave(args) {
+
+        if (args.columnName == "Quantity_Allocated") {
+
+            if (args.value == args.previousValue) {
+                total = total;
+                StockDiff = parseInt(window._StockonHand) - total;
+            }
+            else if (parseInt(args.value) > parseInt(args.previousValue)) {
+                diff = parseInt(args.value) - parseInt(args.previousValue);
+                total = parseInt(total) + diff; //+ temp;
+                StockDiff = parseInt(window._StockonHand) - total;
+            }
+
+            else if (parseInt(args.value) < parseInt(args.previousValue)) {
+                diff = parseInt(args.previousValue) - parseInt(args.value);
+                total = parseInt(total) - diff; //+ temp;
+                StockDiff = parseInt(window._StockonHand) - total;
+            }
+            $("#TotalAllocation").val(total);
+            $("#StockOnHandAfter").val(StockDiff);//updating the value of the input control with the total
+            // temp = total;
+
+        }
+        if (flag) {
+            args.cancel = true;
+            if ($.inArray(args.rowData, this.batchChanges.changed) == -1)
+                this.batchChanges.changed.push(args.rowData);
+            var batchData = this.getBatchChanges();
+            if (batchData.changed.length > 0 && !$(args.cell).closest("tr").hasClass("e-insertedrow")) {
+                flag = false;
+                this.batchSave();
+                //var gridObj = $("#order_grid").data("ejGrid");
+                //gridObj.refreshContent(false);
+            }
+            else
+                flag = false;
+        }
+        else if (!flag)
+            flag = true;
+    }
+    @*function onClick(args) {
+        var grid = $("#Grid").ejGrid("instance");
+        var order_type = grid.getSelectedRecords()[0].OrderType;
+        var product_code = grid.getSelectedRecords()[0].item_code;
+        location.href = '@Url.Action("AllocationHSIP", "LMIS_HIVTestKits")?order_type=' + order_type + ' & product_code=' + product_code ;
+        //alert(myvistdate);
+    }*@
+</script>
+
+<script>
+
+    function onClick(args) {
+        var grid = $("#Grid").ejGrid("instance");
+        //var param_on = grid.getSelectedRecords()[0].OrderNumber;
+        //var order_status = grid.getSelectedRecords()[0].OrderStatusId;
+        @*location.href = '@Url.Action("GetOrder", "OrderTracking")?param_on=' + param_on;*@
+
+        //var grid = $("#Grid").ejGrid("instance");
+        if (grid.getSelectedRows().length > 0)
+            grid.startEdit(grid.getSelectedRows());
+        else
+            alert(grid.localizedLabels.EditOperationAlert);
+
+    }
+</script>
+<style>
+    .customCSS.e-rowcell {
+        background-color: #EFF5FB;
+        /*font-family: 'Bell MT';
+        font-style: italic;*/
+        /*color: whitesmoke;*/
+        /*font-size: 20px;*/
+        font: large bolder;
+        font-weight: bolder;
+        font-family: 'Times New Roman', Times, serif;
+    }
+</style>
+

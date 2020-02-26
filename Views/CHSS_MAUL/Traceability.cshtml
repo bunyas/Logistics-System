@@ -1,0 +1,429 @@
+﻿
+@{
+    ViewBag.Title = "Traceability";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb" style="margin-top:30px;">
+    <li class="breadcrumb-item">
+        <a href="#">Dashboard</a>
+    </li>
+    <li class="breadcrumb-item active">Traceability of commodities</li>
+</ol>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+
+            <div class="col-md-1"><h6>From:</h6></div>
+            <div class="col-md-3">
+                <input type="text" id="dp_start_date" name="dp_start_date" class=" e-field e-ejinputtext valid" style="width:100%" />
+            </div>
+            <div class="col-md-1"><h6 style="float:right;">TO:</h6></div>
+            <div class="col-md-3">
+                <input type="text" id="dp_end_date" name="dp_end_date" class=" e-field e-ejinputtext valid" style="width:100%" />
+            </div>
+            <div class="col-md-2">
+                <input id="LoadDatabtn" class="btn btn-sm btn-primary" type="button" value="Load Records" onclick="myfunc()" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@{Html.EJ().Tab("defaultTabs").Items(data =>
+    {
+    data.Add().ID("Specialization").Text("Specialisation Details").ContentTemplate(@<div>
+
+        @(Html.EJ().Grid<object>("specialisationGrid")
+            .Datasource((IEnumerable<object>)ViewBag.specialization)
+            .ShowColumnChooser()
+            .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+             {
+                 items.AddTool(ToolBarItems.ExcelExport);
+             }))
+     .AllowSorting() .AllowFiltering().ShowColumnChooser().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+            .Columns(col =>
+
+            {
+
+                col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+                col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Level_Desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+                col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:dd/MM/yyyy}").Add();
+
+                col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+                col.Field("Description").HeaderText("Field of speciality").Width("250").AllowFiltering(false).Add();
+
+                //col.Field("Result").HeaderText("Result").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick")))
+    </div>);
+    data.Add().ID("RequisitionSystem").Text("ART items Requisitioning System").ContentTemplate(@<div>
+
+        @(Html.EJ().Grid<object>("RequisitionGrid")
+            .Datasource((IEnumerable<object>)ViewBag.requisition)
+            .ShowColumnChooser()
+            .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+             {
+                 items.AddTool(ToolBarItems.ExcelExport);
+             }))
+     .AllowSorting() .AllowFiltering().ShowColumnChooser().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+            .Columns(col =>
+
+            {
+
+                col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+                col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Level_Desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+                col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:dd/MM/yyyy}").Add();
+                col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+                col.Field("Q_one").HeaderText(" Are ART commodities requested using requisition and issue voucher?").Width("250").AllowFiltering(false).Add();
+
+                col.Field("Q_two").HeaderText("Are all sections of the requisition and issue voucher completed?").Width("250").AllowFiltering(false).Add();
+
+                col.Field("Q_three").HeaderText("Does this facility requisition ART items once a week").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+                col.Field("Sum").HeaderText("Sum").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+                col.Field("Percentage").HeaderText("Percentage Score").TextAlign(TextAlign.Left).Priority(4).Width("250").AllowFiltering(false).Add();
+
+            }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick1")))
+    </div>);
+    data.Add().ID("Supplier").Text("from supplier/ warehouse to facility store (DN Vs GRN)").ContentTemplate(@<div>
+
+        @(Html.EJ().Grid<object>("SupplierGrid")
+            .Datasource((IEnumerable<object>)ViewBag.suplier)
+            .ShowColumnChooser()
+            .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+             {
+                 items.AddTool(ToolBarItems.ExcelExport);
+             }))
+     .AllowSorting() .AllowFiltering().ShowColumnChooser().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+            .ShowStackedHeader()
+        .StackedHeaderRows(row =>
+        {
+            row.StackedHeaderColumns(column =>
+            {
+                column.HeaderText("quantity and batch \n delivered according to the most recent delivery note from the supplier").Column(col =>
+                {
+                    col.Add("Recent_Delivery_Note_Quantity");
+                    col.Add("Recent_Delivery_Note_Batch");
+                }).Add();
+                column.HeaderText("quantity and batch delivered according to the corresponding Good Received Note").Column(col =>
+                {
+                    col.Add("Responding_Goods_Received_Note_Quantity");
+                    col.Add("Responding_Goods_Received_Batch");
+                }).Add();
+                column.HeaderText(" quantity and batch recorded as received in the Stock card for the delivery made in (a) above").Column(col =>
+                {
+                    col.Add("Received_Stock_Card_Quantity");
+                    col.Add("Received_Stock_Card_Note_Batch");
+                }).Add();
+            }).Add();
+        })
+        .Columns(col =>
+
+        {
+
+            col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+            col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("Level_Desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+            col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+            col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:dd/MM/yyyy}").Add();
+
+            col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+            col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+            col.Field("product_description").HeaderText("Product name").Width("200").AllowFiltering(true).Add();
+
+            col.Field("packsize").HeaderText("Pack size").Width("80").AllowFiltering(false).Add();
+
+            col.Field("Recent_Delivery_Note_Quantity").HeaderText("Quantity(a)").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            col.Field("Recent_Delivery_Note_Batch").HeaderText("Batch(a)").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            col.Field("Responding_Goods_Received_Note_Quantity").HeaderText("Quantity(b)").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            col.Field("Responding_Goods_Received_Batch").HeaderText("Batch(b)").Width("100").AllowFiltering(false).Add();
+
+            col.Field("Received_Stock_Card_Quantity").HeaderText("Quantity(c)").Width("100").AllowFiltering(false).Add();
+
+            col.Field("Received_Stock_Card_Note_Batch").HeaderText("Batch(c)").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            col.Field("Batch_Comp").HeaderText("Is Batch in (a), (b) and (c) the same ").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            col.Field("Quantity_Comp").HeaderText("Is quantity in (a), (b) and ( c) the same ").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+        }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick2")))
+    </div>);
+    data.Add().ID("FacilityStore").Text("from facility store to ART dispensing unit").ContentTemplate(@<div>
+
+        @(Html.EJ().Grid<object>("FacilityStoreGrid")
+            .Datasource((IEnumerable<object>)ViewBag.facilitystore)
+            .ShowColumnChooser()
+            .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+             {
+                 items.AddTool(ToolBarItems.ExcelExport);
+             }))
+     .AllowSorting() .AllowFiltering().ShowColumnChooser().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+            .Columns(col =>
+
+            {
+
+                col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+                col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Level_Desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+                col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:dd/MM/yyyy}").Add();
+                col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+                col.Field("product_description").HeaderText("product Name").Width("200").AllowFiltering(true).Add();
+
+                col.Field("packsize").HeaderText("Unit Pack").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Item_Availability").HeaderText("Is the item available ?").TextAlign(TextAlign.Left).Priority(4).Width("70").AllowFiltering(false).Add();
+
+                col.Field("Issue_Date").HeaderText("Date Of Issue (Voucher)").AllowFiltering(false).Width(100).Format("{0:dd/MM/yyyy}").Add();
+
+                col.Field("Quantity_Issued").HeaderText("Qty Issued (Voucher)").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Stock_Card_Issue_date").HeaderText("Date Of Issue On Stock Card").TextAlign(TextAlign.Left).Priority(4).AllowFiltering(false).Width(100).Format("{0:dd/MM/yyyy}").Add();
+
+                col.Field("Stock_Card_Quantity_Issued").HeaderText("Qty Issued On Stock Card").Width("120").AllowFiltering(false).Add();
+
+                col.Field("Date_Comp").HeaderText("Do the dates tally 100%?(a)").Width("70").AllowFiltering(false).Add();
+
+                col.Field("Quantity_Comp").HeaderText("Do the Qty tally 100%(b)").TextAlign(TextAlign.Left).Priority(4).Width("70").AllowFiltering(false).Add();
+
+            }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick3")))
+    </div>);
+    data.Add().ID("PatientsIssued").Text(" issued to patients ").ContentTemplate(@<div>
+
+        @(Html.EJ().Grid<object>("PatientsGrid")
+            .Datasource((IEnumerable<object>)ViewBag.Patients)
+            .ShowColumnChooser()
+            .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+            {
+                items.AddTool(ToolBarItems.ExcelExport);
+            }))
+     .AllowSorting() .AllowFiltering().ShowColumnChooser().AllowGrouping().AllowTextWrap().AllowPaging().PageSettings(page => page.PageSize(20)).IsResponsive().AllowResizeToFit()
+        .AllowScrolling().ScrollSettings(scroll => { scroll.Width("100%"); }).FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+            .Columns(col =>
+
+            {
+
+                col.Field("facility_code").HeaderText("Facility code").IsPrimaryKey(true).TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("SAP_Code").HeaderText("SAP code").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("District_Name").HeaderText("District").Width("100").AllowEditing().Add();
+
+                col.Field("ImplimentingPartnerDescription").HeaderText("IP").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("ComprehensiveImplimentingPartnerDescription").HeaderText("Comprehensive IP").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Level_Desc").HeaderText("Level of care").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowEditing().Add();
+
+                col.Field("CDCRegion").HeaderText("CDC Region").Width("100").AllowEditing().Add();
+
+                col.Field("date_of_visit").HeaderText("Date of visit").IsPrimaryKey(true).TextAlign(TextAlign.Left).Priority(4).Width(100).Format("{0:dd/MM/yyyy}").Add();
+
+                col.Field("SCTO").HeaderText("SCTO").TextAlign(TextAlign.Left).Width("100").AllowEditing().Add();
+
+                col.Field("Facility").HeaderText("Facility name").TextAlign(TextAlign.Left).Priority(4).Width("150").AllowEditing().Add();
+
+                col.Field("Q_one").HeaderText("Opening stock").Width("100").AllowFiltering(false).Add();
+
+                col.Field("Q_two").HeaderText("Quantity received").Width("100").AllowFiltering(false).Add();
+
+                col.Field("Q_three").HeaderText("Stock on hand ").Width("100").AllowFiltering(false).Add();
+
+                col.Field("Q_four").HeaderText("quantity dispensed to patients").Width("150").AllowFiltering(false).Add();
+
+                col.Field("Q_five").HeaderText("consumption").Width("100").AllowFiltering(false).Add();
+
+                col.Field("Q_six").HeaderText("Is the amount of d) and e) the same?").Width("250").AllowFiltering(false).Add();
+                col.Field("Sum").HeaderText("Sum").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+                col.Field("Percentage").HeaderText("Percentage Score").TextAlign(TextAlign.Left).Priority(4).Width("100").AllowFiltering(false).Add();
+
+            }).ClientSideEvents(evt => evt.ToolbarClick("OnToolbarClick4")))
+    </div>);
+    }).EnableTabScroll(true).Render();}
+
+
+<script>
+    $(function () {
+        $("#dp_start_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+        $("#dp_end_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+    });
+    function OnToolbarClick(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["SpecializationData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function OnToolbarClick1(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["RequisitionSystemData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function OnToolbarClick2(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["SupplierData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function OnToolbarClick3(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["FacilityStoreData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function OnToolbarClick4(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["PatientsIssuedData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function myfunc() {
+        var dateobject = $("#dp_start_date").data("ejDatePicker");
+        var StartDate = dateobject.getValue();
+        var dateobject1 = $("#dp_end_date").data("ejDatePicker");
+        var EndDate = dateobject1.getValue();
+        $.ajax({
+            url: "BindSpecialization",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startMonth": StartDate,
+                "endMonth": EndDate
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#specialisationGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+        $.ajax({
+            url: "BindRequisitionSystem",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startMonth": StartDate,
+                "endMonth": EndDate
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#RequisitionGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+        $.ajax({
+            url: "BindSuplier",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startMonth": StartDate,
+                "endMonth": EndDate
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#SupplierGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+        $.ajax({
+            url: "BindFacilityStore",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startMonth": StartDate,
+                "endMonth": EndDate
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#FacilityStoreGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+        $.ajax({
+            url: "BindIssuedToPatients",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startMonth": StartDate,
+                "endMonth": EndDate
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#PatientsGrid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+    }
+</script>
+

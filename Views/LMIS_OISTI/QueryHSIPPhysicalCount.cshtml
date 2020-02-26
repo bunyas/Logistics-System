@@ -1,0 +1,127 @@
+﻿
+@{
+    ViewBag.Title = "QueryHSIPPhysicalCount";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+@section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexHSIP", "Home")
+                </li>
+                <li>
+                    @Html.ActionLink("Query Index", "QueryHSIPPhysicalCount", "LMIS_ART")
+                </li>
+                <li class="active">
+                    <strong>OI STI: Physical count</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+<div class="row">
+    <div class="col-lg-3">
+        <p>Start Of Reporting Period</p>
+        <p><input type="text" id="dp_start_date" name="dp_start_date" class="e-field e-ejinputtext valid" /></p>
+    </div>
+    <div class="col-lg-3">
+        <p>End Of Reporting Period</p>
+        <p><input type="text" id="dp_end_date" name="dp_end_date" class="e-field e-ejinputtext valid" /></p>
+    </div>
+    <div class="col-lg-3">
+        <br />
+        <input id="LoadDatabtn" style="margin-top:7px;" class="btn btn-block btn-primary" type="button" value="Load Query" onclick="myfunc()" />
+    </div>
+</div>
+
+@(Html.EJ().Grid<object>
+        ("grid")
+        .CssClass("table table-responsive")
+        //.Datasource(datasource => datasource.URL("DataSourceGetAll").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+        .AllowFiltering()
+        .AllowTextWrap()
+        .AllowGrouping()
+        .ShowColumnChooser()
+        .AllowScrolling()
+        .AllowKeyboardNavigation(true)
+         .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+         {
+             items.AddTool(ToolBarItems.ExcelExport);
+         }))
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+       .AllowFiltering()
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .Columns(col =>
+        {
+            col.Field("SAP_Code").HeaderText("SAP Code").Width("80px").Add();
+            col.Field("Facility").HeaderText("Facility").Width("150px").Add();
+            col.Field("ZoneDescription").HeaderText("Sector").Width("90px").Add();
+            col.Field("District_Name").HeaderText("District").Width("100px").Add();
+            col.Field("ImplementingPartnerDescription").HeaderText("IP").Width("80px").Add();
+            col.Field("level_Desc").HeaderText("Level of care").Width("80px").Add();
+            col.Field("SCTO").HeaderText("SCTO").Width("80px").Add();
+            col.Field("DateOfPhysicalCount").HeaderText("Physical count date").Format("{0:dd/MM/yy}").Width("100px").Add();
+            col.Field("ExpiryDate").HeaderText("Expiry date").Width("100px").Format("{0:dd/MM/yy}").Add();
+            col.Field("ProductCode").HeaderText("Product code").Width("80px").Add();
+            col.Field("product_description").HeaderText("Product").Width("150px").Add();
+            col.Field("BatchNo").HeaderText("Batch no").AllowFiltering(false).Width("80px").Add();
+            col.Field("Quantity_Dispensary").HeaderText("Quantity at the dispensary").AllowFiltering(true).Width("80px").Add();
+            col.Field("Quantity_Store").HeaderText("Quantity in store").AllowFiltering(true).Width("80px").Add();
+            col.Field("Total").HeaderText("Total").AllowFiltering(true).Width("80px").Add();
+            col.Field("Comment").HeaderText("Notes").AllowFiltering(false).Width("150px").Add();
+
+
+
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete"); eve.ToolbarClick("OnToolbarClick"); })
+)
+
+
+<script type="text/javascript">
+    $(function () {
+        $("#dp_start_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+        $("#dp_end_date").ejDatePicker(
+            {
+                width: '240px',
+                dateFormat: "dd/MM/yyyy"
+            }
+        );
+    });
+    function OnToolbarClick(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["PhysicalCountData"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+        }
+    }
+    function myfunc() {
+        var dateobject = $("#dp_start_date").data("ejDatePicker");
+        var StartDate = dateobject.getValue();
+        var dateobject1 = $("#dp_end_date").data("ejDatePicker");
+        var EndDate = dateobject1.getValue();
+        $.ajax({
+            url: "GetPhysicalCount",
+            type: "Get",
+            dataType: "json",
+            data: {
+                "startdate": StartDate,
+                "enddate": EndDate,
+            },
+            success: function (data) {
+                var formatData = ej.parseJSON(data);
+                var grid = $("#grid").ejGrid("instance");
+                grid.dataSource(data);
+                grid.dataSource(formatData);
+            }
+        });
+    }
+</script>
+

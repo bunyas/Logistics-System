@@ -1,0 +1,308 @@
+﻿
+@{
+    ViewBag.Title = "CustomOrders";
+    Layout = "~/Views/Shared/_LayoutFacilityHSIP.cshtml";
+}
+
+@section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexFacilityHSIP", "Home")
+                </li>
+                <li class="active">
+                    <strong>ART: HSIP Custom Order</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+<script>
+    var finalsub = false;
+    
+</script>
+@(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("DataSourceHSIPCustomOrders").UpdateURL("DialogUpdateCustomHSIP").InsertURL("DialogInsertHSIPCustom").Adaptor(AdaptorType.UrlAdaptor))
+        .AllowPaging()
+         .AllowFiltering().ShowColumnChooser()
+        .AllowTextWrap()
+        .AllowGrouping()
+
+        //.AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        //.AllowSearching().SearchSettings(search =>
+        //{
+        //    search.Fields(fields =>
+        //    {
+        //        //fields.Add("Outcome");
+        //        //fields.Add("Output");
+        //        //fields.Add("Indicator");
+        //        //fields.Add("Indicator_2");
+        //        //fields.Add("PerformanceTargetNotes");
+        //        //fields.Add("ExplanatoryNotes");
+        //    });
+        //    search.Operator(Operator.Contains);
+        //    search.IgnoreCase(true);
+        //})
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    items.AddTool(ToolBarItems.Add);
+                    items.AddTool(ToolBarItems.Edit);
+                    items.AddTool(ToolBarItems.Update);
+                    items.AddTool(ToolBarItems.Cancel);
+                    //items.AddTool(ToolBarItems.Search);
+                });
+            })
+        .Columns(col =>
+        {
+            col.Field("OrderNumber").AllowEditing(false).HeaderText("Order Number").IsPrimaryKey(true).Add();
+            col.Field("FacilityCode").AllowEditing(false).HeaderText("Facility").ForeignKeyField("FacilityCode").ForeignKeyValue("Facility").DataSource((IEnumerable<Object>)ViewBag.FacilityDataSource).Add();
+            col.Field("DatePrepared").AllowEditing(false).HeaderText("Date Prepared").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("DateExpected").AllowEditing(false).HeaderText("Date Expected").Format("{0:dd/MM/yyyy}").Add();
+            col.Field("FinalSubmission").EditType(EditingType.BooleanEdit).AllowEditing(false).HeaderText("Final Submission").Add();
+            col.Field("RFSO_SentBackTofacility").EditType(EditingType.BooleanEdit).AllowEditing(false).HeaderText("Order Sent Back").Add();
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete"); })
+)
+<script type="text/template" id="template">
+   
+    <div class="row">
+        <div class="col-lg-3">
+           
+            <p>Facility</p>
+            <p><input type="text" id="FacilityCode" name="FacilityCode" value="{{:FacilityCode}}" class="e-field e-ejinputtext valid" /></p>
+            <div>
+                <table>
+                    <tr>
+                       <td class="btn btn-danger btn-sm" align="left"  style="font-size:medium">  Final Submission ? </td>
+                        <td style="transform:scale(2)">
+                            {{if FinalSubmission}}
+                            <input type="checkbox"   id="FinalSubmission"  checked="checked" name="FinalSubmission" class="e-field e-checkbox  " style="width:30px" />
+                            {{else}}
+                            <input type="checkbox" id="FinalSubmission"  name="FinalSubmission" class="e-field e-checkbox " style="width:30px" />
+                            {{/if}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="col-lg-3">
+            <p>Date Submitted</p>
+            <p><input type="text" id="DatePrepared" name="DatePrepared" value="{{:DatePrepared}}" class="e-field e-ejinputtext valid" /></p>
+        </div>
+        <div class="col-lg-3">
+            <p>Expected Date</p>
+            <p><input type="text" id="DateExpected" name="DateExpected" value="{{:DateExpected}}" class="e-field e-ejinputtext valid" /></p>
+        </div>
+        <div class="col-lg-3">
+            <p>Order Number</p>
+            <p><input type="text" id="OrderNumber" readonly name="OrderNumber" value="{{:OrderNumber}}" class="e-field e-ejinputtext valid" /></p>
+            </div>
+       
+        <hr />
+        <div id="defaultTab" style="width: 100%;">
+            <ul>
+                <li><a href="#tab1">ART HSIP Custom Orders</a></li>
+            </ul>
+
+            <div id="tab1">
+                <div class="myDiv">
+                </div>
+                <div style="min-height:400px;">
+                    <div id="order_grid"></div>
+                </div>
+            </div>
+        </div>
+        <br />
+    </div>
+  
+</script>
+<script>
+    function open(args) {
+
+        var objDialog = $("#Grid").data("ejGrid");
+        var $dialogWrapper = objDialog.element.find("#" + objDialog._id + "_dialogEdit_wrapper");
+        $dialogWrapper.css("top", "0px");
+        $dialogWrapper.css("left", "0px");
+    }
+
+     var mProducts =@Html.Raw(Json.Encode(ViewBag.ProductDataSource));
+    function complete(args) {
+
+        if ((args.requestType == "beginedit" || args.requestType == "add") && args.model.editSettings.editMode == "dialogtemplate") {
+            $('#' + this._id + '_dialogEdit').ejDialog("option", "title", "ART HSIP Custom Orders"); //change dialog title
+            $("#" + this._id + "_dialogEdit").ejDialog({ open: "open" })
+            
+            $("#DateExpected").ejDatePicker(
+                {
+                    width: '240px',
+                    minDate: new Date(),
+                   // minDate = "01/01/2018",
+                    dateFormat: "dd/MM/yyyy" }
+            );
+            //var today = new Date();
+            $("#DatePrepared").ejDatePicker(
+                {
+                    width: '240px',
+                    maxDate: new Date(),
+                    dateFormat: "dd/MM/yyyy" }
+            );
+           
+            $.ajax({
+                //url: 'HAT/Districts',
+                url: 'GetFacilityData',
+                //data: JSON.stringify(mid),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: 'GET',
+                success: function (data) {
+                    if (data.length > 0) {
+                        var DropDownListDist = $('#FacilityCode').ejDropDownList({
+                            dataSource: data,
+                            width: "240px",
+                            fields: { value: "FacilityCode", text: "Facility" }, readOnly: true
+                        }).data("ejDropDownList");
+                        var ddl2 = $('#FacilityCode').ejDropDownList("instance");
+                        var fc = data[0].FacilityCode;
+                        console.log(JSON.stringify(fc));
+                        ddl2.selectItemByValue(fc);
+                    }
+
+                },
+
+            });
+           
+            $("#defaultTab").ejTab({ selectedItemIndex: 0 }).ejTab({ showRoundedCorner: true });
+
+            //if (args.requestType == "beginedit" || args.requestType == "add")
+            {
+
+                $("#EditDialog_Grid_Save").ejButton("destroy");
+                $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+                $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+                $("#EditDialog_Grid_Cancel").ejButton("destroy");
+                $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+                $("#cancel").css({ "width": "100px", "height": "50px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+
+
+                var header_grid = $('#Grid').ejGrid('instance');
+
+                if (args.requestType == "beginedit") {
+                    var order_no = header_grid.getSelectedRecords()[0].OrderNumber;
+                     
+                    $("#DateExpected").ejDatePicker(
+                        {
+                            width: '240px',
+                            dateFormat: "dd/MM/yyyy",
+                            //maxDate: new Date()
+                            readOnly: true
+                        }
+                    );
+ 
+                    $("#DatePrepared").ejDatePicker(
+                        {
+                            width: '240px',
+                            dateFormat: "dd/MM/yyyy",
+                            //maxDate: new Date()
+                            readOnly: true
+                        }
+                    );
+                    
+                }
+
+                if (args.requestType == "add") {
+                    var order_no = "new_record";
+                   
+                }
+             
+                $("#order_grid").ejGrid({
+                    dataSource: ej.DataManager({ url: "GetOrderCustom", batchUrl: "UpdateCustom", adaptor: "UrlAdaptor" }),
+                    query: new ej.Query().addParams('param_on', order_no),
+                    //.executeQuery(new ej.Query().addParams('param_fc', facility_code).addParams('param_sd', start_date).addParams('param_ed', end_date)),
+                    //dataSource: ej.DataManager({ url: "BatchDataEdit?facility_code=" + facility_code + "&start_date=" + start_date + "&end_date=" + end_date, batchUrl: "BatchUpdateHeader", adaptor: "UrlAdaptor" }),
+                    allowGrouping: false,
+
+                    //groupSettings: { showDropArea: false, groupedColumns: ["ovc_identification_Desc"], headerText: "" },
+                    toolbarSettings: { showToolbar: true, toolbarItems: ["add", "delete", "cancel"] },
+                    editSettings: { allowDeleting: true, allowEditing: true, allowAdding: true, editMode: 'batch', rowPosition: "bottom"  },
+                    allowScrolling: true,
+                    scrollSettings: { width: "100%", height: "auto" },
+                    allowPaging: false,
+                    enableAltRow: true,
+                    allowTextWrap: true,
+                    textWrapSettings: { wrapMode: "both" },
+                    allowResizeToFit: true,
+                    showStackedHeader: true,
+                    isResponsive: true,
+                    enableResponsiveRow: true,
+                    allowScrolling: true,
+                    allowKeyBoardNavigation: true,
+                     columns: [
+                         //{ field: "product_code", width: 200, headerText: "Product", isPrimaryKey: true, foreignKeyField: "product_code", foreignKeyValue: "product_description", dataSource: mProducts, enableFilterSearch: true,},
+                         { field: "product_code", width: 200, headerText: "Product", foreignKeyValue: "product_description", editType: "dropdownedit", editParams: { fields: { value: "product_code", text: "product_description", groupBy: "Classification" }, enableFilterSearch: true}, dataSource: mProducts},
+                        { field: "Quantity_Required_Current_Patients", headerText: "Quantity Required", allowEditing: true, width: 80, editType: ej.Grid.EditingType.Numeric, editParams: { minValue: 0 } },
+                        { field: "Notes", headerText: "Notes",  width: 200, allowEditing: true },
+                        { field: "RFSONotes", headerText: "SCTO Notes",   width: 200, allowEditing: false }
+                    ]
+                });
+                var nullstr = '';
+            }
+        }
+    }
+
+    function queryCellInfo(args) {
+        if (args.column.field == "product_code" && args.data.product_code == null)
+            $($(args.cell).parent()).css("backgroundColor", "steelblue").css("color", "white");/*custom css applied to the row */
+    }
+
+    function queryCellInfoPatients(args) {
+        if (args.column.field == "regimen_code" && args.data.regimen_code == null)
+            $($(args.cell).parent()).css("backgroundColor", "steelblue").css("color", "white");/*custom css applied to the row */
+    }
+
+</script>
+
+
+<script type="text/javascript">
+
+    function savess() {
+        var datepickObj = $("#DatePrepared").data('ejDatePicker');
+        var dp = datepickObj.option('value');
+
+        if (dp == null) {
+            alert('Please fill in the missing Information, Date Prepared is Missing !..');
+        }
+        else {
+
+            if (document.getElementById('FinalSubmission').checked) {
+                $('#FinalSubmission').val(true);
+            } else {
+                $('#FinalSubmission').val(false);
+            }
+            var obj = $("#Grid").ejGrid("instance");
+            obj.endEdit();
+            var grd_order = $("#order_grid").ejGrid("instance");
+            grd_order.batchSave();
+        }
+    }
+    function cancelss() {
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+    }
+</script>
+ 

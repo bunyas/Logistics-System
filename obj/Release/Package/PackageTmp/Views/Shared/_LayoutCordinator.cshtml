@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Medical Access Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @*@Styles.Render("~/Content/ej/web/flat-saffron/ej.web.all.min.css")*@
+    @Styles.Render("~/Content/ej/web/bootstrap-theme/ej.web.all.min.css")
+    @Scripts.Render("~/Scripts/jquery-3.1.1.min.js")
+    @Scripts.Render("~/Scripts/jquery.validate.min.js")
+    @Scripts.Render("~/Scripts/jsrender.min.js")
+    @Scripts.Render("~/Scripts/ej/ej.web.all.min.js")
+    @Scripts.Render("~/Scripts/ej/ej.unobtrusive.min.js")
+    @Scripts.Render("~/Scripts/jquery.validate.unobtrusive.min.js")
+
+    <style>
+        #Wrapper {
+            /*background-color: #3F51B5;*/
+            z-index: 1;
+            height: 500px;
+            width: 250px;
+            position: fixed;
+        }
+
+        #page-content-wrapper {
+            margin-left: 260px;
+            margin-right: 7px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="navbar navbar-fixed-top">
+
+        @Html.Partial("_LoginPartial")
+
+        @Html.EJ().Menu("mainMenu").Items(items =>
+   {
+       items.Add().Url(Url.Action("IndexCodinator", "Home")).Text("Dashboard");
+
+       items.Add().Url("#").Text("Custom HSIP Orders").Children(child =>
+       {
+           child.Add().Id("LMIS_ART").Url(Url.Action("SAPExportHSIP_CustomCordinator", "LMIS_ART")).Text("ART");
+           child.Add().Id("LMIS_HIVTestKits").Url(Url.Action("SAPExportHSIP_CustomCordinator", "LMIS_HIVTestKits")).Text("HIV Test Kits");
+           child.Add().Id("LMIS_Laboratory").Url(Url.Action("SAPExportHSIP_CustomCordinator", "LMIS_Laboratory")).Text("Laboratory");
+           child.Add().Id("LMIS_SMC").Url(Url.Action("SAPExportHSIP_CustomCordinator", "LMIS_SMC")).Text("SMC");
+           child.Add().Id("LMIS_OISTI").Url(Url.Action("SAPExportHSIP_CustomCordinator", "LMIS_OISTI")).Text("OIs");//Referral
+           child.Add().Id("LMIS_ViralLoad").Url(Url.Action("SAPExportHSIP_CustomCordinator", "LMIS_ViralLoad")).Text("Viral Load");//
+       });
+
+       items.Add().Url("#").Text("Routine HSIP Orders").Children(child =>
+       {
+           child.Add().Id("LMIS_ART").Url(Url.Action("SAPExportHSIP_Cordinator", "LMIS_ART")).Text("ART");
+           child.Add().Id("LMIS_HIVTestKits").Url(Url.Action("SAPExportHSIP_Cordinator", "LMIS_HIVTestKits")).Text("HIV Test Kits");
+           child.Add().Id("LMIS_Laboratory").Url(Url.Action("SAPExportHSIP_Cordinator", "LMIS_Laboratory")).Text("Laboratory");
+           child.Add().Id("LMIS_SMC").Url(Url.Action("SAPExportHSIP_Cordinator", "LMIS_SMC")).Text("SMC");
+           child.Add().Id("LMIS_OISTI").Url(Url.Action("SAPExportHSIP_Cordinator", "LMIS_OISTI")).Text("OIs");//Referral
+           child.Add().Id("LMIS_ViralLoad").Url(Url.Action("SAPExportHSIP_Cordinator", "LMIS_ViralLoad")).Text("Viral Load");//
+       });
+       //items.Add().Id("Utilities").Url("#").Text("Utilities").Children(child =>
+       //{
+       //    child.Add().Id("Register").Url(Url.Action("Register", "Account")).Text("Register Users");
+       //    child.Add().Id("ManageUsers").Url(Url.Action("ManageUsers", "Account")).Text("Manage Users");
+
+       //});
+
+   }).EnableSeparator(false).CssClass("Black-Menu")
+    </div>
+
+    <div class="container body-content">
+        @RenderSection("BreadCrumb", required: false)
+        @RenderBody()
+    </div>
+    <footer>
+        <div class="container body-content">
+            <hr />
+            <p>&copy; @DateTime.Now.Year - Medical Access Uganda LTD</p>
+            <hr />
+            <p class="box-title"><b> @String.Format("{0 : dddd, MMMM d, yyyy}", DateTime.Now) </b><span class="label label-primary"></span></p>
+        </div>
+
+    </footer>
+
+    @Html.EJ().ScriptManager()
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <style type="text/css" class="cssStyles">
+        .myclass {
+            float: right;
+        }
+    </style>
+    <script>
+
+    </script>
+
+    <script type="text/javascript">
+        jQuery(function ($) {
+            var menuObj = $("#mainMenu").ejMenu({ width: "100%", enableSeparator: false });
+        });
+
+    </script>
+    <style type="text/css" class="cssStyles">
+        #More, #Utilities, #Register, #Help, #ManageUsers, #Sign_In {
+            float: right;
+        }
+ 
+    </style>
+
+    <style type="text/css" class="cssStyles">
+        .Black-Menu .e-menu, .e-menu.e-horizontal .e-list > ul {
+            background: #800000;
+        }
+
+            .Black-Menu .e-menu.e-horizontal .e-list > a {
+                color: white;
+            }
+    </style>
+
+</body>
+</html>

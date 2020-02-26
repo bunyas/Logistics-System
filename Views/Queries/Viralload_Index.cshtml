@@ -1,0 +1,142 @@
+﻿
+
+@{
+    ViewBag.Title = "Viralload Query";
+    if (User.IsInRole("LMISCordinator"))
+    {
+        Layout = "~/Views/Shared/_LayoutCordinator.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+    }
+}
+
+<br />
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="breadcrumb">
+            @*<li>
+                    <a href="~/Secretariat/Dashboards/db_secretariat_overall.aspx" runat="server">Home</a>
+                </li>*@
+            <li class="active">
+                <strong>Order Details: Detailed ViralLoad Query </strong>
+            </li>
+        </ol>
+    </div>
+</div>
+@using (Html.BeginForm())
+{<div>
+        <div class="row">
+            <div class="col-lg-3">
+                <p>Start Of Reporting Period</p>
+                <p><input type="text" id="dp_start_date" name="dp_start_date" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>End Of Reporting Period</p>
+                <p><input type="text" id="dp_end_date" name="dp_end_date" class="e-field e-ejinputtext valid" /></p>
+            </div>
+            <div class="col-lg-3">
+                <p>Order type</p>
+                <p><input type="text" id="Emergency" name="Emergency" /></p>
+            </div>
+            <div class="col-lg-3">
+                <br />
+                <input id="LoadDatabtn" style="margin-top:7px;" class="btn btn-block btn-primary" type="button" value="Load Query" onclick="myfunc()" />
+            </div>
+        </div>
+    </div>
+    <div class="clear"> </div>
+}
+<br />
+
+
+<div id="mqpartial" class="tabstyle">
+
+</div>
+
+
+<script>
+     var mEmergency =@Html.Raw(Json.Encode(ViewBag.Emergency));
+    var DropDownListDist = $('#Emergency').ejDropDownList({
+        dataSource: mEmergency,
+         width: "240px",
+         fields: { value: "ID", text: "Description" },
+    }).data("ejDropDownList");
+    var ddl2 = $('#Emergency').ejDropDownList("instance");
+    var fc = mEmergency[0].ID;
+    ddl2.selectItemByValue(fc);
+    $("#dp_start_date").ejDatePicker(
+        {
+            width: '240px',
+            //maxDate: new Date(),
+            dateFormat: "dd/MM/yyyy"
+        }
+    );
+    $("#dp_end_date").ejDatePicker(
+        {
+            width: '240px',
+            //maxDate: new Date(),
+            dateFormat: "dd/MM/yyyy"
+        }
+    );
+    function myfunc() {
+        var dateobject = $("#dp_start_date").data("ejDatePicker");
+            var StartDate = dateobject.getValue();
+
+            var dateobject1 = $("#dp_end_date").data("ejDatePicker");
+            var EndDate = dateobject1.getValue();
+            var objsss = $('#Emergency').data("ejDropDownList");
+            var emer = objsss.option("value");
+
+            // Home is your controller, Index is your action name
+            $("#mqpartial").load("@Url.Action("Viralload", "Queries")",
+                {
+                    'sdate': StartDate,
+                    'edate': EndDate,
+                    '_emmergency': emer
+                },
+                                            function (response, status, xhr) {
+                                                if (status == "error") {
+                                                    alert("An error occurred while loading the results.");
+                                                }
+                                            }
+            );
+    }
+    @*$(function () {
+        $(':button').click(function () {
+            var dateobject = $("#dp_start_date").data("ejDatePicker");
+            var StartDate = dateobject.getValue();
+
+            var dateobject1 = $("#dp_end_date").data("ejDatePicker");
+            var EndDate = dateobject1.getValue();
+
+            // Home is your controller, Index is your action name
+            $("#mqpartial").load("@Url.Action("Viralload", "Queries")",
+                {
+                    'sdate': StartDate,
+                    'edate': EndDate
+                },
+                function (response, status, xhr) {
+                    if (status == "error") {
+                        alert("An error occurred while loading the results.");
+                    }
+                }
+            );
+
+
+        });
+    });*@
+
+</script>
+
+
+
+
+
+
+
+
+
+
+

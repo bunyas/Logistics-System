@@ -1,0 +1,580 @@
+﻿
+@{
+    ViewBag.Title = "CCU_MasterChild";
+    Layout = "~/Views/Shared/_LayoutHSIP.cshtml";
+}
+
+<h2>CCU_MasterChild</h2>
+<div id='medicinesGrid'></div>
+<script>
+    var compcode = 1;
+    var products =@Html.Raw(Json.Encode(ViewBag.Products));
+    var Dosage =@Html.Raw(Json.Encode(ViewBag.Dosage));
+    window.e_reg_complaint_code = 1;
+    $(function () {
+    $("#medicinesGrid").ejGrid({
+        dataSource: ej.DataManager({ url: 'Quality_Complaints?e_reg_complaint_code=' + window.e_reg_complaint_code, batchUrl: "BatchUpdateQualityIssues", adaptor: "UrlAdaptor" }),
+        detailsTemplate: "#tabGridContents",
+        detailsDataBound: "detailGridData", 
+        allowGrouping: false,
+        isResponsive: true,
+        enableAltRow: true,
+        allowTextWrap: true,
+        textWrapSettings: { wrapMode: "both" },
+        allowResizeToFit: true,
+        showStackedHeader: true,
+        enableResponsiveRow: true,
+        toolbarSettings: {
+            showToolbar: true,
+            toolbarItems: ["add", "edit", "delete", "update", "cancel"]
+        },
+        editSettings: {
+            allowEditing: true,
+            allowAdding: true,
+            allowDeleting: true,
+            rowPosition: "bottom"
+        },
+        allowPaging: true,
+        cellEdit: "cellEditMedicine",
+        beforeBatchSave: "SaveBatch"  ,
+
+        editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+        allowResizeToFit: true,
+        columns: [
+            { field: "Id", visible: true, allowEditing: true, headerText: "Id", width: 50, isPrimaryKey: true },
+
+            { field: "e_reg_complaint_code", visible: true, allowEditing: true, headerText: "e_reg_complaint_code", width: 50/*, isPrimaryKey: true*/ },
+            { field: "product_code", isPrimaryKey: true, editType: "dropdownedit", editParams: { enableAnimation: true }, validationRules: { required: true }, visible: true, allowEditing: true, headerText: "Generic name (& strength)", foreignKeyField: "product_code", foreignKeyValue: "product_description", dataSource: products, /*change: "ValChangeProdcutType",*/ width: 400 },
+            { field: "batch_no", isPrimaryKey: true, validationRules: { required: true }, visible: true, allowEditing: true, headerText: "Batch No.", width: 100, isPrimaryKey: true },
+            { field: "manufacturer", visible: true, headerText: "Manufacturer", width: 300 },
+            { field: "QualityIssue_code", visible: true, headerText: "QualityIssue_code", width: 100 },
+            { field: 'date_quality_issue_identified', type: "date", headerText: 'Date Quality issue was identified', editType: "datepicker", format: "{0:MM/dd/yyyy}", editParams: { buttonText: "Now" }, width: 150 },
+            { field: "dosage_form", visible: true, allowEditing: true, headerText: "Dosage form", foreignKeyField: "dosage_id", foreignKeyValue: "dosage_desc", dataSource: Dosage, width: 100 },
+        ],
+        });
+    });
+</script>
+ 
+
+
+<script>
+    function cellEditActionTaken(args) {
+
+        var gridInstance = $("#ActionTakenGrd").ejGrid("instance");
+        var actionTakenindex = gridInstance.selectedRowsIndexes;
+        var grid = this._id;
+        var Rcode = $("#e_reg_complaint_code").val();
+        var VRcode = $("#Id").val();
+        alert(VRcode);
+        $("#ActionTakenGrd").ejGrid("setCellValue", actionTakenindex, "e_reg_track_complaint_code", Rcode);
+    }
+
+    function queryCellInfo(args) {
+
+        if (args.column.field == "investigation_code" && (args.data.investigation_code.trim() == '4.1' || args.data.investigation_code.trim() == '4.2' ||
+            args.data.investigation_code.trim() == '6.1' || args.data.investigation_code.trim() == '6.2'))
+            $($(args.cell).parent()).css("backgroundColor", "white").css("color", "red").css("font-weight", "bold");/*custom css applied to the row */
+
+
+    }
+    function edit(args) {
+         
+    }
+
+    function cellEditMedicine(args) {
+
+        //var result = this.getSelectedRecords();
+        //var gridInstance = $("#medicinesGrid").ejGrid("instance");
+        //var medicineindex = gridInstance.selectedRowsIndexes;
+        //var grid = this._id;
+        //var Rcode = $("#e_reg_complaint_code").val();
+        //$("#medicinesGrid").ejGrid("setCellValue", medicineindex, "e_reg_complaint_code", Rcode);
+         
+    }
+    function SaveBatch(args) {
+
+        var message = "";
+        var messageadded = "";
+
+        if (args.batchChanges.added.length > 0) {
+            console.log(JSON.stringify(args.batchChanges.added));
+        }
+
+        for (var i = 0; i < args.batchChanges.added.length; i++) {
+            var messageadded = messageadded + "\n" + "Are you sure to add new records " + args.batchChanges.added[i].product_code + " Manufactured by " + args.batchChanges.added[i].Manufacturer + " in Batch " + args.batchChanges.added[i].batch_no + " identified on " + args.batchChanges.added[i].date_quality_issue_identified + " in row " + i;
+            //check for validity of columns
+            var date_issue_identified = args.batchChanges.added[i].date_quality_issue_identified;
+            var row = i + 1;
+            if (Date.parse(date_issue_identified)) {
+                //Valid date
+            } else {
+                alert('The Date the issue was identified in row ' + row + ' is invalid!!!');
+                args.cancel = true // Don't save the data'
+            }
+        }
+        if (confirm(messageadded)) {
+            //if yes ,data will save
+        }
+
+
+        for (var i = 0; i < args.batchChanges.changed.length; i++) {
+            var message = message + "\n" + "Would you like to update the following records? " + args.batchChanges.changed[i].product_code + " Manufactured by " + args.batchChanges.changed[i].manufacturer + " in Batch " + args.batchChanges.changed[i].batch_no + " identified on " + args.batchChanges.changed[i].date_quality_issue_identified + " in row " + i
+        }
+        //if (isupdate) {
+        //    if (confirm(message)) {
+        //        //if yes ,data will save
+        //    }
+        //    else
+        //        args.cancel = true // if no the data wount save
+        //}
+        //isupdate = false
+    }
+
+</script>
+
+
+ 
+ <script id="tabGridContents" type="text/x-jsrender">
+    <b>Product Support Documents and Actions</b>
+    <div class="tabcontrol" id="defaultTab">
+        <ul>
+            <li style="background:#2db833;"><a href="#tab1{{:Id}}"><b style="color:white">Supporting Documents</b></a></li>
+            <li style="background:blue; color:black"><a href="#tab2{{:Id}}"><b style="color:white">Action Taken</b></a></li>
+            <li style="background:Tomato; color:white "><a href="#tab3{{:Id}}"><b style="color:white">Preliminary Investigation</b></a></li>
+            <li style="background:DodgerBlue; color:white "><a href="#tab4{{:Id}}"><b style="color:white">Detailed Investigation</b></a></li>
+            <li style="background:DodgerBlue; color:white "><a href="#tab5{{:Id}}"><b style="color:white">Detailed Investigation</b></a></li>
+
+            </ul>
+        <div id="tab1{{:Id}}">
+            @*<h3>Supporting Documents</h3>*@
+            <div id="detailGrid">
+            </div>
+        </div>
+        <div id="tab2{{:Id}}">
+            @*<h3>Action Taken</h3>*@
+            <div id="ActionTakenGrd">
+            </div>
+        </div>
+        <div id="tab3{{:Id}}">
+            @*<h3>Preliminary Investigation</h3>*@
+            <div id="PreInvestGrd">
+            </div>
+        </div>
+
+        <div id="tab4{{:Id}}">
+            @*<b>Detailed Investigation</b>*@
+            <div>
+                <div id="DetailInvestGrd"></div>
+            </div>
+        </div> 
+        <div id="tab5{{:Id}}">
+            <p class="text-primary">.text-primary</p>
+            <p class="text-secondary">.text-secondary</p>
+            <p class="text-success">.text-success</p>
+            <p class="text-danger">.text-danger</p>
+            <p class="text-warning">.text-warning</p>
+            <p class="text-info">.text-info</p>
+            <p class="text-light bg-dark">.text-light</p>
+            <p class="text-dark">.text-dark</p>
+            <p class="text-muted">.text-muted</p>
+            <p class="text-white bg-dark">.text-white</p>
+
+            @*<div class="bg-success">bg-primary</div>
+            <div class="p-3 mb-2 bg-secondary text-white">.bg-secondary</div>
+            <div class="p-3 mb-2 bg-success text-white">.bg-success</div>
+            <div class="p-3 mb-2 bg-danger text-white">.bg-danger</div>
+            <div class="p-3 mb-2 bg-warning text-dark">.bg-warning</div>
+            <div class="p-3 mb-2 bg-info text-white">.bg-info</div>
+            <div class="p-3 mb-2 bg-light text-dark">.bg-light</div>
+            <div class="p-3 mb-2 bg-dark text-white">.bg-dark</div>
+            <div class="p-3 mb-2 bg-white text-dark">.bg-white</div>*@
+        </div>
+    </div>
+</script> 
+
+<script type="text/javascript">
+    function detailGridData(e) {
+          // $("#defaultTab").ejTab({ hiddenItemIndex: [3] });
+
+        var filteredData = e.data["QualityIssue_code"];
+        var regcode = e.data["e_reg_complaint_code"];
+        var batchno = e.data["batch_no"];
+        var productcode = e.data["product_code"];
+        var keyId = e.data["Id"];
+
+        console.log(e.data);
+        //console.log(filteredData);
+
+        //var data = ej.DataManager(window.ordersView).executeLocal(ej.Query().where("QualityIssue_code", "equal", parseInt(filteredData), true));
+        var data = ej.DataManager({
+            // url: 'LoadGridFiles?e_reg_complaint_code=' + window.e_reg_complaint_code + '&batchno=' + window.batchno + '&productcode=' + window.productcode,
+            url: 'LoadGridFiles?e_reg_complaint_code=' + regcode + '&batchno=' + batchno + '&productcode=' + productcode,
+            updateUrl: "DialogInsertSupDoc?compcode=" + regcode,
+            insertUrl: "DialogInsertSupDoc?compcode=" + regcode,
+            removeUrl: "DialogDeleteSupDoc",
+            adaptor: new ej.UrlAdaptor()
+        });//.executeLocal(ej.Query().where("Id", "equal", filteredData, true));
+        //alert(keyId);
+        var Action_Taken =@Html.Raw(Json.Encode(ViewBag.fo_a_action_taken));
+        var dataGrid2 = ej.DataManager({ url: "BatchData_Complaint_Tracker?e_reg_track_code=" + regcode, batchUrl: "BatchUpdateComplaint_Tracker", adaptor: "UrlAdaptor" });
+        var dataActionTaken = ej.DataManager({ url: 'Quality_Complaints?e_reg_complaint_code=' + window.e_reg_complaint_code, batchUrl: "BatchUpdateQualityIssues", adaptor: "UrlAdaptor" });
+
+        var dataPreInvestGrd = ej.DataManager({ url: "BatchData?regCompCode=" + window.e_reg_complaint_code, batchUrl: "BatchUpdate", adaptor: "UrlAdaptor" });
+
+        var dataDetailInvestGrd = ej.DataManager({ url: "BatchDataDetailInvestGrd?regCompCode=" + window.e_reg_complaint_code, batchUrl: "BatchUpdate", adaptor: "UrlAdaptor" });
+
+        var dataYesNo =@Html.Raw(Json.Encode(ViewBag.YesNo));
+        e.detailsElement.find("#detailGrid").ejGrid({             
+            dataSource: data,
+             
+            allowPaging: true, pageSettings: { pageSize: 2 },
+            editSettings: {
+                allowEditing: true, allowAdding: true, allowDeleting: true,
+                editMode: "dialogtemplate",
+                dialogEditorTemplateID: "#SupportDocUploadtemplate",
+                showDeleteConfirmDialog: true
+            },
+            toolbarSettings: {
+                showToolbar: true,
+                toolbarItems: ["add", /*"edit",*/ "delete", "update"/*, "cancel"*/]
+            },
+            columns: [
+                { field: "Id", visible: false, headerText: 'ID', textAlign: ej.TextAlign.Right, width: 85, isPrimaryKey: true },
+               // { headerText: "Submitted Evidence", template: "#FileURLtemplate", textAlign: "center", width: 110 },
+                { field: "Details", headerText: 'Details', textAlign: ej.TextAlign.Left, width: 120 },
+                { field: "e_reg_complaint_code", visible: false, headerText: 'Complaint No.', textAlign: ej.TextAlign.Left, width: 100 },
+                { field: "batch_no", visible: false, headerText: 'Batch No.', textAlign: ej.TextAlign.Left, width: 50 },
+                { field: "product_code", visible: false, headerText: 'Product Code', textAlign: ej.TextAlign.Left, width: 50 },
+                { field: "QualityIssue_code", visible: false, headerText: "QualityIssue_code", width: 100 },
+                {
+                    headerText: "Manage Records",
+                    commands: [
+                        { type: "edit", buttonOptions: { text: "Edit" } },
+                        { type: "delete", buttonOptions: { text: "Delete" } },
+                    ],
+                    width: 150
+                }
+            ],
+            actionComplete: "childGridcomplete",
+            onActionBegin: "onActionBeginSupDocs"
+        });
+        e.detailsElement.find("#ActionTakenGrd").ejGrid({
+            dataSource: dataActionTaken,// dataGrid2,
+            allowGrouping: false,
+            isResponsive: true,
+            enableAltRow: true,
+            allowTextWrap: true,
+            textWrapSettings: { wrapMode: "both" },
+            cellEdit: "cellEditActionTaken",
+            allowResizeToFit: true,
+            showStackedHeader: true,
+            enableResponsiveRow: true,
+            queryCellInfo: "queryCellInfo",
+            toolbarSettings: {
+                showToolbar: true,
+                toolbarItems: ["add", "edit", "delete", "update", "cancel"]
+            },
+
+            editSettings: { rowPosition: "bottom", allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+            allowResizeToFit: true,
+            columns: [
+                { field: "e_reg_track_code", visible: true, allowEditing: true, headerText: "HHcode", width: 100, isPrimaryKey: false },
+                { field: "e_reg_track_complaint_code", visible: true, allowEditing: true, headerText: "Comp. Code", width: 100, isPrimaryKey: false },
+                { field: "e_reg_track_date_of_action", headerText: "Date Action was taken", editType: "datepicker", format: "{0:MM/dd/yyyy}", width: 100 },
+                {
+                    field: "e_reg_track_action_details", headerText: "Details", headerTooltip: "To add new line use Shift-Enter ", editTemplate: {
+                        create: function () {
+                            return "<textarea style='width:100%; display:block; max-width:100%;line-height:3.0;padding:15px 15px  30px; border-radius:3px; border:1px solid #F7E98D; font:13px Tahoma, cursive; transition:box-shadow 0.5s ease; box-shadow:0 4px 6px rgba(0,0,0,0.1); font-smoothing:subpixel-antialiased; background:linear-gradient(#F9EFAF, #F7E98D); background:-o-linear-gradient(#F9EFAF, #F7E98D); background:-ms-linear-gradient(#F9EFAF, #F7E98D); background:-moz-linear-gradient(#F9EFAF, #F7E98D); background:-webkit-linear-gradient(#F9EFAF, #F7E98D);'>{{:e_reg_track_action_details}}</textarea>";
+                        },
+                        write: function (args) {
+                            $('.text').css("max-width", args.element.parent("td").width());
+                            $('.text').css("max-height", args.element.parent("td").height());
+                            null;
+                        },
+                        read: function (args) {
+                            return args.val();
+                        },
+                    }
+                    , width: 300,
+                },
+                { field: "e_reg_track_action_taken", width: 200, headerText: "Action Taken", editType: "dropdownedit", editParams: { showCheckbox: true }, foreignKeyValue: "action_taken_desc", foreignKeyField: "action_taken_code", dataSource: Action_Taken },
+            ],
+        });
+
+        e.detailsElement.find("#PreInvestGrd").ejGrid({
+            dataSource: dataPreInvestGrd,
+            allowGrouping: false,
+            isResponsive: true,
+            enableAltRow: true,
+            allowTextWrap: true,
+            textWrapSettings: { wrapMode: "both" },
+            cellEdit: "cellEdit",
+            allowResizeToFit: true,
+            showStackedHeader: true,
+            enableResponsiveRow: true,
+            queryCellInfo: "queryCellInfo",
+            toolbarSettings: { showToolbar: false, toolbarItems: ['search'] },
+            editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+            allowResizeToFit: true,
+            columns: [
+                { field: "e_reg_complaint_code", visible: false, allowEditing: true, headerText: "HHcode", width: 50, isPrimaryKey: false },
+                { field: "investigation_code", visible: true, allowEditing: false, headerText: "", isPrimaryKey: true },
+                { field: "investigation_desc", visible: true, allowEditing: false, headerText: "COMPLAINT INVESTIGATION", width: 400 },
+                { field: "yes_no", visible: true, headerText: "Yes/No", width: 100, foreignKeyField: "yes_no_id", foreignKeyValue: "yes_no_desc", dataSource: dataYesNo },
+
+                { headerText: "Submitted Evidence", template: "#tempx", textAlign: "center", width: 110 },
+
+                {
+                    field: "Required_Evidence", headerText: "Required Evidence", headerTooltip: "Click the button to add Select file(s)", editTemplate: {
+                        create: function () {
+                            return $("<div class='e-field'>");
+                        },
+                        write: function (args) {
+                            var proxy = args;
+                            args.element.ejUploadbox({
+                                saveUrl: "SaveSupportDoc",
+                                extensionsAllow: ".zip",
+                                complete: function (args) {
+                                    proxy.element.val(args.responseText);
+                                },
+                                uploadName: "PreInvestGrdRequired_Evidence",
+                            });
+                            proxy.element.val(proxy.rowdata.Required_Evidence);
+                        },
+                        read: function (args) {
+                            return args.val();
+                        },
+                    }
+                    , width: 300,
+                },
+            ],
+            create: "onGridCreate"
+        });
+
+
+        e.detailsElement.find("#DetailInvestGrd").ejGrid({
+            dataSource: dataDetailInvestGrd,// ej.DataManager({ url: "BatchDataDetailInvestGrd?regCompCode=" + window.e_reg_complaint_code, batchUrl: "BatchUpdate", adaptor: "UrlAdaptor" }),
+            allowGrouping: false,
+            isResponsive: true,
+            enableAltRow: true,
+            allowTextWrap: true,
+            textWrapSettings: { wrapMode: "both" },
+            cellEdit: "cellEdit",
+            allowResizeToFit: true,
+            showStackedHeader: true,
+            enableResponsiveRow: true,
+            queryCellInfo: "queryCellInfo",
+            toolbarSettings: { showToolbar: false, toolbarItems: ['search'] },
+            editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+            allowResizeToFit: true,
+            columns: [
+                { field: "e_reg_complaint_code", visible: false, allowEditing: true, headerText: "HHcode", width: 50, isPrimaryKey: false },
+                { field: "investigation_code", visible: false, allowEditing: false, headerText: "", isPrimaryKey: true },
+                { field: "investigation_desc", visible: true, allowEditing: false, headerText: "COMPLAINT INVESTIGATION", width: 400 },
+                { field: "yes_no", visible: true, headerText: "Yes/No", width: 100, foreignKeyField: "yes_no_id", foreignKeyValue: "yes_no_desc", dataSource: dataYesNo },
+                { field: "Required_Evidence", visible: true, headerText: "Required Evidence", width: 400/*, isPrimaryKey: true */ },
+
+            ],
+        });
+
+
+
+
+       // e.detailsElement.find(".defaultTab").ejTab();
+        //$("#defaultTab").ejTab({ selectedItemIndex: 0, cssClass: "fat-lime", collapsible: true, heightAdjustMode: "fill", height: "300px" });
+        e.detailsElement.find(".tabcontrol").ejTab({ selectedItemIndex: 0, /*cssClass: "fat-lime", */collapsible: true, heightAdjustMode: "fill", height: "300px" });
+
+    }
+</script>
+
+<script type="text/template" id="SupportDocUploadtemplate">
+    <b>Supporting Documents Details ****</b>
+
+    <div id="defaultTabx" @*style="width: 500px;height:200px;"*@>
+
+        <table cellspacing="3">
+            <tr hidden="hidden">
+                <td style="text-align: left"> <input type="text" id="Id" name="Id" value="{{:Id}}" class="e-field e-ejinputtext valid" /></td>
+                <td style="text-align: left"> <input type="text" id="e_reg_complaint_code" name="e_reg_complaint_code" value="{{:e_reg_complaint_code}}" class="e-field e-ejinputtext valid" /></td>
+            </tr>
+            <tr hidden="hidden">
+                <td style="text-align: left"> <input type="text" id="batch_no" name="batch_no" value="{{:batch_no}}" class="e-field e-ejinputtext valid" /></td>
+                <td style="text-align: left"> <input type="text" id="product_code" name="product_code" value="{{:product_code}}" class="e-field e-ejinputtext valid" /></td>
+            </tr>
+            <tr hidden="hidden">
+                <td style="text-align: left"> <input type="text" id="QualityIssue_code" name="QualityIssue_code" value="{{:QualityIssue_code}}" class="e-field e-ejinputtext valid" /></td>
+            </tr>
+            <tr hidden="hidden">
+                <td style="text-align: left" colspan="2"> <input type="text" id="FileURL" name="FileURL" value="{{:FileURL}}" class="e-field e-ejinputtext valid" /></td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">
+                    Select File for Upload
+                </td>
+                <td style="text-align: justify">
+                    <div id="UploadSupFile"></div>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:justify;">
+                    File Desc
+                </td>
+                <td style="text-align: left">
+                    @*<textarea id="Details" name="Details" class="e-ejinputtext" value="{{: Details}}" style='width:100%; display:block; max-width:100%;line-height:3.0;padding:15px 15px  30px; border-radius:3px; border:1px solid #F7E98D; font:13px Tahoma, cursive; transition:box-shadow 0.5s ease; box-shadow:0 4px 6px rgba(0,0,0,0.1); font-smoothing:subpixel-antialiased; background:linear-gradient(#F9EFAF, #F7E98D); background:-o-linear-gradient(#F9EFAF, #F7E98D); background:-ms-linear-gradient(#F9EFAF, #F7E98D); background:-moz-linear-gradient(#F9EFAF, #F7E98D); background:-webkit-linear-gradient(#F9EFAF, #F7E98D);'>{{:Details}}</textarea>*@
+                    <textarea id="Details" name="Details" class="form-control" value="{{: Details}}" cols="95" rows="5" style="max-width:100%">{{: Details}}</textarea>
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+
+</script>
+
+<script>
+     
+    
+</script>
+<script id="FileURLtemplate" type="text/x-template"> 
+    <a rel='nofollow' href=" DownloadFile?fileNamePath={{:FileURL}}">{{:Details}}</a>
+</script>
+<script id="tempx" type="text/x-template"> 
+    <a rel='nofollow' href=" DownloadFile?fileNamePath={{:Required_Evidence}}">{{:Required_Evidence}}</a>
+</script> 
+<script>
+    function childGridcomplete(args) {
+        if (/*args.requestType == "beginedit" || */args.requestType == "add") { 
+            //window.product_comp_code = result[0].Id;;  
+            //A Global var to track and hold file uploading info
+            window.supDocuploadData = {};
+            window.supDocuploadData.url = args.requestType == "add" ? "DialogInsertSupDoc" : "DialogInsertSupDoc";
+            // alert(window.supDocuploadData.url);
+            var regcode = $('#e_reg_complaint_code').val();
+            var batch_no = $('#batch_no').val();
+            var product_code = $('#product_code').val();
+
+            $('#UploadSupFile').ejUploadbox({
+                saveUrl: "SaveSupportingDoc?regcode=" + window.regcode + "&batch_no=" + window.batchno + "&product_code=" + window.productcode + "&product_comp_code=" + window.product_comp_code,
+                removeUrl: "DialogDeleteSupDoc",
+                dialogAction: { closeOnComplete: true },
+                multipleFilesSelection: false,
+                showFileDetails: false,
+                begin: "onbeginSupDocs",
+                success: "onsuccessSupDocs",
+
+            });
+        }
+
+        if (args.requestType == "save") {
+
+            //var data = args.responseText; // responseText contains variables 
+            //// that correspond to the FileCollection Class
+            //var jsonResponse = JSON.parse(data);
+
+            args.data["testStr"] = "Peter";
+            var recId = $("#Id").val();
+            //Updating the file as one of the column data 
+            // args.data["Photo"] = window.supDocuploadData.files;
+            alert('Saving the Docs details ----->' + recId);
+            window.supDocuploadData["editData"] = new FormData();
+
+            //Converting the grid data to form data to send files to controller
+            for (var d in args.data)
+                supDocuploadData.editData.append(d, args.data[d]);
+            //console.log(JSON.stringify(window.supDocuploadData.editData));
+            proxy = this;
+            $.ajax({
+                url: window.supDocuploadData.url,
+                type: 'POST',
+                data: window.supDocuploadData.editData,
+                contentType: false,
+                processData: false,
+                success: function () {
+                    proxy.refreshContent();
+
+                    var upload = $('#UploadSupFile').ejUploadbox("instance");
+                    if (upload != null && upload != undefined) {
+                        if (upload.diaObj != null && upload.diaObj != undefined) {
+                            var wrapper = upload.diaObj.wrapper;
+                            var fileItem = wrapper.find(".e-ul li.e-upload-file");
+                            for (var i = 0; i < fileItem.length; i++) {
+                                //alert('Using begin(args) ------');
+                                upload._xhrPerformUpload($(fileItem[i]).data("file"));
+                            }
+                        }
+                    }
+                }
+            });
+        } 
+    }
+
+    function onActionBeginSupDocs(args) {
+ 
+
+    }
+</script>
+
+<script>
+    function setCodePreInvestGrd(args) {
+
+        $.ajax({
+            type: 'GET',
+            url: "PreInvestigationGrid",
+            success: function (result) {
+                if (result > 0) {
+                    //debugger;
+
+                    for (i = 0; i < result; i++) {
+                        $("#PreInvestGrd").ejGrid("setCellValue", i, "e_reg_complaint_code", args);
+                    }
+                }
+            },
+        });
+    }
+    function setCodeDetailInvestGrd(args) {
+        $.ajax({
+            type: 'GET',
+            url: "DetailInvestigationGrid",
+            success: function (result2) {
+                if (result2 > 0) {
+                    //debugger;
+                    for (i = 0; i < result2; i++) {
+                        $("#DetailInvestGrd").ejGrid("setCellValue", i, "e_reg_complaint_code", args);
+                    }
+                }
+            },
+        });
+    }
+
+
+</script>
+
+
+<style type="text/css" class="cssStyles">
+    .tab1style {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0px -9px 0px 9px;
+        background-color:orangered;
+        color:white;
+    }
+    .tab2style { 
+        background-color: steelblue;
+        color: white;
+    }
+    .tab3style {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0px -9px 0px 9px;
+        background-color:violet;
+        color: white;
+    }
+
+    .tab4style {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0px -9px 0px 9px;
+        background-color:black;
+        color: white;
+    }
+</style>

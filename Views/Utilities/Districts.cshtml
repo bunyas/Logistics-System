@@ -1,0 +1,494 @@
+﻿
+
+@{
+    ViewBag.Title = "Districts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Districts</h2>
+@(Html.EJ().Dialog("basicDialog").Title("Warning")@*.ShowFooter(true).FooterTemplateId("sample")*@.ShowOnInit(false))
+<div id="ControlRegion">
+    @(Html.EJ().Grid<object>("Grid")
+        // .Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.datasource))
+
+       // .Datasource(datasource => datasource.URL("GetComplaints")/*.UpdateURL("DialogUpdate").InsertURL("DialogInsert")*/.RemoveURL("DialogDelete").Adaptor(AdaptorType.UrlAdaptor))
+       .AllowSearching(true)
+    .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+
+    .ContextMenuSettings(contextMenu =>
+    {
+        contextMenu.EnableContextMenu();
+    }).AllowScrolling()
+    .ScrollSettings(col => { col.Width(1300); })
+    .AllowPaging()
+     .AllowFiltering().ShowColumnChooser().AllowResizing()
+    .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+    .ToolbarSettings(toolbar =>
+    {
+        toolbar.ShowToolbar().ToolbarItems(items =>
+        {
+            items.AddTool(ToolBarItems.Add);
+            items.AddTool(ToolBarItems.Edit);
+            items.AddTool(ToolBarItems.Update);
+            items.AddTool(ToolBarItems.Cancel);
+            items.AddTool(ToolBarItems.Search);
+            items.AddTool(ToolBarItems.ExcelExport);
+        });
+    })
+    .Columns(col =>
+    {
+        col.Field("District_Code").Visible(true).IsPrimaryKey(true).HeaderText("District Code").TextAlign(TextAlign.Justify).Width(100).Add();
+        col.Field("District_Name").HeaderText("District Name").TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("Region_Id").Visible(true).HeaderText("Region").TextAlign(TextAlign.Justify).ForeignKeyField("Region_Id").ForeignKeyValue("Region_Description").DataSource((IEnumerable<object>)ViewBag.Region).Width(100).Add();
+        col.Field("Is_Urban").HeaderText("Is Urban").TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("District_Ministry_Code").Visible(true).HeaderText("District Ministry code").TextAlign(TextAlign.Justify).Width(100).Add();
+        col.Field("Is_Municipality").HeaderText("Is Municipality").TextAlign(TextAlign.Justify).Width(150).Add();
+        col.Field("ISO_Code").Visible(true).HeaderText("ISO code").TextAlign(TextAlign.Justify).Width(100).Add();
+        col.Field("CDCRegionId").HeaderText("CDC Region").TextAlign(TextAlign.Justify).ForeignKeyField("CDCRegionId").ForeignKeyValue("CDCRegion").DataSource((IEnumerable<object>)ViewBag.CdcRegion).Width(150).Add();
+        col.Field("ImplimentingPartnerCode").Visible(true).HeaderText("Comprehensive IP").TextAlign(TextAlign.Justify).ForeignKeyField("ImplimentingPartnerCode").ForeignKeyValue("ImplementingPartnerDescription").DataSource((IEnumerable<object>)ViewBag.Implementing).Width(100).Add();
+
+    })
+    .ClientSideEvents(eve => { /*eve.Load("onLoad");*/ eve.ActionComplete("edit").ToolbarClick("OnToolbarClick"); }))
+
+</div>
+
+
+<script type="text/template" id="template">
+    <b>District Details</b>
+    <div id="defaultTab" style="width:900px">
+        <table cellspacing="5">
+            <tr>
+                <td colspan="6" style="color:red;"> The fields with an asterisk(<span style="color:red;">*</span>) are considered mandatory</td>
+            </tr>
+            <tr>
+
+                <td style="text-align: right;">District Code</td>
+                <td style="text-align: left"> <input type="text" readonly="readonly" id="District_Code" name="District_Code" value="{{:District_Code}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">District Name <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="District_Name" name="District_Name" value="{{:District_Name}}" class="e-field e-ejinputtext valid " /> </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">Region <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="Region_Id" name="Region_Id" value="{{:Region_Id}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">District Ministry Code</td>
+                <td style="text-align: left"> <input type="text" id="District_Ministry_Code" name="District_Ministry_Code" value="{{:District_Ministry_Code}}" class="e-field e-ejinputtext valid " /> </td>
+           </tr>
+            <tr>
+                <td style="text-align: right;">Is Municipality</td>
+                <td style="text-align: left">
+                    <input type="checkbox" id="Is_Municipality" name="Is_Municipality" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                  </td>
+                <td style="text-align: right;">ISO Code</td>
+                <td style="text-align: left"> <input type="text" id="ISO_Code" name="ISO_Code" value="{{:ISO_Code}}" class="e-field e-ejinputtext valid " /> </td>
+               </tr>
+            <tr>
+                <td style="text-align: right;">CDC Region <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="CDCRegionId" name="CDCRegionId" value="{{:CDCRegionId}}" class="e-field e-ejinputtext valid " /> </td>
+                <td style="text-align: right;">Comprehensive Implimenting Partner <span style="color:red;">*</span></td>
+                <td style="text-align: left"> <input type="text" id="ImplimentingPartnerCode" name="ImplimentingPartnerCode" value="{{:ImplimentingPartnerCode}}" class="e-field e-ejinputtext valid " /> </td>
+               </tr>
+            <tr>
+                <td style="text-align: right;">Is Urban</td>
+                <td style="text-align: left">
+                    <input type="checkbox" id="Is_Urban" name="Is_Urban" checked="checked" class="e-field e-checkbox" style="width:30px" />
+                    @*{{if Is_Urban}}
+                    
+                    {{else}}
+                    <input type="checkbox" id="Is_Urban" name="Is_Urban" class="e-field e-checkbox" style="width:30px" />
+                    {{/if}}*@
+                </td>
+               
+            </tr>
+        </table>
+        <div id="dialog">
+
+        </div>
+    </div>
+
+</script>
+<script>
+    $(function () {
+
+        $.ajax({
+            url: "GetDistricts",
+            type: "GET",
+            dataType: "json",
+            //data: {
+            //    date1: f1,
+            //    date2: f2
+            //},
+            success: function (result) {
+                var formatData = ej.parseJSON(result);
+                var obj = $("#Grid").ejGrid("instance");
+                obj.dataSource(result);
+                obj.dataSource(formatData);
+            }
+        });
+    });
+</script>
+
+<script>
+
+    function OnToolbarClick(args) {
+        if (args.itemName.indexOf("Export") > -1) {//if no selectedRecords, currenviewdata will be exported
+            this.model["Districts"] = JSON.stringify(this.model.dataSource, null, 2147483644);
+            //this.model["Districts"] = JSON.stringify(this.model.currentViewData);
+        }
+    }
+    function edit(args) {
+
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            window._requestType = args.requestType;
+            $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+            $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+            $("#EditDialog_Grid_Cancel").ejButton("destroy");
+            $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+            $("#cancel").css({ "width": "100px", "height": "50px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+
+               var mcdcRegion =@Html.Raw(Json.Encode(ViewBag.cdcregion));
+      var DropDownListDist = $('#CDCRegionId').ejDropDownList({
+        dataSource: mcdcRegion,
+         width: "240px",
+         fields: { value: "CDCRegionId", text: "CDCRegion" },
+      }).data("ejDropDownList");
+
+
+     var mPartner =@Html.Raw(Json.Encode(ViewBag.Implementing));
+     var DropDownListDist = $('#ImplimentingPartnerCode').ejDropDownList({
+        dataSource: mPartner,
+         width: "240px",
+         fields: { value: "ImplimentingPartnerCode", text: "ImplementingPartnerDescription" },
+     }).data("ejDropDownList");
+
+     var mRegion =@Html.Raw(Json.Encode(ViewBag.Region));
+     var DropDownListDist = $('#Region_Id').ejDropDownList({
+        dataSource: mRegion,
+         width: "240px",
+         fields: { value: "Region_Id", text: "Region_Description" },
+    }).data("ejDropDownList");
+
+
+            if (args.requestType == "add") {
+                $.ajax({
+                    url: "CheckDistrictsNo",
+                    type: "Get",
+                    dataType: "json",
+                    success: function (data) {
+                       /// alert(data);
+                        var count = (data + 1);
+                        $('#District_Code').val(count);
+
+                        //cancelss();
+                    }
+                });
+            }
+
+
+            if (args.requestType == "beginedit") {
+                var cpname = $('#District_Name').val();
+                $('#' + this._id + '_dialogEdit').ejDialog("option", "title", "Edit " + cpname + "'s details"); //change dialog title
+                document.getElementById("Is_Urban").checked = false;
+                document.getElementById("Is_Municipality").checked = false;
+                var gridObj = $("#Grid").data("ejGrid");
+                var Municiple = gridObj.getSelectedRecords()[0].Is_Municipality;
+                var Urban = gridObj.getSelectedRecords()[0].Is_Urban;
+                if (Municiple == true) {
+                    document.getElementById("Is_Municipality").checked = true;
+                }
+                if (Urban == true) {
+                    document.getElementById("Is_Urban").checked = true;
+                }
+            }
+        }
+
+    }
+
+    ///Function to return the dd-mm-YYYY format
+      $.validator.setDefaults({
+        //to validate all fields(hidden also)
+        ignore: [],
+
+        errorClass: 'e-validation-error',
+        //it specifies the error message display position
+        errorPlacement: function (error, element) {
+            $(error).insertAfter(element.closest(".e-widget"));
+        },
+    });
+
+
+</script>
+<script>
+    
+</script>
+
+<script>
+      function savess() {
+
+          var _District_Code = $('#District_Code').val();
+          var _District_Name = $('#District_Name').val();
+          var Ministry_Code = $('#District_Ministry_Code').val();
+          var _ISO_Code = $('#ISO_Code').val();
+          var CDCRegion = $('#CDCRegionId').data("ejDropDownList");
+          var _CDCRegion = CDCRegion.option("value");
+          var IP = $('#ImplimentingPartnerCode').data("ejDropDownList");
+          var _IP = IP.option("value");
+          var Region = $('#Region_Id').data("ejDropDownList");
+          var _Region = Region.option("value");
+          var _Is_Urban = $("#Is_Urban").is(":checked");
+          var _Is_Municipality = $("#Is_Municipality").is(":checked");
+
+          if (_District_Name == null || _District_Name == "") {
+              var str = "Please fill in the District Name";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_Region == null || _Region == "") {
+              var str = "Please fill in the Region";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_CDCRegion == null || _CDCRegion == "") {
+              var str = "Please fill in the CDC Region";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else if (_IP == null || _IP == "") {
+              var str = "Please fill in the Implementing Partner";
+              $("#basicDialog").html('<p style="font-family: cursive;color: blue;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+              $("#button1").ejButton({
+                  cssClass: "e-primary",
+                  size: "large",
+                  showRoundedCorner: true,
+                  contentType: "textandimage",
+                  prefixIcon: "e-icon e-handup",
+                  visible: false,
+                  style: "float:right",
+                  click: function (args) {
+                      $("#basicDialog").ejDialog("close");
+                  }
+              });
+              $("#basicDialog").ejDialog({ enableModal: true });
+              $("#basicDialog").ejDialog("open");
+              return;
+          }
+          else {
+              var _type = 0;
+              if (window._requestType == "beginedit") {
+                  _type = 2;
+              }
+              else if (window._requestType == "add") {
+                  _type = 1;
+              }
+              $.ajax({
+                  url: "SaveDistrict",
+                  type: "Get",
+                  dataType: "json",
+                  data: {
+                      "DistrictCode": _District_Code,
+                      "DistrictName": _District_Name,
+                      "Region": _Region,
+                      "CDCRegion": _CDCRegion,
+                      "IP": _IP,
+                      "ISO_Code": _ISO_Code,
+                      "MinistryCode": Ministry_Code,
+                      "IsUban": _Is_Urban,
+                      "IsMunicipality": _Is_Municipality,
+                      "_type": _type
+                  },
+                  success: function (data) {
+                      alert(data);
+                      cancelss();
+                      var obj = $("#Grid").ejGrid("instance");
+                      obj.refreshContent();
+                  }
+              });
+          }
+
+         
+      }
+    function cancelss() {
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+    }
+</script>
+
+<style>
+    .e-grid .e-groupdroparea, /*GroupDropArea */
+    .e-grid .e-groupdroparea:hover, /*GroupDropArea Hover*/
+    .e-grid .e-cloneproperties, /*Column header clone during dragging header*/
+    .e-grid .e-groupheadercell:hover, /*HeaderCell in GroupDropArea*/
+    .e-grid td.e-active, /*During Row Selected*/
+    /*For pager items and their hover*/
+    .e-pager .e-currentitem,
+    .e-pager .e-currentitem:hover,
+    .e-pager .e-link:hover,
+    .e-pager .e-icon:hover {
+        background-color: #ea1b8d;
+    }
+
+    .e-grid .e-gridheader /*For line that separates the grid header and content*/ {
+        border-bottom-color: #ea1b8d;
+    }
+
+    .e-grid tr.e-hover /*For row hover*/ {
+        background-color: #e66aae;
+        color: #FFFFFF;
+    }
+
+    .e-grid .e-alt_row /*For Alternate row color*/ {
+        background-color: #E5E4E2; /*#99CFE3;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+        border-bottom: 1px solid #c8c8c8;
+        border-left: 1px solid #c8c8c8;
+    }
+</style>
+<style>
+    .panel-default > .panel-heading {
+        background-color: #451bb1 /*#3e1111*/;
+        color: white;
+        /*background-color:silver;*/
+        /*color: white;*/
+    }
+</style>
+
+<style type="text/css" class="cssStyles">
+    .control {
+        margin-left: 30px;
+    }
+
+    .ctrllabel {
+        padding-top: 15px;
+    }
+
+    .control {
+        margin-left: 20px;
+    }
+
+    .frame {
+        height: 250px;
+        width: 1000px;
+    }
+
+    .frame1 {
+        height: 240px;
+        width: 900px;
+    }
+
+    .txt {
+        display: block;
+        margin-bottom: 12px;
+    }
+</style>
+
+<style>
+    #lblComplaintTitle {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #c9252b;
+        vertical-align: top;
+        /*width: 700px;*/
+    }
+
+    .redLabels {
+        /*font-size: 24px;*/
+        background-color: white;
+        color: #ff0000;
+        vertical-align: top;
+        font-weight: bold;
+        /*width: 700px;*/
+    }
+
+    .myDiv {
+        font-size: 18px;
+        background-color: white;
+        color: orangered;
+        vertical-align: top;
+        text-align: center;
+        /*width: 700px;*/
+    }
+</style>
+
+<style>
+    .e-grid .e-dialog .gridform .e-rowcell {
+        padding: .5em;
+    }
+
+    .custom.e-js .e-header {
+        background: #c9252b;
+    }
+
+    .custom.e-js .e-content {
+        background: #ddd;
+    }
+
+    .custom .e-rbn-button.e-btn.e-select {
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    .tabstyle {
+        background: #F9F9F9;
+        border-radius: 10px;
+        border: 1px solid #99CFE3;
+        display: block;
+    }
+
+    .longcolumns {
+        width: 600px !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        border-right: 5px #666 outset !important;
+        border-left: 5px #666 outset !important;
+    }
+</style>
+
+
+
+

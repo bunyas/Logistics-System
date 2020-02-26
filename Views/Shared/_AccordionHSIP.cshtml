@@ -1,0 +1,224 @@
+﻿<style type="text/css">
+ 
+</style>
+    <div class="controlframe">
+        @{Html.EJ().Accordion("basicAccordion").ShowRoundedCorner(true).Width("250px").Height("850px").Items(data =>
+        {
+        data.Add().Text("LMIS").ContentTemplate(@<div>
+        <div class="emp-list">
+            <b class="headername">Custom HSIP Orders</b><br />
+            <table class="table">
+                <tr>
+                    <td>
+                        @Html.ActionLink("ART", "HSIPCustomOrders", "LMIS_ART")
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.ActionLink("HIV Test Kits", "HSIPCustomOrders", "LMIS_HIVTestKits")
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                       @Html.ActionLink("Laboratory", "HSIPCustomOrders", "LMIS_Laboratory")
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.ActionLink("SMC", "HSIPCustomOrders", "LMIS_SMC")
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                       @Html.ActionLink("OI", "HSIPCustomOrders", "LMIS_OISTI")
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                      @Html.ActionLink("Viral Load", "HSIPCustomOrders", "LMIS_ViralLoad")
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+            </table>
+        </div> 
+       <div class="emp-list">
+                   <b class="headername">Routine HSIP Orders</b><br />
+           <table class="table">
+               <tr>
+                   <td>
+                      @Html.ActionLink("ART", "HSIPRoutineOrders", "LMIS_ART")
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                       @Html.ActionLink("HIV Test Kits", "HSIPRoutineOrders", "LMIS_HIVTestKits")
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                       @Html.ActionLink("Laboratory", "HSIPRoutineOrders", "LMIS_Laboratory")
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                       @Html.ActionLink("SMC", "HSIPRoutineOrders", "LMIS_SMC")
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                       @Html.ActionLink("OI", "HSIPRoutineOrders", "LMIS_OISTI")
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                       @Html.ActionLink("Viral Load", "HSIPRoutineOrders", "LMIS_ViralLoad")
+                   </td>
+               </tr>
+               <tr>
+                   <td></td>
+               </tr>
+           </table>
+       </div>
+       <div class="emp-list">
+              <b class="headername">HSIP Order Allocations</b><br />
+           <table class="table">
+               <tr>
+                   <td>
+                       @Html.ActionLink("ART", "AllocationHSIPIndex", "LMIS_ART") 
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                       @Html.ActionLink("HIV Test Kits", "AllocationHSIPIndex", "LMIS_HIVTestKits")
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                       @Html.ActionLink("Laboratory", "AllocationHSIPIndex", "LMIS_Laboratory")
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                       @Html.ActionLink("SMC", "AllocationHSIPIndex", "LMIS_SMC")
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                       @Html.ActionLink("OI", "AllocationHSIPIndex", "LMIS_OISTI")
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                       @Html.ActionLink("Viral Load", "AllocationHSIPIndex", "LMIS_ViralLoad")
+                   </td>
+               </tr>
+               <tr>
+                   <td></td>
+               </tr>
+           </table>
+        </div>   
+         <div class="emp-list">
+              <b class="headername">HSIP SAP Export</b><br />
+             <table class="table">
+                 <tr>
+                     <td>
+                         @Html.ActionLink("ART", "SAPExportHSIP", "LMIS_ART")
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>
+                         @Html.ActionLink("HIV Test Kits", "SAPExportHSIP", "LMIS_HIVTestKits")
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>
+                         @Html.ActionLink("Laboratory", "SAPExportHSIP", "LMIS_Laboratory")
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>
+                         @Html.ActionLink("SMC", "SAPExportHSIP", "LMIS_SMC")
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>
+                         @Html.ActionLink("OI", "SAPExportHSIP", "LMIS_OISTI")
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>
+                         @Html.ActionLink("Viral Load", "SAPExportHSIP", "LMIS_ViralLoad")
+                     </td>
+                 </tr>
+                 <tr>
+                     <td></td>
+                 </tr>
+             </table>
+      </div>   
+      <div class="emp-list">
+             <b class="headername">HSIP Queries</b><br />
+          <table class="table">
+              <tr>
+                  <td>
+                      @Html.ActionLink("ART", "QueryHSIP", "LMIS_ART")
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                      @Html.ActionLink("HIV Test Kits", "QueryHSIP", "LMIS_HIVTestKits")
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                      @Html.ActionLink("Laboratory", "QueryHSIP", "LMIS_Laboratory")
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                      @Html.ActionLink("SMC", "QueryHSIP", "LMIS_SMC")
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                      @Html.ActionLink("OI", "QueryHSIP", "LMIS_OISTI")
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                      @Html.ActionLink("Viral Load", "QueryHSIP", "LMIS_ViralLoad")
+                  </td>
+              </tr>
+              <tr>
+                  <td></td>
+              </tr>
+          </table>
+       </div>   
+    </div>);
+        data.Add().Text("CCU").ContentTemplate(@<div>
+        <div class="emp-list">
+           <b class="headername">Customer Care Unit</b><br />
+             <table class="table">
+                <tr>
+                  <td>
+                    @Html.ActionLink("Customer Care Unit (CCU)", "Complaints", "fo_complaint")
+                  </td>
+                </tr>
+                @*<tr>
+             <td>
+              @Html.ActionLink("HIV Test Kits", "HSIPCustomOrders", "LMIS_HIVTestKits")
+               </td>
+              </tr>*@
+              
+             </table>
+         </div> 
+    </div>);
+        data.Add().Text("CHSS").ContentTemplate(@<div>
+    </div>);
+        data.Add().Text("M&E").ContentTemplate(@<div>
+    </div>);
+       
+        }).HeightAdjustMode(HeightAdjustMode.Content).Render();}
+    </div>
+    

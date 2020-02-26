@@ -1,0 +1,211 @@
+﻿@model mascis.fo_complaint
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>fo_complaint</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.e_reg_complaint_No)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.e_reg_complaint_No)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.e_reg_contact_person_id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.e_reg_contact_person_id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.e_reg_date_recieved)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.e_reg_date_recieved)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.e_reg_date_complaint)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.e_reg_date_complaint)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.e_reg_complaint_details)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.e_reg_complaint_details)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.e_reg_affected_sites)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.e_reg_affected_sites)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.e_reg_product_category)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.e_reg_product_category)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.e_reg_date_resolved)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.e_reg_date_resolved)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.e_reg_expected_date_resolution)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.e_reg_expected_date_resolution)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DeletedRecord)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DeletedRecord)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.is_quality_issue)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.is_quality_issue)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AffectedSites)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AffectedSites)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Sup_Doc_Evidence_Rec)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Sup_Doc_Evidence_Rec)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Prod_Samples_Provided)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Prod_Samples_Provided)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Communicated_By_Lev1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Communicated_By_Lev1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email_letter_attached)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email_letter_attached)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Communicated_By_Lev2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Communicated_By_Lev2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Feedback)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Feedback)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Feedback_Communicated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Feedback_Communicated)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Feedback_Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Feedback_Date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.No_Feedback_Reason)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.No_Feedback_Reason)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.fo_a_communication_mode.comm_mode_desc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.fo_a_communication_mode.comm_mode_desc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.fo_a_complaint_accuteness.accuteness_desc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.fo_a_complaint_accuteness.accuteness_desc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.fo_a_complaint_category.complaint_category_desc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.fo_a_complaint_category.complaint_category_desc)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.e_reg_complaint_code }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

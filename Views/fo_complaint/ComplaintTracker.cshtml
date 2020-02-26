@@ -1,0 +1,262 @@
+﻿
+@{
+    ViewBag.Title = "ComplaintTracker";
+    Layout = "~/Views/Shared/_LayoutFacilityHSIP.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="breadcrumb">
+            <li>
+                @*@Html.ActionLink("Home", "IndexHSIP", "Home")*@
+            </li>
+            <li class="active">
+                <strong>Track your Complaint</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+@(Html.EJ().Grid<object>("Grid").AllowRowDragAndDrop()
+        .Datasource(datasource => datasource.URL("TrackComplaints").RemoveURL("DialogDelete").Adaptor(AdaptorType.UrlAdaptor))
+        .EnableAltRow()
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.DialogTemplate).DialogEditorTemplateID("#template"); })
+        .AllowPaging()
+        .AllowFiltering()
+        // .AllowTextWrap()
+        // .AllowGrouping()
+        .SelectionType(SelectionType.Multiple)
+        .AllowScrolling()
+        .IsResponsive(true)
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })
+        .ToolbarSettings(toolbar =>
+        {
+            toolbar.ShowToolbar().ToolbarItems(items =>
+            {
+                //items.AddTool(ToolBarItems.Add);
+                items.AddTool(ToolBarItems.Edit);
+                //items.AddTool(ToolBarItems.Delete);
+                //items.AddTool(ToolBarItems.Update);
+                items.AddTool(ToolBarItems.Cancel);
+                items.AddTool(ToolBarItems.Search);
+                //items.AddTool(ToolBarItems.ExcelExport);
+                //items.AddTool(ToolBarItems.WordExport);
+                //items.AddTool(ToolBarItems.PdfExport);
+            });
+        })
+        .Columns(col =>
+        {
+
+            col.Field("e_reg_complaint_code").HeaderText("e_reg_complaint_code").IsPrimaryKey(true).Visible(false).TextAlign(TextAlign.Right).Width(90).Add();
+            col.Field("e_reg_complaint_No").HeaderText("Complaint Number").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Justify).Width(90).Add();
+            col.Field("e_reg_date_recieved").Type("date").HeaderText("Date Recieved").Format("{0:dd/MMM/yyyy}").Width(110).Add();
+            //col.Field("e_reg_date_complaint").Type("date").HeaderText("Date Complaint").Format("{0:dd/MMM/yyyy}").Width(100).Add();
+
+            col.Field("e_reg_complaint_details").HeaderText("Complaint Details").ClipMode(ClipMode.EllipsisWithTooltip).Width(400).Add();
+            col.Field("e_reg_complaint_category").HeaderText("Complaint Category").ForeignKeyField("complaint_category_code").ForeignKeyValue("complaint_category_desc").DataSource((IEnumerable<object>)ViewBag.e_reg_complaint_category).Width(200).Add();
+            col.Field("e_reg_product_category").HeaderText("Product Category").ForeignKeyField("category_code").ForeignKeyValue("category_desc").DataSource((IEnumerable<object>)ViewBag.Product_Category).Width(200).Add();
+            col.Field("e_reg_date_resolved").HeaderText("Date resolved").Format("{0:dd/MMM/yyyy}").Width(100).Add();
+            //col.Field("ActionTaken").HeaderText("Action Taken").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            //col.Field("Feedback").HeaderText("Feedback").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).Width(100).Add();
+            col.Field("e_reg_complaint_status").HeaderText("Status").IsPrimaryKey(false).Visible(true).TextAlign(TextAlign.Right).ForeignKeyField("status_code").ForeignKeyValue("status_desc").DataSource((IEnumerable<object>)ViewBag.fo_a_status).Width(100).Add();
+
+        })
+    .ClientSideEvents(evt => evt.ActionBegin("onActionBegin").ActionComplete("edit").ActionFailure("failure"))
+)
+
+<script type="text/template" id="template" @*style="width: 100%"*@>
+    @*<b>Complaints</b>*@
+    <table style="width:100%;">
+        <tr>
+            <td style="text-align:left;" @*hidden="hidden"*@>Complaint Number</td>
+            <td style="text-align: left" hidden="hidden"> <input type="text" id="e_reg_complaint_code" name="e_reg_complaint_code" value="{{:e_reg_complaint_code}}" class="e-field e-ejinputtext valid" hidden="hidden" /> </td>
+            <td style="text-align: left; color:#021aee;" @*hidden="hidden"*@> 
+            @*<input type="text" id="e_reg_complaint_No" name="e_reg_complaint_No" value="{{:e_reg_complaint_No}}" class="e-field e-ejinputtext valid"  />*@ 
+                <label id="e_reg_complaint_No"  name="e_reg_complaint_No">{{:e_reg_complaint_No}}</label>
+            </td>
+            <td style="text-align: left;" id="ReceiivedDate">Date of Submission</td>
+            <td style="text-align: left" id="ReceiivedDate1"> <input type="text" id="e_reg_date_recieved" name="e_reg_date_recieved" value="{{:e_reg_date_recieved}}" readonly="readonly"  class="e-field e-ejinputtext valid" style="border:none;"/></td>
+            <td style="text-align: right; width:10%">Current Status</td>
+            <td style="text-align: left"> <input type="text" hidden="hidden" id="e_reg_complaint_status" name="e_reg_complaint_status" value="{{:e_reg_complaint_status}}" readonly="readonly" class="e-field e-ejinputtext valid" style="border:none;" />
+                <input type="text" id="complaint_status" name="complaint_status" readonly="readonly" class="e-field e-ejinputtext valid" style="border:none;" /></td>
+            <td id="Resolved1">Date Resolved</td>
+            <td style="text-align: left" id="Resolved2"> <input type="text" id="e_reg_date_resolved" name="e_reg_date_resolved" value="{{:e_reg_date_resolved}}" readonly="readonly" class="e-field e-ejinputtext valid" style="border:none;" /></td>
+        </tr>
+        <tr style="">
+            <td class="redLabels"  colspan="9" style="text-align: left; border-bottom-color:crimson; border-bottom-style:solid;">Issue/ Complaint Details</td>
+        </tr>
+        <tr>
+            <td colspan="9" style="text-align: left;">
+                <label id="e_reg_complaint_details" name="e_reg_complaint_details" value="{{: e_reg_complaint_details}}" style="max-width:100%">{{: e_reg_complaint_details}}</label>
+            </td>
+        </tr>
+    </table>
+    <hr/>
+    <div class="panel panel-default" id="ActionTakenPanel" hidden="hidden">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseActionTakenPanel">
+                    Actions taken
+                </a>
+            </h4>
+        </div>
+        <div id="collapseActionTakenPanel" class="panel-collapse collapse collapse in">
+            <div @*class="panel-body"*@>
+                <table>
+                    <tr style="width:100%">
+                        <td width="100%">
+                            <div id="ActionTakenPanelGrid" width:100%"> </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+    function edit(args) {
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            $($("#EditDialog_Grid_Save").hide()).after('<button id="save" type="button" onclick="savess();" class="btn btn-success btn-sm" > <span class="glyphicon glyphicon-save"></span> Save</button>');
+            $("#save").css({ "width": "100px", "height": "50px", "font-size": "17px", "margin-left": "190px", "visibility":"hidden" });
+            $("#EditDialog_Grid_Cancel").ejButton("destroy");
+            $($("#EditDialog_Grid_Cancel").hide()).after(' <button type="button" id="cancel" onclick="cancelss()" class="btn btn-danger btn-sm" ><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>');
+            $("#cancel").css({ "width": "100px", "height": "50px", "float": "right", "margin-left": "10px", "margin-top": "20px", "margin-bottom": "10px" });
+            $("#e_reg_date_recieved").ejDatePicker(
+                {
+                    maxDate: new Date(), value: new Date(new Date($("#e_reg_date_recieved").attr("value"))),
+                    dateFormat: "dd/MM/yyyy",
+                    validationRules: {
+                        required: true
+                    },
+                    validationMessage: {
+                        required: "Date recieved is Required"
+                    },
+                }
+            );
+            $("#e_reg_date_resolved").ejDatePicker(
+                {
+                    maxDate: new Date(), value: new Date(new Date($("#e_reg_date_resolved").attr("value"))),
+                    dateFormat: "dd/MM/yyyy",
+                    validationRules: {
+                        required: true
+                    },
+                    validationMessage: {
+                        required: "Date recieved is Required"
+                    },
+                }
+            );
+            var status = $("#e_reg_complaint_status").val();
+            if (status == 2) {
+                $("#complaint_status").val("Resolved");
+            }
+            else {
+                debugger;
+                $("#complaint_status").val("Pending");
+            }
+            $("#ActionTakenPanelGrid").ejGrid({
+                //dataSource: ej.DataManager({ url: 'Quality_ComplaintsOP?e_reg_complaint_code=' + window.e_reg_complaint_code, batchUrl: "BatchUpdateQualityIssues", adaptor: "UrlAdaptor" }),
+
+                //detailsTemplate: "#tabGridContents",
+                //detailsDataBound: "detailGridData",
+                //cellSave: "OtherMedicinecellsave",
+                allowGrouping: false,
+                isResponsive: true,
+                enableAltRow: true,
+                allowTextWrap: true,
+                textWrapSettings: { wrapMode: "both" },
+                allowResizeToFit: true,
+                showStackedHeader: true,
+                enableResponsiveRow: true,
+
+                //toolbarSettings: {
+                //    showToolbar: true,
+                //    toolbarItems: ["add", "edit", "delete", "update", "cancel"]
+
+                //},
+                editSettings: {
+                    allowEditing: true,
+                    allowAdding: true,
+                    allowDeleting: true,
+                    rowPosition: "bottom"
+                },
+                allowPaging: true,
+                cellEdit: "cellEditTakenPanelGrid",
+                editSettings: { allowEditing: false, allowAdding: true, allowDeleting: true, editMode: 'batch' },
+                allowResizeToFit: true,
+                columns: [
+                    { field: "Action_id", visible: false, allowEditing: false, headerText: "ID", width: 80/*, isPrimaryKey: true*/ },
+                    //{ field: "e_reg_complaint_code", visible: true, headerText: "QualityIssue_code", width: 100 },
+                    { field: "e_reg_complaint_code", visible: false, headerText: "complaint code", width: 80/*, isPrimaryKey: true*/ },
+                    { field: "e_reg_complaint_No", visible: false, headerText: "complaint no", /*change: "ValChangeProdcutType",*/ width: 80 },
+                    { field: 'Action_date', type: "date", allowEditing: false, headerText: 'Action date', editType: "datepicker", format: "{0:dd/MM/yyyy}", editParams: { buttonText: "Now" }, width: 150 },
+                    {
+                        field: "Action_description", allowEditing: false, headerText: "Description", headerTooltip: "To add new line use Shift-Enter ", editTemplate: {
+                            create: function () {
+                                return "<textarea style='width:100%; display:block; max-width:100%;line-height:3.0;padding:15px 15px  30px; border-radius:3px; border:1px solid #F7E98D; font:13px Tahoma, cursive; transition:box-shadow 0.5s ease; box-shadow:0 4px 6px rgba(0,0,0,0.1); font-smoothing:subpixel-antialiased; background:linear-gradient(#F9EFAF, #F7E98D); background:-o-linear-gradient(#F9EFAF, #F7E98D); background:-ms-linear-gradient(#F9EFAF, #F7E98D); background:-moz-linear-gradient(#F9EFAF, #F7E98D); background:-webkit-linear-gradient(#F9EFAF, #F7E98D);'>{{:Action_description}}</textarea>";
+                            },
+                            write: function (args) {
+                                $('.text').css("max-width", args.element.parent("td").width());
+                                $('.text').css("max-height", args.element.parent("td").height());
+                                null;
+                            },
+                            read: function (args) {
+                                return args.val();
+                            },
+                        }
+                        , /*width: 300,*/
+                    },
+
+                ],
+            });
+
+            var grid2 = $("#ActionTakenPanelGrid").ejGrid("instance");
+            grid2.dataSource(ej.DataManager({ url: 'GetActionTracker?e_reg_complaint_code=' + $('#e_reg_complaint_code').val(), batchUrl: "BatchUpdateActionTaken", adaptor: "UrlAdaptor" }));
+        }
+
+    }
+</script>
+<script>
+    function cancelss() {
+        cancelSave();
+
+    }
+    function cancelSave(args) {
+        $("#Grid").ejWaitingPopup("hide");
+        var proddesc = $('#e_reg_complaint_details').val();
+        var str = "The edits on " + proddesc + " have been Cancelled!!!";
+        //$("#SuccessDial").html('<p style="font-family: cursive;color: green;">' + str + '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>');
+        $("#CancelDial").html('<p style="font-family: cursive;color: red;">' + str /*+ '</p></br><button id="button1" style="margin-left: 50%;size: large; showRoundedCorner: true; cssClass:customCss1">OK</button>'*/);
+
+        var obj = $("#Grid").ejGrid("instance")
+        obj.cancelEdit();
+        $("#btnOK").ejButton({
+            cssClass: "e-danger",
+            size: "large",
+            showRoundedCorner: true,
+            contentType: "textandimage",
+            prefixIcon: "e-icon e-handup",
+            visible: false,
+            style: "float:right",
+            click: function (args) {
+
+                $("#CancelDial").ejDialog("close");
+            }
+        });
+
+        $("#CancelDial").ejDialog({ enableModal: true });
+        $("#CancelDial").ejDialog("open");
+    }
+</script>

@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewBag.Title = "ManageRFSOFacility";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section BreadCrumb{
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li>
+                    @Html.ActionLink("Home", "IndexAdministrator", "Home")
+                </li>
+                <li class="active">
+                    <strong>RFSO: Manage Facility RFSO</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+}
+
+@(Html.EJ().Grid<object>
+        ("Grid")
+        .Datasource(datasource => datasource.URL("DataSourceRFSO").BatchURL("BatchUpdate").Adaptor(AdaptorType.UrlAdaptor))
+        //.AllowPaging()
+        .AllowFiltering()
+        .AllowTextWrap()
+        .AllowGrouping()
+
+        //.AllowScrolling()
+        //.ScrollSettings(scroll =>
+        //{
+        //    scroll.AllowVirtualScrolling().Height(500).Width(0).
+        //    VirtualScrollMode(VirtualScrollMode.Normal);
+        //})
+        .AllowKeyboardNavigation(true)
+        .GroupSettings(group => { group.ShowGroupedColumn(true); })
+        .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+        .FilterSettings(filter => { filter.FilterType(FilterType.Excel); })
+        .ShowColumnChooser()
+          .EditSettings(edit => { edit.AllowEditing().EditMode(EditMode.Batch); })
+        .AllowSearching().SearchSettings(search =>
+        {
+            search.Fields(fields =>
+            {
+
+            });
+            search.Operator(Operator.Contains);
+            search.IgnoreCase(true);
+        })
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().EditMode(EditMode.Batch); })
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    //items.AddTool(ToolBarItems.Add);
+                    items.AddTool(ToolBarItems.Edit);
+                    items.AddTool(ToolBarItems.Update);
+                    items.AddTool(ToolBarItems.Cancel);
+                    items.AddTool(ToolBarItems.Search);
+                });
+            })
+        .Columns(col =>
+        {
+            col.Field("FacilityCode").IsPrimaryKey(true).Width(100).HeaderText("FacilityCode").Visible(false).Add();
+            col.Field("Facility").AllowEditing(false).Width(180).HeaderText("Facility").Add();
+            col.Field("level_of_care_Dec").AllowEditing(false).Width(150).HeaderText("Level of Care").Add();
+            col.Field("ZoneDescription").AllowEditing(false).Width(100).HeaderText("Sector").Add();
+            col.Field("District_Name").AllowEditing(false).Width(150).HeaderText("District").IsPrimaryKey(true).Add();
+            col.Field("ImplementingPartnerDescription").AllowEditing(false).Width(100).HeaderText("IP").Add();
+            col.Field("RFSO_UserName").AllowEditing(true).Width(150).HeaderText("SCTO").ForeignKeyField("Email").ForeignKeyValue("UserName").DataSource((IEnumerable<Object>)ViewBag.RFSO).Add();
+        })
+        .ClientSideEvents(eve => { eve.ActionComplete("complete"); })
+)
+@*@using (Html.BeginForm("ManageRFSOFacility", "ManageRFSOFacility", FormMethod.Post))
+{
+    <div class="row">
+        <div class="col-lg-3">
+            <hr />
+            @Html.EJ().Button("Export").Type(ButtonType.Submit).Size(ButtonSize.Large).Text("Save")
+        </div>
+    </div>
+}*@
+
